@@ -27,7 +27,6 @@ public class Field {
     public static final Pose2d BlueTrenchTop = new Pose2d(new Translation2d(Inches.of(BlueTrenchBottom.getX()), fieldWidth.minus(Inches.of(BlueTrenchBottom.getY()))), Rotation2d.kZero);
 
     // Red side
-
     public static final Pose2d RedHub = new Pose2d(new Translation2d(fieldLength.minus(Inches.of(BlueHub.getX())), (fieldWidth.minus(Inches.of(BlueHub.getY())))), Rotation2d.kZero);
 
 
