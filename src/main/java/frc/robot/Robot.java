@@ -17,10 +17,15 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     SmartDashboard.putData("Arena: ", field);
-   field.getObject("Blue Hub").setPose(Field.BlueHub);
-   field.getObject("Blue Tower").setPose(Field.BlueTower);
-   field.getObject("Blue Outpost").setPose(Field.BlueOutpost);
-   field.getObject("Blue Depot").setPose(Field.BlueDepot);
+   field.getObject("Blue Hub").setPose(Field.blueHub);
+   field.getObject("Blue Tower").setPose(Field.blueTower);
+   field.getObject("Blue Outpost").setPose(Field.blueOutpost);
+   field.getObject("Blue Depot").setPose(Field.blueDepot);
+   field.getObject("Blue Trench Top").setPose(Field.blueTrenchTop);
+   field.getObject("Blue Trench Bottom").setPose(Field.blueTrenchBottom);
+
+   field.getObject("Red Hub ").setPose(Field.redHub);
+
    
    
   }
