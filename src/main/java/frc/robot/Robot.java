@@ -21,13 +21,18 @@ public class Robot extends TimedRobot {
    field.getObject("Blue Tower").setPose(Field.blueTower);
    field.getObject("Blue Outpost").setPose(Field.blueOutpost);
    field.getObject("Blue Depot").setPose(Field.blueDepot);
-   field.getObject("Blue Trench Top").setPose(Field.blueTrenchTop);
+    field.getObject("Blue Trench Top").setPose(Field.blueTrenchTop);
    field.getObject("Blue Trench Bottom").setPose(Field.blueTrenchBottom);
 
-   field.getObject("Red Hub ").setPose(Field.redHub);
+   field.getObject("Red Hub").setPose(Field.redHub);
+    field.getObject("Red Tower").setPose(Field.redTower);
+   field.getObject("Red Outpost").setPose(Field.redOutpost);
+   field.getObject("Red Depot").setPose(Field.redDepot);
+   field.getObject("Red Trench Top").setPose(Field.redTrenchTop);
+   field.getObject("Red Trench Bottom").setPose(Field.redTrenchBottom);
+   
 
-   
-   
+
   }
 
 
