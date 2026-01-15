@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -14,7 +13,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -55,7 +53,7 @@ import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
+@Logged
 public class Swerve extends SubsystemBase {
     private final SwerveDrive swerveDrive;
 
@@ -76,7 +74,6 @@ public class Swerve extends SubsystemBase {
     private final ProfiledPIDController xController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.defaultRotationConstraints);
-
 
     public Swerve(BooleanSupplier overridePathFollowing) {
                 this.overridePathFollowing = overridePathFollowing;

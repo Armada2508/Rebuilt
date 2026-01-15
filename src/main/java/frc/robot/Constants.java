@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -86,7 +87,7 @@ public class Constants {
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
 
-    public static class ControllerK {
+public static class ControllerK {
         public static final int xboxPort = 0;
         public static final double leftJoystickDeadband = 0.07;
         public static final double rightJoystickDeadband = 0.07;
@@ -94,5 +95,15 @@ public class Constants {
         // Teleop Alignment Overriding
         public static final double overrideThreshold = 0.14;
         public static final Time overrideTime = Seconds.of(0.25);
+    }
+    public static class DriveK {
+        // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
+        public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
+        public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
+        public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
+
+        public static final double driveSpeedModifier = 1;
+        public static final double rotationSpeedModifier = 1;
+        public static final double exponentialControl = 1.75;
     }
 }

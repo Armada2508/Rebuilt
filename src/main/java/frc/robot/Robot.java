@@ -4,22 +4,62 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Constants.ControllerK;
+import frc.robot.Constants.DriveK;
+import frc.robot.lib.util.DriveUtil;
+import frc.robot.lib.util.DynamicSlewRateLimiter;
+import frc.robot.subsystems.Swerve;
 
+@Logged
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
 
+    @Logged(name = "Swerve")
+    private final Swerve swerve = new Swerve(() -> false);
+    private final XboxController xboxController = new XboxController(ControllerK.xboxPort);
 
-  public Robot() {
+    public Robot() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+        Epilogue.bind(this);
+        swerve.setDefaultCommand(teleopDriveCommand());
+    }
 
-  }
+    public Command teleopDriveCommand() {
+        return swerve.driveCommand(
+            () -> {
+                double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
+                val *= DriveK.driveSpeedModifier;
+                return val;
+            }, 
+            () -> {
+                double val = MathUtil.applyDeadband(-xboxController.getLeftX(), ControllerK.leftJoystickDeadband);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
+                val *= DriveK.driveSpeedModifier;
+                return val; 
+            },  
+            () -> {
+                double val = MathUtil.applyDeadband(-xboxController.getRightX(), ControllerK.rightJoystickDeadband);
+                val = DriveUtil.powKeepSign(val, DriveK.exponentialControl);
+                val *= DriveK.rotationSpeedModifier;
+                return val; 
+            },
+            true, true
+        ).withName("Swerve Drive Field Oriented");
+    }
 
-  public static boolean onRedAlliance() {
-    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
-  }
+    public static boolean onRedAlliance() {
+        return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+    }
+
 
 }
