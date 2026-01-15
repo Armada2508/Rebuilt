@@ -25,6 +25,8 @@ public class Intake {
         talonWheels.getConfigurator().apply(IntakeK.pidConfig);
         talonWheels.getConfigurator().apply(IntakeK.softwareLimitConfig);
         talonArm.getConfigurator().apply(new TalonFXConfiguration());
+        talonArm.getConfigurator().apply(IntakeK.pidConfig);
+        talonArm.getConfigurator().apply(IntakeK.softwareLimitConfig);
     }
     public void configMotionMagic() {
         

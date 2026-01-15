@@ -2,7 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Radians;
+
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -14,7 +14,8 @@ import edu.wpi.first.units.measure.Distance;
 
 public class Constants {
     public static class IntakeK {
-        public static final int motorID = 0;
+        public static final int talonArmID = 0;
+        public static final int talonWheelsID = 1;
         
 
         // PID & Feedforward gains
@@ -37,6 +38,7 @@ public class Constants {
         .withReverseSoftLimitEnable(true)
         .withForwardSoftLimitThreshold(maxAngle.in(Degrees))
         .withReverseSoftLimitThreshold(maxAngle.in(Degrees));
+
 
     }
 }
