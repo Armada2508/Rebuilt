@@ -13,6 +13,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -48,24 +49,28 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
+import frc.robot.subsystems.Vision.VisionResults;
 import swervelib.SwerveDrive;
 import swervelib.motors.TalonFXSwerve;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-@Logged
-public class Swerve extends SubsystemBase {
-    private final SwerveDrive swerveDrive;
 
+@Logged
+public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
+
+    private final SwerveDrive swerveDrive;
+    private final Supplier<VisionResults> visionSource; //! NOT IN REBUILT
     private final TalonFX frontLeft;
     private final TalonFX frontRight;
     private final TalonFX backLeft;
     private final TalonFX backRight;
     private final SysIdRoutine sysIdRoutine; 
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
-    // private boolean initializedOdometryFromVision = false; //! Add when we have vision
+    private boolean initializedOdometryFromVision = false;
     @SuppressWarnings("unused")
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
+    // PID Alignment
     private final BooleanSupplier overridePathFollowing;
     private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
     private Pose2d targetPose;
@@ -75,8 +80,9 @@ public class Swerve extends SubsystemBase {
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.defaultRotationConstraints);
 
-    public Swerve(BooleanSupplier overridePathFollowing) {
-                this.overridePathFollowing = overridePathFollowing;
+    public Swerve(Supplier<VisionResults> visionSource /* NOT IN REBUILT */, BooleanSupplier overridePathFollowing) {
+        this.visionSource = visionSource; //! NOT IN REBUILT
+        this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
         try {
@@ -112,12 +118,26 @@ public class Swerve extends SubsystemBase {
                 this
             )
         );
-
         setupPathPlanner();
         frontLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
         frontRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
         backLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
         backRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
+        SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
+        for (var result : visionSource.get().results()) {
+            EstimatedRobotPose pose = result.getFirst();
+            if (!initializedOdometryFromVision) {
+                resetOdometry(pose.estimatedPose.toPose2d());
+                initializedOdometryFromVision = true;
+                continue;
+            }
+            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
+        }
     }
 
     private void setupPathPlanner() {
@@ -130,21 +150,6 @@ public class Swerve extends SubsystemBase {
             SwerveK.robotConfig,
             Robot::onRedAlliance, 
             this);
-    }
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
-        SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
-        // for (var result : visionSource.get().results()) { //! Wait until we have vision to re-enable and debug this.
-            // EstimatedRobotPose pose = result.getFirst();
-            // if (!initializedOdometryFromVision) {
-                // resetOdometry(pose.estimatedPose.toPose2d());
-                // initializedOdometryFromVision = true;
-                // continue;
-            // }
-            // swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
-        // }
     }
 
     /**
@@ -161,17 +166,6 @@ public class Swerve extends SubsystemBase {
             AngularVelocity rotation = RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters)));
             drive(Robot.onRedAlliance() ? translation.unaryMinus() : translation, rotation, fieldRelative, openLoop);
         }).withName("Swerve Drive");
-    }
-    
-    /**
-     * Commands the drivebase to move according to the given linear and rotational velocities
-     * @param translation Linear velocity of the robot in meters per second
-     * @param rotation Rotation rate of the robot in Radians per second
-     * @param fieldRelative Whether the robot is field relative (true) or robot relative (false)
-     * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
-     */
-    private void drive(Translation2d translation, AngularVelocity rotation, boolean fieldRelative, boolean isOpenLoop) {
-        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop);
     }
 
     /**
@@ -244,15 +238,33 @@ public class Swerve extends SubsystemBase {
         }).finallyDo(this::stop).withName("PID Align");
     }
 
-    //! Add documentation
-    public void stop() {
-        drive(Translation2d.kZero, RadiansPerSecond.zero(), true, false);
-    }
-
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         return alignToPosePID(targetPoseSupplier, SwerveK.defaultTranslationConstraints, SwerveK.defaultRotationConstraints);
     }
 
+    public Command setDriveVoltage(Voltage volts) {
+        VoltageOut request = new VoltageOut(volts);
+        return run(() -> {
+            for (var module : swerveDrive.getModules()) {
+            var motor = (TalonFXSwerve) module.getDriveMotor();
+            ((TalonFX) motor.getMotor()).setControl(request);
+        }}).finallyDo(this::stop);
+    }
+
+    /**
+     * Commands the drivebase to move according to the given linear and rotational velocities
+     * @param translation Linear velocity of the robot in meters per second
+     * @param rotation Rotation rate of the robot in Radians per second
+     * @param fieldRelative Whether the robot is field relative (true) or robot relative (false)
+     * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
+     */
+    private void drive(Translation2d translation, AngularVelocity rotation, boolean fieldRelative, boolean isOpenLoop) {
+        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop);
+    }
+
+    public void stop() {
+        drive(Translation2d.kZero, RadiansPerSecond.zero(), true, false);
+    }
 
     /**
      * Resets the odometry to the given pose
@@ -269,13 +281,18 @@ public class Swerve extends SubsystemBase {
     public Pose2d getPose() {
         return swerveDrive.getPose();
     }
-    
+
     /**
      * Returns the robot's velocity (x, y, and omega)
      * @return Current velocity of the robot
      */
     public ChassisSpeeds getChassisSpeeds() {
         return swerveDrive.getRobotVelocity();
+    }
+
+    @Logged
+    public double getLinearVelocity() {
+        return Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
     }
 
     /**
@@ -286,20 +303,6 @@ public class Swerve extends SubsystemBase {
         swerveDrive.setChassisSpeeds(chassisSpeeds);
     }
 
-    public Command setDriveVoltage(Voltage volts) {
-        VoltageOut request = new VoltageOut(volts);
-        return run(() -> {
-            for (var module : swerveDrive.getModules()) {
-            var motor = (TalonFXSwerve) module.getDriveMotor();
-            ((TalonFX) motor.getMotor()).setControl(request);
-        }}).finallyDo(this::stop);
-    }
-
-    @Logged
-    public double getLinearVelocity() {
-        return Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
-    }
-    
     /**
      * Returns the robot's heading as an Angle wrapped between -180 and 180
      * @return The heading of the robot
@@ -329,7 +332,7 @@ public class Swerve extends SubsystemBase {
         }
         return wheelPositions;
     }
-    
+
     @Logged(name = "Current Command")
     public String getCurrentCommandName() {
         var cmd = getCurrentCommand();
@@ -337,9 +340,9 @@ public class Swerve extends SubsystemBase {
         return cmd.getName();
     }
 
-    // public boolean initializedOdometryFromVision() { //! Add when we have vision
-        // return initializedOdometryFromVision;
-    // }
+    public boolean initializedOdometryFromVision() {
+        return initializedOdometryFromVision;
+    }
 
     /**
      * Resets the gyro and odometry to the current position but the current direction is now seen as 0.

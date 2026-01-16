@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
-
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -17,23 +17,31 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.lib.util.DriveUtil;
-import frc.robot.lib.util.DynamicSlewRateLimiter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Vision;
 
 @Logged
 public class Robot extends TimedRobot {
-
-    @Logged(name = "Swerve")
-    private final Swerve swerve = new Swerve(() -> false);
     private final XboxController xboxController = new XboxController(ControllerK.xboxPort);
 
+    @Logged
+    private Vision vision = new Vision();
+    @Logged(name = "Swerve")
+    private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
+        Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
+        || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
+        || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
+
     public Robot() {
+        //! CODE RUNS HERE
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
         swerve.setDefaultCommand(teleopDriveCommand());
+
     }
 
     public Command teleopDriveCommand() {
+        //! CODE RUNS HERE
         return swerve.driveCommand(
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
@@ -54,7 +62,7 @@ public class Robot extends TimedRobot {
                 return val; 
             },
             true, true
-        ).withName("Swerve Drive Field Oriented");
+        ).withName("Swerve Drive Field Oriented"); //! this is not being run
     }
 
     public static boolean onRedAlliance() {
