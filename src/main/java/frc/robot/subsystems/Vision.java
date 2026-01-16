@@ -22,10 +22,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import frc.robot.Constants.VisionK;
+import frc.robot.Field;
+
 import static edu.wpi.first.units.Units.Meters;
 
 @Logged
 public class Vision {
+    private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
@@ -117,21 +120,16 @@ public class Vision {
             return VisionK.untrustedStdDevs;
         }
         if (numTags == 0) return VisionK.untrustedStdDevs;
-        // boolean sawReef = false;
-        // for (var target : result.getTargets()) {
-        //     if (VisionK.reefTags.contains(target.getFiducialId())) {
-        //         sawReef = true;
-        //     }
-        // }
-        // Matrix<N3, N1> stdDevs;
-        // if (numTags == 1) {
-        //     stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
-        // }
-        // stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
-        // if (name == VisionK.backCameraName && !sawReef) {
-        //     stdDevs = stdDevs.times(4);
-        // }
-        // return stdDevs;
+        boolean sawReef = false;
+        Matrix<N3, N1> stdDevs;
+        if (numTags == 1) {
+            stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
+        }
+        stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
+        if (name == VisionK.backCameraName && !sawReef) {
+            stdDevs = stdDevs.times(4);
+        }
+        return stdDevs;
     }
     @Logged(name = "Front Camera Connected")
     public boolean isCameraConnectedFront() {
