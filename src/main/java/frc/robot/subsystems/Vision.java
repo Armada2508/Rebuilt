@@ -9,6 +9,8 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
@@ -20,6 +22,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import frc.robot.Constants.VisionK;
+import static edu.wpi.first.units.Units.Meters;
 
 @Logged
 public class Vision {
@@ -82,6 +85,7 @@ public class Vision {
     private boolean isValidPose(EstimatedRobotPose pose) {
         var pose3d = pose.estimatedPose;
         return pose3d.getMeasureX().gte(Meters.zero()) 
+            //& Errors here with Field will be resolved once fieldConstants are added.
             && pose3d.getMeasureX().lte(Field.fieldLength)
             && pose3d.getMeasureY().gte(Meters.zero())
             && pose3d.getMeasureY().lte(Field.fieldWidth)
