@@ -16,11 +16,11 @@ import frc.robot.Constants.ShooterK;
 import frc.robot.lib.util.Util;
 
 @Logged
-public class Shooter extends SubsystemBase{
+public class Shooter extends SubsystemBase {
     
     private final TalonFX talonShooter = new TalonFX(ShooterK.talonID);
 
-    public Shooter(){
+    public Shooter() {
         configTalons();
     }
 
@@ -28,12 +28,12 @@ public class Shooter extends SubsystemBase{
      * The talons NeutralMode need to be set as coastMode for the longevity of the motor
      * (brakeMode may cause damage)
      */
-    public void configTalons(){
+    public void configTalons() {
         Util.factoryReset(talonShooter);
         Util.coastMode(talonShooter);
     }
 
-    public Command setShooterVoltage(Voltage voltage){
+    public Command setShooterVoltage(Voltage voltage) {
         return runOnce(() -> {
             talonShooter.setControl(new VoltageOut(voltage.in(Volts)));
         }).withName("Set Shooter Voltage");
@@ -50,17 +50,17 @@ public class Shooter extends SubsystemBase{
      * Sets shooter motor to its NeutralMode
      * (in this case coastMode)
      */
-    public void stop(){
+    public void stop() {
         talonShooter.setControl(new NeutralOut());
     }
 
-    public Command flywheelUpToSpeed(){
+    public Command flywheelUpToSpeed() {
         return setShooterVoltage(ShooterK.fuelShootVoltage)
         .andThen(Commands.waitSeconds(ShooterK.flywheelSpeedUpTime));
     }
 
     //!unfinished, figure it out soon
-    public Command shootFuel(){
+    public Command shootFuel() {
         return setShooterVoltage(ShooterK.fuelShootVoltage)
         .andThen();
     }
