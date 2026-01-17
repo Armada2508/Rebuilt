@@ -5,9 +5,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -15,18 +15,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 
 import edu.wpi.first.math.VecBuilder;
@@ -37,27 +26,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.math.Matrix;
-// import edu.wpi.first.math.Pair;
-// import edu.wpi.first.math.VecBuilder;
-// import edu.wpi.first.math.geometry.Pose3d;
-// import edu.wpi.first.math.geometry.Rotation3d;
-// import edu.wpi.first.math.geometry.Transform3d;
-// import edu.wpi.first.math.numbers.N1;
-// import edu.wpi.first.math.numbers.N3;
-// import edu.wpi.first.math.trajectory.TrapezoidProfile;
-// import edu.wpi.first.math.util.Units;
-// import edu.wpi.first.units.LinearAccelerationUnit;
-// import edu.wpi.first.units.measure.Angle;
-// import edu.wpi.first.units.measure.AngularAcceleration;
-// import edu.wpi.first.units.measure.AngularVelocity;
-// import edu.wpi.first.units.measure.Current;
-// import edu.wpi.first.units.measure.Distance;
-// import edu.wpi.first.units.measure.LinearAcceleration;
-// import edu.wpi.first.units.measure.LinearVelocity;
-// import edu.wpi.first.units.measure.Time;
-// import edu.wpi.first.units.measure.Voltage;
-// import edu.wpi.first.wpilibj.Filesystem;
-// import frc.robot.lib.util.Encoder;
 
 
 public class Constants {
@@ -66,15 +34,15 @@ public class Constants {
         public static final int wheelsID = 1;
         
         
-        // PID & Feedforward gains
-        // PID for wheels
+       
+        // PID & Feedforward for wheels
         public static final double WkP = 0; //! find all values
         public static final double WkD = 0;
         public static final double WkV = 0;
         public static final double WkG = 0;
         public static final double WkS = 0;
         
-        //PID for arm
+        //PID & Feedforward for arm
         public static final double AkP = 0; //! find all values
         public static final double AkD = 0;
         public static final double AkV = 0;
@@ -89,7 +57,23 @@ public class Constants {
         public static final Angle intakeDepotAngle = Degrees.of(0);
         public static final Angle intakeAngle = Degrees.of(0);
 
-        public static final Voltage spinWheelsVoltage = Volts.of(0);
+        // Wheel current limit configs
+        public static final CurrentLimitsConfigs wheelCurrentConfigs = new CurrentLimitsConfigs() //! find values
+        .withStatorCurrentLimit(Amps.of(0))
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimit(Amps.of(0))
+        .withSupplyCurrentLowerLimit(Amps.of(0))
+        .withSupplyCurrentLimitEnable(true);
+
+        // Arm current limit configs
+        public static final CurrentLimitsConfigs armCurrentConfigs = new CurrentLimitsConfigs() //! find values
+        .withStatorCurrentLimit(Amps.of(0))
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimit(Amps.of(0))
+        .withSupplyCurrentLowerLimit(Amps.of(0))
+        .withSupplyCurrentLimitEnable(true);
+
+        public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
         
         // Wheel Slot0Configs
         public static final Slot0Configs wheelPidConfig = new Slot0Configs()
