@@ -49,6 +49,8 @@ public class Intake {
 
     public void stow() { // Put the intake up and stop the motors
        setAngle(IntakeK.stowAngle);
+       arm.setControl(new VoltageOut(IntakeK.stowVoltage)); //! find value
+       
     }
 
     public void intakeDepot() { 
@@ -61,10 +63,10 @@ public class Intake {
     }
 
     public Angle getAngle() {
-    return arm.getPosition();
+    return arm.getPosition().getValue();
     }
 
-    public void spinWheels() {
+    public void spinWheels() { // spins the intake wheels/motor
         wheels.setControl(new VoltageOut(IntakeK.spinWheelsVoltage)); //! find value
     }
 

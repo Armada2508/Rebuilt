@@ -36,6 +36,7 @@ public class Constants {
         public static final Angle intakeDepotAngle = Degrees.of(0);
         public static final Angle intakeAngle = Degrees.of(0);
         public static final Voltage spinWheelsVoltage = Volts.of(0);
+        public static final Voltage stowVoltage = Volts.of(0);
 
         public static final Slot0Configs pidConfig = new Slot0Configs()
         .withKP(kP)
