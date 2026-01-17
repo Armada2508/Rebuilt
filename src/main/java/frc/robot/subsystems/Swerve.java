@@ -60,28 +60,35 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class Swerve extends SubsystemBase { // physicalproperties/conversionFactors/angle/factor = 360.0 deg/4096.0 units per rotation
 
     private final SwerveDrive swerveDrive;
-    private final Supplier<VisionResults> visionSource; //! NOT IN REBUILT
+    private final Supplier<VisionResults> visionSource; 
+
     private final TalonFX frontLeft;
     private final TalonFX frontRight;
     private final TalonFX backLeft;
     private final TalonFX backRight;
+
     private final SysIdRoutine sysIdRoutine; 
+
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
     private boolean initializedOdometryFromVision = false;
     @SuppressWarnings("unused")
     private Pose2d pathPlannerTarget = Pose2d.kZero; // For logging
+
     // PID Alignment
     private final BooleanSupplier overridePathFollowing;
     private final Debouncer overrideDebouncer = new Debouncer(ControllerK.overrideTime.in(Seconds));
     private Pose2d targetPose;
     private boolean completedAlignmentBool = false;
     public final Trigger completedAlignment = new Trigger(() -> completedAlignmentBool);
+
     private final ProfiledPIDController xController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController yController = new ProfiledPIDController(SwerveK.translationConstants.kP, SwerveK.translationConstants.kI, SwerveK.translationConstants.kD, SwerveK.defaultTranslationConstraints);
     private final ProfiledPIDController thetaController = new ProfiledPIDController(SwerveK.rotationConstants.kP, SwerveK.rotationConstants.kI, SwerveK.rotationConstants.kD, SwerveK.defaultRotationConstraints);
 
+    //~ ============ GENERAL / SETUP =============================================================================================
+
     public Swerve(Supplier<VisionResults> visionSource /* NOT IN REBUILT */, BooleanSupplier overridePathFollowing) {
-        this.visionSource = visionSource; //! NOT IN REBUILT
+        this.visionSource = visionSource; 
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -152,6 +159,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             this);
     }
 
+    //~ ============ DRIVING & TURNING =============================================================================================
+
     /**
      * Commands the robot to drive according to the given velocities, this switches the direction depending on what alliance you're on
      * @param TranslationX Translation in the X direction (Forwards, Backwards) between -1 and 1
@@ -167,6 +176,32 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             drive(Robot.onRedAlliance() ? translation.unaryMinus() : translation, rotation, fieldRelative, openLoop);
         }).withName("Swerve Drive");
     }
+
+    /**
+     * Commands the drivebase to move according to the given linear and rotational velocities
+     * @param translation Linear velocity of the robot in meters per second
+     * @param rotation Rotation rate of the robot in Radians per second
+     * @param fieldRelative Whether the robot is field relative (true) or robot relative (false)
+     * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
+     */
+    private void drive(Translation2d translation, AngularVelocity rotation, boolean fieldRelative, boolean isOpenLoop) {
+        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop);
+    }
+
+    public Command setDriveVoltage(Voltage volts) {
+        VoltageOut request = new VoltageOut(volts);
+        return run(() -> {
+            for (var module : swerveDrive.getModules()) {
+            var motor = (TalonFXSwerve) module.getDriveMotor();
+            ((TalonFX) motor.getMotor()).setControl(request);
+        }}).finallyDo(this::stop);
+    }
+
+    public void stop() {
+        drive(Translation2d.kZero, RadiansPerSecond.zero(), true, false);
+    }
+
+//~ ============ ALIGNMENT =============================================================================================
 
     /**
      * Constructs a command to take the robot from current position to an end position. This does not flip the path depending on alliance
@@ -242,38 +277,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return alignToPosePID(targetPoseSupplier, SwerveK.defaultTranslationConstraints, SwerveK.defaultRotationConstraints);
     }
 
-    public Command setDriveVoltage(Voltage volts) {
-        VoltageOut request = new VoltageOut(volts);
-        return run(() -> {
-            for (var module : swerveDrive.getModules()) {
-            var motor = (TalonFXSwerve) module.getDriveMotor();
-            ((TalonFX) motor.getMotor()).setControl(request);
-        }}).finallyDo(this::stop);
-    }
 
-    /**
-     * Commands the drivebase to move according to the given linear and rotational velocities
-     * @param translation Linear velocity of the robot in meters per second
-     * @param rotation Rotation rate of the robot in Radians per second
-     * @param fieldRelative Whether the robot is field relative (true) or robot relative (false)
-     * @param isOpenLoop Whether it uses a closed loop velocity control or an open loop
-     */
-    private void drive(Translation2d translation, AngularVelocity rotation, boolean fieldRelative, boolean isOpenLoop) {
-        swerveDrive.drive(translation, rotation.in(RadiansPerSecond), fieldRelative, isOpenLoop);
-    }
-
-    public void stop() {
-        drive(Translation2d.kZero, RadiansPerSecond.zero(), true, false);
-    }
-
-    /**
-     * Resets the odometry to the given pose
-     * @param pose Pose to reset the odemetry to
-     */
-    public void resetOdometry(Pose2d pose) {
-        swerveDrive.resetOdometry(pose);
-    }
-
+//~ ============ GETTERS =============================================================================================
     /**
      * Returns the robot's pose
      * @return Current pose of the robot as a Pose2d
@@ -288,19 +293,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public ChassisSpeeds getChassisSpeeds() {
         return swerveDrive.getRobotVelocity();
-    }
-
-    @Logged
-    public double getLinearVelocity() {
-        return Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
-    }
-
-    /**
-     * Set the speed of the robot with closed loop velocity control
-     * @param chassisSpeeds to set speed with (robot relative)
-     */
-    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-        swerveDrive.setChassisSpeeds(chassisSpeeds);
     }
 
     /**
@@ -320,8 +312,17 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     }
 
     /**
+     * Returns the linear velocity of the drivebase by taking the hypoteneuse of the x and y velocity vectors.
+     * @return The linear velocity in Meters per Second
+     */
+    @Logged
+    public double getLinearVelocity() {
+        return Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
+    }
+
+    /**
      * Returns the positions of each drive wheel in radians, front left -> front right -> back left -> back right.
-     * @return
+     * @return The positions as doubles in an array
      */
     public double[] getWheelPositions() {
         var modulePositions = swerveDrive.getModulePositions();
@@ -333,6 +334,10 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return wheelPositions;
     }
 
+    /**
+     * Returns the currently running command
+     * @return The command being run
+     */
     @Logged(name = "Current Command")
     public String getCurrentCommandName() {
         var cmd = getCurrentCommand();
@@ -340,10 +345,43 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         return cmd.getName();
     }
 
+//~ ============ SETTERS =============================================================================================
+    /**
+     * Set the speed of the robot with closed loop velocity control
+     * @param chassisSpeeds to set speed with (robot relative)
+     */
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+        swerveDrive.setChassisSpeeds(chassisSpeeds);
+    }
+
+    /**
+     * Sets each drive motor in each module to coast mode
+     */
+    public void setCoastMode() {
+        swerveDrive.setMotorIdleMode(false);
+    }
+
+    /**
+     * Sets each drive motor in each module to brake mode
+     */
+    public void setBrakeMode() {
+        swerveDrive.setMotorIdleMode(true);
+    }
+
+//~ ============ VISION =============================================================================================
+    /**
+     * Resets the odometry to the given pose
+     * @param pose Pose to reset the odemetry to
+     */
+    public void resetOdometry(Pose2d pose) {
+        swerveDrive.resetOdometry(pose);
+    }
+
     public boolean initializedOdometryFromVision() {
         return initializedOdometryFromVision;
     }
 
+//~ ============ SYSID / ZEROING =============================================================================================
     /**
      * Resets the gyro and odometry to the current position but the current direction is now seen as 0.
      * Useful for resetting the forward direction for field relative driving
@@ -352,14 +390,11 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         swerveDrive.zeroGyro();
     }
 
-    public void setCoastMode() {
-        swerveDrive.setMotorIdleMode(false);
-    }
-
-    public void setBrakeMode() {
-        swerveDrive.setMotorIdleMode(true);
-    }
-
+    /**
+     * Turns all of the wheels to turn to 0 angle
+     * Useful for resetting the drivebase
+     * @return A command to turn all wheels to face forward, stopping the drivebase afterwards
+     */
     public Command faceWheelsForward() {
         SwerveModuleState state = new SwerveModuleState();
         return run(() -> {
@@ -380,5 +415,4 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public Command characterizeDriveWheelDiameter() {
         return new DriveWheelCharacterization(this);
     }
-
 }

@@ -4,23 +4,17 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
-import frc.robot.Constants.SwerveK;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -38,7 +32,6 @@ public class Robot extends TimedRobot {
         || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
 
     public Robot() {
-        //! CODE RUNS HERE
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
         swerve.setDefaultCommand(teleopDriveCommand());
@@ -51,7 +44,6 @@ public class Robot extends TimedRobot {
     }
 
     public Command teleopDriveCommand() {
-        //! CODE RUNS HERE
         return swerve.driveCommand(
             () -> {
                 double val = MathUtil.applyDeadband(-xboxController.getLeftY(), ControllerK.leftJoystickDeadband);
@@ -72,7 +64,7 @@ public class Robot extends TimedRobot {
                 return val; 
             },
             true, true
-        ).withName("Swerve Drive Field Oriented"); //! this is not being run
+        ).withName("Swerve Drive Field Oriented");
     }
 
     public static boolean onRedAlliance() {
