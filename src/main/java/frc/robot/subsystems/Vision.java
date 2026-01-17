@@ -26,11 +26,12 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
+import frc.robot.Constants.VisionK;
+import frc.robot.Field;
 
 @Logged
 public class Vision extends SubsystemBase {
-
-    private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+    private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
@@ -122,11 +123,13 @@ public class Vision extends SubsystemBase {
         }
         if (numTags == 0) return VisionK.untrustedStdDevs;
         boolean sawReef = false;
+      
         for (var target : result.getTargets()) {
             if (VisionK.reefTags.contains(target.getFiducialId())) {
                 sawReef = true;
             }
         }
+
         Matrix<N3, N1> stdDevs;
         if (numTags == 1) {
             stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
@@ -237,8 +240,7 @@ public class Vision extends SubsystemBase {
             .transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
         );
     }
-
+  
     // This is your poor man's type alias, allows me to shorten the type and reference it by using VisionResults instead of List<Pair<EstimatedRobotPose, Matrix<N3, N1>>>
     public record VisionResults(List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> results){}
-
 }
