@@ -273,6 +273,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         }).finallyDo(this::stop).withName("PID Align");
     }
 
+    /**
+     * Command to drive the robot to another position without creating a path.
+     * Uses default translation and rotation constraints.
+     * @param targetPoseSupplier Supplier of the target pose
+     * @return The command
+     */
     public Command alignToPosePID(Supplier<Pose2d> targetPoseSupplier) {
         return alignToPosePID(targetPoseSupplier, SwerveK.defaultTranslationConstraints, SwerveK.defaultRotationConstraints);
     }
