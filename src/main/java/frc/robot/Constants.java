@@ -62,17 +62,25 @@ import edu.wpi.first.math.Matrix;
 
 public class Constants {
     public static class IntakeK {
-        public static final int armID = 0;
+        public static final int armID = 0; //! find, may change
         public static final int wheelsID = 1;
-        TalonFXConfiguration wheelsConfig = new TalonFXConfiguration();
-        TalonFXConfiguration armConfig = new TalonFXConfiguration();
+        
         
         // PID & Feedforward gains
+        // PID for wheels
+        public static final double WkP = 0; //! find all values
+        public static final double WkD = 0;
+        public static final double WkV = 0;
+        public static final double WkG = 0;
+        public static final double WkS = 0;
         
-        public static final double kP = 0; //! find all values
-        public static final double kD = 0;
-        public static final double kV = 0;
-        public static final double kG = 0;
+        //PID for arm
+        public static final double AkP = 0; //! find all values
+        public static final double AkD = 0;
+        public static final double AkV = 0;
+        public static final double AkG = 0;
+        public static final double AkS = 0;
+
 
         // Limits
         public static final Angle maxAngle = Degrees.of(0); //! find values
@@ -80,18 +88,28 @@ public class Constants {
         public static final Angle stowAngle = Degrees.of(0);
         public static final Angle intakeDepotAngle = Degrees.of(0);
         public static final Angle intakeAngle = Degrees.of(0);
+
         public static final Voltage spinWheelsVoltage = Volts.of(0);
-        public static final Voltage stowVoltage = Volts.of(0);
+        
+        // Wheel Slot0Configs
+        public static final Slot0Configs wheelPidConfig = new Slot0Configs()
+        .withKP(WkP)
+        .withKD(WkD)
+        .withKV(WkV)
+        .withKG(WkG)
+        .withKS(WkS);
 
-        public static final Slot0Configs pidConfig = new Slot0Configs()
-        .withKP(kP)
-        .withKD(kD)
-        .withKV(kV)
-        .withKG(kG);
+        // Arm Slot0Configs
+        public static final Slot0Configs armPidConfig = new Slot0Configs()
+        .withKP(AkP)
+        .withKD(AkD)
+        .withKV(AkV)
+        .withKG(AkG)
+        .withKS(AkS);
 
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0);
+
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! find
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
-        // Motion Magic settings
         
 
         public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()

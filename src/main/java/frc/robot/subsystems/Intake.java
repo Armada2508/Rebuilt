@@ -16,10 +16,12 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Velocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
 import frc.robot.lib.util.Util;
 
-public class Intake {
+public class Intake extends SubsystemBase implements Loggable {
 
     private final TalonFX wheels = new TalonFX(IntakeK.wheelsID);
     private final TalonFX arm = new TalonFX(IntakeK.armID);
@@ -27,49 +29,71 @@ public class Intake {
     public Intake() {
         configTalons();
         configMotionMagic(IntakeK.maxVelocity, IntakeK.maxAcceleration);
-        setAngle(IntakeK.intakeAngle);
     }
-
-    public void configTalons() {
+    /**
+     * factory resets motors and applies PID + software limits
+     * javadoc
+     */
+    private void configTalons() {
         Util.factoryReset(wheels, arm); // factory reset
-        wheels.getConfigurator().apply(IntakeK.pidConfig);
+        wheels.getConfigurator().apply(IntakeK.wheelPidConfig);
         wheels.getConfigurator().apply(IntakeK.softwareLimitConfig);
 
-        arm.getConfigurator().apply(IntakeK.pidConfig);
+        arm.getConfigurator().apply(IntakeK.armPidConfig);
         arm.getConfigurator().apply(IntakeK.softwareLimitConfig);
     }
-
-    public void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
+    /**
+     * configs Motion Magic
+     * @param velocity
+     * @param acceleration
+     */
+    private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
         MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(DegreesPerSecond);
         motionMagicConfigs.MotionMagicAcceleration = acceleration.in(DegreesPerSecondPerSecond);
         
         arm.getConfigurator().apply(motionMagicConfigs);
     }
-
-    public void stow() { // Put the intake up and stop the motors
-       setAngle(IntakeK.stowAngle);
-       arm.setControl(new VoltageOut(IntakeK.stowVoltage)); //! find value
-       
+    /**
+     * javadoc
+     */
+    public Command setAngleCommand(Angle targetAngle) { // Put the intake up and stop the motors
+       return runOnce(() -> {
+        setAngle(targetAngle);
+       })
+       .withName("Set Angle");
     }
-
+    /**
+     * javadoc
+     */
     public void intakeDepot() { 
         setAngle(IntakeK.intakeDepotAngle);
     }
-
+    /**
+     * Sets the angle specified
+     * @param angle
+     */
     public void setAngle(Angle angle) { // Set the angle to which the intake will move to
         MotionMagicVoltage request = new MotionMagicVoltage(angle);
         arm.setControl(request);
     }
-
+    /**
+     * javadoc
+     * @return
+     */
     public Angle getAngle() {
-    return arm.getPosition().getValue();
+        return arm.getPosition().getValue();
     }
-
+    /**
+     * javadoc
+     */
     public void spinWheels() { // spins the intake wheels/motor
         wheels.setControl(new VoltageOut(IntakeK.spinWheelsVoltage)); //! find value
     }
 
+    /**
+     * javadoc
+     */
     public void stop() { // stop everything
         wheels.setControl(new NeutralOut());
         arm.setControl(new NeutralOut());
