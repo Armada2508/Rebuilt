@@ -122,20 +122,12 @@ public class Vision extends SubsystemBase {
             return VisionK.untrustedStdDevs;
         }
         if (numTags == 0) return VisionK.untrustedStdDevs;
-        boolean sawReef = false;
-      
-        for (var target : result.getTargets()) {
-            if (VisionK.reefTags.contains(target.getFiducialId())) {
-                sawReef = true;
-            }
-        }
-
         Matrix<N3, N1> stdDevs;
         if (numTags == 1) {
             stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
         }
         stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
-        if (name == VisionK.backCameraName && !sawReef) {
+        if (name == VisionK.backCameraName) {
             stdDevs = stdDevs.times(4);
         }
         return stdDevs;
