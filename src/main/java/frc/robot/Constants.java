@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.math.Matrix;
 // import edu.wpi.first.math.Pair;
 // import edu.wpi.first.math.VecBuilder;
@@ -61,5 +63,19 @@ public class Constants {
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(3), Units.feetToMeters(3), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }
+    public static class TransmissionK {
+        public static final int talonID = 2;
+        
+          // Conveyer current limit configs
+        public static final CurrentLimitsConfigs conveyorCurrentConfigs = new CurrentLimitsConfigs() //! find values
+        .withStatorCurrentLimit(Amps.of(0))
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimit(Amps.of(0))
+        .withSupplyCurrentLowerLimit(Amps.of(0))
+        .withSupplyCurrentLimitEnable(true);
+
+        public static final Voltage spinConveyorVoltage = Volts.of(0); //! find values
+
     }
 }
