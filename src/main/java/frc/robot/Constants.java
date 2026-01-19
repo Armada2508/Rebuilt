@@ -4,16 +4,14 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -21,34 +19,61 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.math.Matrix;
-// import edu.wpi.first.math.Pair;
-// import edu.wpi.first.math.VecBuilder;
-// import edu.wpi.first.math.geometry.Pose3d;
-// import edu.wpi.first.math.geometry.Rotation3d;
-// import edu.wpi.first.math.geometry.Transform3d;
-// import edu.wpi.first.math.numbers.N1;
-// import edu.wpi.first.math.numbers.N3;
-// import edu.wpi.first.math.trajectory.TrapezoidProfile;
-// import edu.wpi.first.math.util.Units;
-// import edu.wpi.first.units.LinearAccelerationUnit;
-// import edu.wpi.first.units.measure.Angle;
-// import edu.wpi.first.units.measure.AngularAcceleration;
-// import edu.wpi.first.units.measure.AngularVelocity;
-// import edu.wpi.first.units.measure.Current;
-// import edu.wpi.first.units.measure.Distance;
-// import edu.wpi.first.units.measure.LinearAcceleration;
-// import edu.wpi.first.units.measure.LinearVelocity;
-// import edu.wpi.first.units.measure.Time;
-// import edu.wpi.first.units.measure.Voltage;
-// import edu.wpi.first.wpilibj.Filesystem;
-// import frc.robot.lib.util.Encoder;
 
 public class Constants {
     
     public static class TurretK {
+        public static final int talonId = 0; //! Find
 
+        public static final double gearRatio = 0; //! Ask mechanical
+
+        //& Motion Magic
+        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! Find
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
+
+        //& Angles
+        public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing.
+        
+        public static final Angle maxAngle = Degrees.of(0); //! Find
+        public static final Angle minAngle = Degrees.of(0); //! Find
+
+        //& Currents
+        public static final Current maxStatorCurrent = Amps.of(0); //! Find / Verify
+        public static final Current maxSupplyCurrent = Amps.of(0); //! Find / Verify
+
+        //& PID
+        public static final double kP = 0; //! Tune
+        public static final double kD = 0; //! Tune
+        public static final double kS = 0; //! Tune
+        public static final double kV = 0; //! Tune
+
+        //& Configs
+        public static final Slot0Configs pidConfig = new Slot0Configs()
+        .withKP(kP)
+        .withKD(kD)
+        .withKS(kS)
+        .withKV(kV);
+
+        public static final SoftwareLimitSwitchConfigs softwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(maxAngle)
+        .withReverseSoftLimitEnable(true)
+        .withReverseSoftLimitThreshold(minAngle);
+
+        public static final CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(maxStatorCurrent)
+        .withSupplyCurrentLimit(maxSupplyCurrent);
+
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
+        .withSensorToMechanismRatio(gearRatio);
     }
 
     public static class SuperstructureK {

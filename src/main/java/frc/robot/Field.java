@@ -8,8 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 
 public class Field {
-    // X is left to right, Y is top to bottom
-
+    
     public static final Pose2d origin = Pose2d.kZero;
 
     // Field
