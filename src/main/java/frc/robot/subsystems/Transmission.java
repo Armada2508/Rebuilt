@@ -7,25 +7,35 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants.TransmissionK;
 import frc.robot.lib.util.Util;
 
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 public class Transmission {
-     private final TalonFX conveyor = new TalonFX(TransmissionK.talonID);
 
-     public Transmission() {
+    private final TalonSRX conveyor = new TalonSRX(TransmissionK.talonID);
+
+    public Transmission() {
         configTalons();
-     }
-
-     private void configTalons() {
-        Util.factoryReset(conveyor);
-
-        conveyor.getConfigurator().apply(TransmissionK.conveyorCurrentConfigs);
-
-     }
-    public void spinConveyer() { 
-        conveyor.setControl(new VoltageOut(TransmissionK.spinConveyorVoltage)); //! find value
-
     }
+
+    private void configTalons() {
+        conveyor.configFactoryDefault();
+
+        
+        conveyor.setNeutralMode(NeutralMode.Brake);
+        conveyor.configPeakOutputForward(1.0);
+        conveyor.configPeakOutputReverse(-1.0);
+    }
+
+    public void spinConveyer() {
+        
+        conveyor.set(ControlMode.PercentOutput, TransmissionK.spinConveyorPercent);
+    }
+
     public void stop() {
-        conveyor.setControl(new NeutralOut());
+        conveyor.set(ControlMode.PercentOutput, 0.0);
     }
-
 }
+

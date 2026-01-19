@@ -14,6 +14,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import edu.wpi.first.math.VecBuilder;
@@ -68,14 +69,9 @@ public class Constants {
         public static final int talonID = 2;
         
           // Conveyer current limit configs
-        public static final CurrentLimitsConfigs conveyorCurrentConfigs = new CurrentLimitsConfigs() //! find values
-        .withStatorCurrentLimit(Amps.of(0))
-        .withStatorCurrentLimitEnable(true)
-        .withSupplyCurrentLimit(Amps.of(0))
-        .withSupplyCurrentLowerLimit(Amps.of(0))
-        .withSupplyCurrentLimitEnable(true);
+       public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit =new SupplyCurrentLimitConfiguration(true, 20.0,25.0, 0.5);
 
-        public static final Voltage spinConveyorVoltage = Volts.of(0); //! find values
+        public static final double spinConveyorPercent = 0.4; //! find values
 
     }
 }
