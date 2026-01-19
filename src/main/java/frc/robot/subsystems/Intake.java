@@ -35,7 +35,7 @@ public class Intake extends SubsystemBase{
         Util.factoryReset(wheels, arm);
 
         wheels.getConfigurator().apply(IntakeK.wheelPidConfig);
-        wheels.getConfigurator().apply(IntakeK.softwareLimitConfig);
+        // wheels.getConfigurator().apply(IntakeK.softwareLimitConfig);
         wheels.getConfigurator().apply(IntakeK.wheelCurrentConfigs);
 
         arm.getConfigurator().apply(IntakeK.armPidConfig);

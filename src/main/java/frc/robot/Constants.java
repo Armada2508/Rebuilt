@@ -31,15 +31,12 @@ import edu.wpi.first.math.Matrix;
 public class Constants {
     public static class IntakeK {
         public static final int armID = 0; //! find, may change
-        public static final int wheelsID = 1;
-        
-        
+        public static final int wheelsID = 1;     
        
         // PID & Feedforward for wheels
         public static final double WkP = 0; //! find all values
         public static final double WkD = 0;
         public static final double WkV = 0;
-        public static final double WkG = 0;
         public static final double WkS = 0;
         
         //PID & Feedforward for arm
@@ -80,7 +77,6 @@ public class Constants {
         .withKP(WkP)
         .withKD(WkD)
         .withKV(WkV)
-        .withKG(WkG)
         .withKS(WkS);
 
         // Arm Slot0Configs
@@ -91,10 +87,8 @@ public class Constants {
         .withKG(AkG)
         .withKS(AkS);
 
-
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! find
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
-        
 
         public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
         .withForwardSoftLimitEnable(true)
