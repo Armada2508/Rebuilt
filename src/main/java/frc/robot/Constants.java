@@ -10,12 +10,15 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -23,6 +26,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.math.Matrix;
@@ -69,9 +74,23 @@ public class Constants {
         public static final int talonID = 2;
         
           // Conveyer current limit configs
-       public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit =new SupplyCurrentLimitConfiguration(true, 20.0,25.0, 0.5);
+       public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 20.0,25.0, 0.5);
+       
+       public static final double spinConveyorVoltage = 0;
+       public static final AngularVelocity maxVelocity = RotationsPerSecond.of(0);
+       public static final double minRPM = 0;
+       public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(0);
+        public static final double kP = 0; //! find all values
+        public static final double kD = 0;
+        public static final double kV = 0;
+        public static final double kS = 0;
 
-        public static final double spinConveyorPercent = 0.4; //! find values
+
+         public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
+        .withKP(kP)
+        .withKD(kD)
+        .withKV(kV)
+        .withKS(kS);
 
     }
 }
