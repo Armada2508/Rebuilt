@@ -1,23 +1,16 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Amps;
+
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
+
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
+
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 
 import edu.wpi.first.math.VecBuilder;
@@ -29,7 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Voltage;
+
 import edu.wpi.first.math.Matrix;
 // import edu.wpi.first.math.Pair;
 // import edu.wpi.first.math.VecBuilder;
@@ -76,7 +69,8 @@ public class Constants {
           // Conveyer current limit configs
        public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 20.0,25.0, 0.5);
        
-       public static final double spinConveyorVoltage = 0;
+       public static final double spinConveyorVoltage = 0; //! find all values
+       public static final double spinConveyorVoltageNegative = 0;
        public static final AngularVelocity maxVelocity = RotationsPerSecond.of(0);
        public static final double minRPM = 0;
        public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(0);
