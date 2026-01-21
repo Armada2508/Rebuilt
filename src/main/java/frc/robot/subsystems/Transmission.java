@@ -41,13 +41,13 @@ public class Transmission extends SubsystemBase {
         conveyor.configPeakOutputReverse(0);//! find values
     }
 /**
- * sets the conveyer to spin at a positive voltage
+ * sets the conveyer to spin forward
  */
     public void spinConveyer() {
         conveyor.set(ControlMode.MotionMagic, -TransmissionK.spinConveyorVoltage);
     }
 /**
- * sets conveyer to spin 
+ * sets conveyer to spin backwards
  */
      public void spinConveyerNegative() {
         conveyor.set(ControlMode.MotionMagic, -TransmissionK.spinConveyorVoltage);
@@ -70,35 +70,35 @@ public class Transmission extends SubsystemBase {
     }
 
 /** 
- * Sets motor voltage to zero to stop
+ * Sets motor voltage to zero for stopping
  */
     public void stop() {
         conveyor.set(ControlMode.PercentOutput, 0.0);
     }
 /**
- * Moves the conveyor back and forth to jostle the balls
+ * Moves the conveyor back and forth to jostle the fuel
  */
     public void jostle() {
-        new RunCommand(() -> {
-    spinConveyer();
-}, transmission)
-.withTimeout(.5);
+        runOnce(() -> {
+        spinConveyer();
+})
+        .withTimeout(.5);
     
 
-    new RunCommand(() -> {
-    spinConveyerNegative();
-}, transmission)
-.withTimeout(.5);
+        runOnce(() -> {
+        spinConveyerNegative();
+})
+        .withTimeout(.5);
     
-new RunCommand(() -> {
-    spinConveyer();
-}, transmission)
-.withTimeout(.5);
+        runOnce(() -> {
+        spinConveyer();
+})
+        .withTimeout(.5);
 
-    new RunCommand(() -> {
-    spinConveyerNegative();
-}, transmission)
-.withTimeout(.5);
+        runOnce(() -> {
+        spinConveyerNegative();
+})
+        .withTimeout(.5);
     
 }
 
