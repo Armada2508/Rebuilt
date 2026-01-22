@@ -1,13 +1,12 @@
 package frc.robot;
 
-
 import static edu.wpi.first.units.Units.Degrees;
 
 import static edu.wpi.first.units.Units.Inches;
-
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
@@ -22,7 +21,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.math.Matrix;
 // import edu.wpi.first.math.Pair;
 // import edu.wpi.first.math.VecBuilder;
@@ -63,16 +63,21 @@ public class Constants {
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
-    public static class TransmissionK {
+
+    public static class IndexerK {
         public static final int talonID = 2; //! find
         
           // Conveyor current limit configs
-        public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find?
+        public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
        
-        public static final double peakOutput = 0;
-        public static final double spinConveyorVoltage = 0; //! find all values
+        public static final Voltage spinConveyorVoltage = Volts.of(0); //! find all values
+
+        public static final AngularVelocity maxRPM = RotationsPerSecond.of(0);
+        public static final AngularVelocity minRPM = RotationsPerSecond.of(0);
         public static final AngularVelocity maxVelocity = RotationsPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(0);
+
+        public static final Time jostleDuration = Seconds.of(0.5);
 
         // PID configs for conveyor
         public static final double kP = 0; //! find all values
@@ -85,6 +90,5 @@ public class Constants {
         .withKD(kD)
         .withKV(kV)
         .withKS(kS);
-
     }
 }
