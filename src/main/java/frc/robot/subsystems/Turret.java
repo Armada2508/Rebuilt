@@ -1,12 +1,16 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretK;
@@ -15,12 +19,21 @@ import frc.robot.lib.util.Util;
 public class Turret extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(TurretK.talonId);
+    /* 
+     * ****************** Encoder information
+     * API Documentation: https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DutyCycleEncoder.html
+     * Encoders (Software): https://docs.wpilib.org/en/stable/docs/software/hardware-apis/sensors/encoders-software.html
+     * Encoders (Hardware): https://docs.wpilib.org/en/stable/docs/hardware/sensors/encoders-hardware.html
+     */
+    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(TurretK.channel, TurretK.fullRange.in(Degrees), TurretK.expectedZero.in(Degrees));
+
 
     public Turret() {
         configTalons();
         configMotionMagic();
+        configAbsoluteEncoder();
+        if (!absoluteEncoder.isConnected()) System.out.println("Turret Absolute Encoder not connected!");
     }
-
     
     /**
      * Configures the talon motor
@@ -47,6 +60,15 @@ public class Turret extends SubsystemBase {
 
     }
 
+    private void configAbsoluteEncoder() {
+        absoluteEncoder.setInverted(false); //! Verify this, because the dead gear and the turret gear spin in different directions, this may be needed
+        absoluteEncoder.setAssumedFrequency(0); //^ 1000 Hz if we use the REV Throughbore, 244 Hz if we use the CTRE Mag Encoder
+    }
+
+    @Override
+    public void periodic() {
+    }
+
     /**
      * Sets the angle of the turret
      * @param targetAngle The target angle
@@ -60,16 +82,28 @@ public class Turret extends SubsystemBase {
 
     /**
      * Constructs a command to set the angle of the turret
+     * ? We should know whether or not we measure from 0-360 or -180 to 180. The latter seems safer as with the former, the "zero" would be at 180 degrees.
      * @param targetAngle The target angle
-     * @return 
+     * @return Command to set the angle
      */
     public Command setAngleCommand(Angle targetAngle) {
         return runOnce(() -> setAngle(targetAngle)); //! Check
 
     }
 
-    public Angle getAngle() {
-        return talon.getPosition().getValue();
+    /**
+     * Returns the angle of the turret as read by the absolute encoder
+     * @return
+     */
+    public Angle getAngle() { //! Verify this
+        return Degrees.of(absoluteEncoder.get() * TurretK.encoderToTurretGearRatio);
+    }
+
+    /**
+     * Stops the turret
+     */
+    public void stop() {
+        talon.setControl(new NeutralOut());
     }
 
 }

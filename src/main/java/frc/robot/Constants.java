@@ -5,11 +5,9 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 
@@ -31,17 +29,27 @@ public class Constants {
     public static class TurretK {
         public static final int talonId = 0; //! Find
 
-        public static final double gearRatio = 0; //! Ask mechanical
+        //& Absolute Encoder
+        public static final int channel = 0; //! Ask Electrical
+        public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
+        public static final Angle expectedZero = Degrees.of(180); //! VERIFY THIS!!!!!
+        public static final double absoluteEncoderOffset = 0; //! Find
+        
+        //& Gear Ratios
+        public static final double krakenToTurretGearRatio = 0; //! Ask mechanical
+        public static final double encoderToTurretGearRatio = 0; //! Ask Mechanical
 
         //& Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! Find
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
 
         //& Angles
-        public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing.
-        
-        public static final Angle maxAngle = Degrees.of(0); //! Find
-        public static final Angle minAngle = Degrees.of(0); //! Find
+        public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing. This is 
+                                                                  //^ This is likely outdated with us using an absolute encoder now. Up to testing & Debugging
+
+        // We dont go the maximum rotation to avoid wrap-around error and risk confusing the Absolute encoder, might not be needed though.
+        public static final Angle maxAngle = Degrees.of(179.5);  //! Verify / Check
+        public static final Angle minAngle = Degrees.of(-179.5); //! Verify / Check
 
         //& Currents
         public static final Current maxStatorCurrent = Amps.of(0); //! Find / Verify
@@ -73,7 +81,7 @@ public class Constants {
         .withSupplyCurrentLimit(maxSupplyCurrent);
 
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
-        .withSensorToMechanismRatio(gearRatio);
+        .withSensorToMechanismRatio(krakenToTurretGearRatio);
     }
 
     public static class SuperstructureK {
