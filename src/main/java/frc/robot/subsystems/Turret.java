@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -96,7 +95,8 @@ public class Turret extends SubsystemBase {
      * @return
      */
     public Angle getAngle() { //! Verify this
-        return Degrees.of(absoluteEncoder.get() * TurretK.encoderToTurretGearRatio);
+        return Degrees.of((Rotations.of(absoluteEncoder.get()).in(Degrees) + TurretK.absoluteEncoderOffset.in(Degrees)) /* % Constants.degreesPerRotation */ ); //* Re-go over the and stuff for this.
+        // return Degrees.of(realEncoderReading * TurretK.encoderToTurretGearRatio); //? Can we use the Degrees.of() here?
     }
 
     /**

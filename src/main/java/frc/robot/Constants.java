@@ -33,7 +33,7 @@ public class Constants {
         public static final int channel = 0; //! Ask Electrical
         public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
         public static final Angle expectedZero = Degrees.of(180); //! VERIFY THIS!!!!!
-        public static final double absoluteEncoderOffset = 0; //! Find
+        public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
         
         //& Gear Ratios
         public static final double krakenToTurretGearRatio = 0; //! Ask mechanical
