@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -11,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -21,6 +23,10 @@ import frc.robot.lib.util.Util;
 @Logged
 public class Shooter extends SubsystemBase {
     
+    AngularVelocity velocity;
+
+    AngularVelocity locativeVelocity;
+
     private final TalonFX talonShooter = new TalonFX(ShooterK.talonID);
     public Shooter() {
         configTalons();
@@ -58,7 +64,7 @@ public class Shooter extends SubsystemBase {
         AngularVelocity velocity = getMotorVelocity();
     }
     
-    
+
 
     //public Command brakeShooter(){
     //    return runOnce(() -> {
@@ -74,23 +80,29 @@ public class Shooter extends SubsystemBase {
     public void stop() {
         talonShooter.setControl(new NeutralOut());
     }
-
+    /**
+     * Flywheels on the shooter need time to get up to speed for an effective shot
+     * The velocity needed will vary depending on the distance of the robot to the hub
+     * flywheelUpToSpeed has the motors speed up to the intended velocity before fuel leaves the turret for the shooter
+     * 
+     * 
+     */
     public Command flywheelUpToSpeed() {
-        return setShooterVelocity(getMotorVelocity())
-        .andThen(Commands.waitSeconds(ShooterK.flywheelSpeedUpTime));
+        return setShooterVelocity(locativeVelocity)
+        .andThen(Commands.waitSeconds(ShooterK.flywheelSpeedUpTime.in(Seconds)));
     }
 
     /*
-     * Power the motors.
-     * 
-     * 
+     * Power up the motors
+     * Calculate the velocity required based on where you are on the field.
+     * Shoot the fuel...?????????????????????
      * 
      * 
      * 
      */
     //!unfinished, figure it out soon
-    public Command shootFuel() {
-        return setShooterVoltage(ShooterK.fuelShootVoltage)
-        .andThen();
-    }
+    // public Command shootFuel() {
+    //     return flywheelUpToSpeed()
+    //     .andThen();
+    // }
 }
