@@ -5,7 +5,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TransmissionK;
@@ -20,43 +19,19 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 public class Transmission extends SubsystemBase {
- private final Transmission transmission = new Transmission();
     private final TalonSRX conveyor = new TalonSRX(TransmissionK.talonID);
-/**
- * The method for running the transmission
- */
+    /**
+     * The method for running the transmission
+     */
     public Transmission() {
         configTalons();
         configMotionMagic(TransmissionK.maxVelocity, TransmissionK.maxAcceleration);
     }
-/**
- * Resets then applies the configurations to the motors
- */
-    private void configTalons() {
-        conveyor.configFactoryDefault();
-        
-        
-        conveyor.setNeutralMode(NeutralMode.Coast);
-        conveyor.configPeakOutputForward(0); //! find values
-        conveyor.configPeakOutputReverse(0);//! find values
-    }
-/**
- * sets the conveyer to spin forward
- */
-    public void spinConveyer() {
-        conveyor.set(ControlMode.MotionMagic, -TransmissionK.spinConveyorVoltage);
-    }
-/**
- * sets conveyer to spin backwards
- */
-     public void spinConveyerNegative() {
-        conveyor.set(ControlMode.MotionMagic, -TransmissionK.spinConveyorVoltage);
-    }
-/**
- * configures the motion magic for the motors
- * @param velocity
- * @param acceleration
- */
+    /**
+     * configures the motion magic for the motors
+     * @param velocity
+     * @param acceleration
+     */
     private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
         MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(RPM);
@@ -68,41 +43,59 @@ public class Transmission extends SubsystemBase {
 
         conveyor.configAllSettings(config);
     }
-
-/** 
- * Sets motor voltage to zero for stopping
- */
-    public void stop() {
-        conveyor.set(ControlMode.PercentOutput, 0.0);
+    /**
+     * Resets then applies the configurations to the motors
+     */
+    private void configTalons() {
+        conveyor.configFactoryDefault();
+        
+        conveyor.setNeutralMode(NeutralMode.Coast);
     }
-/**
- * Moves the conveyor back and forth to jostle the fuel
- */
+    /**
+     * sets the conveyer to spin forward
+     */
+    public void spinConveyer() {
+        conveyor.set(ControlMode.MotionMagic, TransmissionK.spinConveyorVoltage);
+    }
+    /**
+     * sets conveyer to spin backwards
+     */
+     public void spinConveyerNegative() {
+        conveyor.set(ControlMode.MotionMagic, -TransmissionK.spinConveyorVoltage);
+    }
+    /**
+     * Moves the conveyor back and forth to jostle the fuel
+     */
     public void jostle() {
         runOnce(() -> {
-        spinConveyer();
-})
-        .withTimeout(.5);
+            spinConveyer();
+    })
+            .withTimeout(.5);
     
+        
+        runOnce(() -> {
+            spinConveyerNegative();
+    })
+            .withTimeout(.5);
+    
+        
+        runOnce(() -> {
+            spinConveyer();
+    })
+            .withTimeout(.5);
 
+        
         runOnce(() -> {
-        spinConveyerNegative();
-})
-        .withTimeout(.5);
-    
-        runOnce(() -> {
-        spinConveyer();
-})
-        .withTimeout(.5);
-
-        runOnce(() -> {
-        spinConveyerNegative();
-})
-        .withTimeout(.5);
-    
+            spinConveyerNegative();
+    })
+            .withTimeout(.5);
 }
-
-
+    /** 
+     * Sets motor voltage to zero for stopping
+     */
+    public void stop() {
+        conveyor.neutralOutput();
+    }
 }
 
 

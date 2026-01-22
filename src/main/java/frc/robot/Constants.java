@@ -64,23 +64,23 @@ public class Constants {
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
     public static class TransmissionK {
-        public static final int talonID = 2;
+        public static final int talonID = 2; //! find
         
-          // Conveyer current limit configs
-       public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 20.0,25.0, 0.5);
+          // Conveyor current limit configs
+        public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find?
        
-       public static final double spinConveyorVoltage = 0; //! find all values
-       public static final double spinConveyorVoltageNegative = 0;
-       public static final AngularVelocity maxVelocity = RotationsPerSecond.of(0);
-       public static final double minRPM = 0;
-       public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(0);
+        public static final double peakOutput = 0;
+        public static final double spinConveyorVoltage = 0; //! find all values
+        public static final AngularVelocity maxVelocity = RotationsPerSecond.of(0);
+        public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(0);
+
+        // PID configs for conveyor
         public static final double kP = 0; //! find all values
         public static final double kD = 0;
         public static final double kV = 0;
         public static final double kS = 0;
 
-
-         public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
+        public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
         .withKP(kP)
         .withKD(kD)
         .withKV(kV)
