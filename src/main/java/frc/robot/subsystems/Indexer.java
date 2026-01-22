@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerK;
 
@@ -70,8 +71,8 @@ public class Indexer extends SubsystemBase {
     /**
      * Moves the conveyor back and forth to jostle the fuel
      */
-    public void jostle() {
-        runOnce(() -> {
+    public Command jostle() {
+       return runOnce(() -> {
             spinConveyer();
     })
         .withTimeout(IndexerK.jostleDuration)
