@@ -1,19 +1,32 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StaticBrake;
-import com.ctre.phoenix6.controls.VoltageOut;
+// import com.ctre.phoenix6.controls.Volt;
+
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -25,7 +38,7 @@ import frc.robot.lib.util.Util;
 
 @Logged
 public class Shooter extends SubsystemBase {
-    
+
     // AngularVelocity velocity;
 
     // AngularVelocity locativeVelocity;
@@ -33,9 +46,11 @@ public class Shooter extends SubsystemBase {
     private final TalonFX talonShooter = new TalonFX(ShooterK.talonID);
     private final SparkMax sparkmaxHood = new SparkMax(ShooterK.sparkmaxHoodID, MotorType.kBrushless);
 
+    private final SparkClosedLoopController sparkMaxController = sparkmaxHood.getClosedLoopController();
+    
     public Shooter() {
         configTalons();
-        configMotionMagic(ShooterK.maxVelocity, ShooterK.maxAcceleration); //!figure this out
+        configMaxMotion(ShooterK.cruiseVelocity, ShooterK.maxAcceleration); //!figure this out (might've figured it out)
     }
 
     /**
@@ -47,9 +62,12 @@ public class Shooter extends SubsystemBase {
         Util.coastMode(talonShooter);
     }
 
-    public void configMotionMagic() {
-        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
-        motionMagicConfigs.withMotionMagicAcceleration(null)
+    public void configMaxMotion(AngularVelocity velocity, AngularAcceleration acceleration) {
+        SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+        
+        sparkMaxConfig.closedLoop.maxMotion.cruiseVelocity(velocity.in(RotationsPerSecond));
+        sparkMaxConfig.closedLoop.maxMotion.maxAcceleration(acceleration.in(RotationsPerSecondPerSecond));
+        sparkmaxHood.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public Command setShooterVoltage(Voltage voltage) {
@@ -59,8 +77,8 @@ public class Shooter extends SubsystemBase {
     }
     /**
      * Function that returns the Angular Velocity of talonShooter
-     * 
-     * 
+     *
+     *
      * @return
      */
     public AngularVelocity getMotorVelocity() {
@@ -75,18 +93,17 @@ public class Shooter extends SubsystemBase {
         return setShooterVelocity(velocity);
     }
 
-
     public void stop() {
         talonShooter.setControl(new NeutralOut());
     }
 
     public Command hoodAngle(Angle targetAngle) {
-        return runOnce(() -> sparkmaxHood.)
+        return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
     }
     // public void shooterPeriodic() {
     //     AngularVelocity velocity = getMotorVelocity();
     // }
-    
+
     //public Command brakeShooter(){
     //    return runOnce(() -> {
     //        var request = new StaticBrake();
@@ -98,13 +115,13 @@ public class Shooter extends SubsystemBase {
      * Sets shooter motor to its NeutralMode
      * (in this case coastMode)
      */
-    
+
     /**
      * Flywheels on the shooter need time to get up to speed for an effective shot
      * The velocity needed will vary depending on the distance of the robot to the hub
      * flywheelUpToSpeed has the motors speed up to the intended velocity before fuel leaves the turret for the shooter
-     * 
-     * 
+     *
+     *
      */
     // public Command flywheelUpToSpeed() {
     //     return setShooterVelocity(locativeVelocity)
@@ -115,9 +132,9 @@ public class Shooter extends SubsystemBase {
      * Power up the motors
      * Calculate the velocity required based on where you are on the field.
      * Shoot the fuel...?????????????????????
-     * 
-     * 
-     * 
+     *
+     *
+     *
      */
-    
+
 }
