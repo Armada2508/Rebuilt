@@ -1,10 +1,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -72,10 +71,9 @@ public class Constants {
        
         public static final Voltage spinConveyorVoltage = Volts.of(0); //! find all values
 
-        public static final AngularVelocity maxRPM = RotationsPerSecond.of(0);
-        public static final AngularVelocity minRPM = RotationsPerSecond.of(0);
-        public static final AngularVelocity maxVelocity = RotationsPerSecond.of(0);
-        public static final AngularAcceleration maxAcceleration = RotationsPerSecondPerSecond.of(0);
+        public static final AngularVelocity maxRPM = DegreesPerSecond.of(0);
+        public static final AngularVelocity minRPM = DegreesPerSecond.of(0);
+        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
 
         public static final Time jostleDuration = Seconds.of(0.5);
 

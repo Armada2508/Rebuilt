@@ -1,16 +1,11 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerK;
 
-import static edu.wpi.first.units.Units.RPM;
-
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -26,7 +21,7 @@ public class Indexer extends SubsystemBase {
      */
     public Indexer() {
         configTalons();
-        configMotionMagic(IndexerK.maxVelocity, IndexerK.maxAcceleration);
+        configMotionMagic(IndexerK.maxRPM, IndexerK.maxAcceleration);
     }
 
     /**
@@ -35,10 +30,6 @@ public class Indexer extends SubsystemBase {
      * @param acceleration
      */
     private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
-        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
-        motionMagicConfigs.MotionMagicCruiseVelocity = velocity.in(RPM);
-        motionMagicConfigs.MotionMagicAcceleration = acceleration.in(RotationsPerSecondPerSecond);
-        
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.motionAcceleration = 0; //! Find values
         config.motionCruiseVelocity = 0;
@@ -91,7 +82,7 @@ public class Indexer extends SubsystemBase {
     }
 
     /** 
-     * Sets motor voltage to zero for stopping
+     * Sets motor to neutral so it stops running
      */
     public void stop() {
         conveyor.neutralOutput();
