@@ -8,7 +8,9 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -106,11 +108,14 @@ public class Turret extends SubsystemBase {
                     Degrees.of(180)
                 ).in(Degrees) % Constants.degreesPerRotation;
         return Degrees.of(theta); //^ pls work this is annoying to math out
+    }
 
-
-
-        // return Degrees.of((Rotations.of(absoluteEncoder.get() * TurretK.encoderToTurretGearRatio).in(Degrees) + TurretK.absoluteEncoderOffset.in(Degrees)) % Constants.degreesPerRotation ); //* Re-go over the and stuff for this.
-        // return Degrees.of(realEncoderReading * TurretK.encoderToTurretGearRatio); //? Can we use the Degrees.of() here?
+    /**
+     * Get the angular velocity of the main turret gear
+     * @return Angular velocity in rotations per second
+     */
+    public AngularVelocity getVelocity() {
+        return talon.getVelocity().getValue().times(TurretK.krakenToTurretGearRatio);
     }
 
     /**
