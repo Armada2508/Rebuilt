@@ -10,73 +10,77 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 public class Indexer extends SubsystemBase {
-    private final TalonSRX conveyor = new TalonSRX(IndexerK.talonID);
+    private final TalonSRX indexer = new TalonSRX(IndexerK.talonID);
 
     /**
-     * The method for running the Indexer
+     * The method for running the indexer
      */
     public Indexer() {
         configTalons();
-        configMotionMagic(IndexerK.maxRPM, IndexerK.maxAcceleration);
+        //configMotionMagic(IndexerK.maxRPM, IndexerK.maxAcceleration);
     }
 
     /**
-     * configures the motion magic for the motors
+     * configures the MotionMagic for the motors
      * @param velocity
      * @param acceleration
      */
-    private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
+    /*private void configMotionMagic(AngularVelocity velocity, AngularAcceleration acceleration) {
         TalonSRXConfiguration config = new TalonSRXConfiguration();
-        config.motionAcceleration = 0; //! Find values
+        config.motionAcceleration = 0; // Find values
         config.motionCruiseVelocity = 0;
 
-        conveyor.configAllSettings(config);
+        indexer.configAllSettings(config);
     }
+    */
 
     /**
      * Resets then applies the configurations to the motors
      */
     private void configTalons() {
-        conveyor.configFactoryDefault();
-        conveyor.setNeutralMode(NeutralMode.Coast);
+        indexer.configFactoryDefault();
+        indexer.setNeutralMode(NeutralMode.Coast);
     }
 
     /**
-     * sets the conveyer to spin forward
+     * sets the Indexer to spin forward
      */
-    public void spinConveyer() {
-        conveyor.set(ControlMode.MotionMagic, IndexerK.spinConveyorVoltage.in(Volts));
+    public void spinIndexer() {
+        //indexer.set(ControlMode.MotionMagic, IndexerK.spinIndexerVoltage.in(Volts));
+        indexer.set(ControlMode.Velocity, IndexerK.spinindexerVoltage.in(Volts));
     }
 
     /**
-     * sets conveyer to spin backwards
+     * sets Indexer to spin backwards
      */
-     public void spinConveyerNegative() {
-        conveyor.set(ControlMode.MotionMagic, -IndexerK.spinConveyorVoltage.in(Volts));
+     public void spinIndexerNegative() {
+        //indexer.set(ControlMode.MotionMagic, -IndexerK.spinIndexerVoltage.in(Volts));
+        indexer.set(ControlMode.Velocity, -IndexerK.spinindexerVoltage.in(Volts));
     }
 
     /**
-     * Moves the conveyor back and forth to jostle the fuel
+     * Moves the indexer back and forth to jostle the fuel
      */
     public Command jostle() {
        return runOnce(() -> {
-            spinConveyer();
+            spinIndexer();
     })
         .withTimeout(IndexerK.jostleDuration)
         .andThen(() -> {
-                spinConveyerNegative();
+                spinIndexerNegative();
     })
         .withTimeout(IndexerK.jostleDuration)
         .andThen(() -> {
-                spinConveyer();
+                spinIndexer();
     })
         .withTimeout(IndexerK.jostleDuration)
         .andThen(() -> {
-                spinConveyerNegative();
+                spinIndexerNegative();
     })
         .withTimeout(IndexerK.jostleDuration);
     }
@@ -85,7 +89,7 @@ public class Indexer extends SubsystemBase {
      * Sets motor to neutral so it stops running
      */
     public void stop() {
-        conveyor.neutralOutput();
+        indexer.neutralOutput();
     }
 }
 

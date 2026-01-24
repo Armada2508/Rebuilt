@@ -66,10 +66,10 @@ public class Constants {
     public static class IndexerK {
         public static final int talonID = 2; //! find
         
-          // Conveyor current limit configs
-        public static final SupplyCurrentLimitConfiguration conveyorCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
+          // indexer current limit configs
+        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
        
-        public static final Voltage spinConveyorVoltage = Volts.of(0); //! find all values
+        public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
 
         public static final AngularVelocity maxRPM = DegreesPerSecond.of(0);
         public static final AngularVelocity minRPM = DegreesPerSecond.of(0);
@@ -77,16 +77,18 @@ public class Constants {
 
         public static final Time jostleDuration = Seconds.of(0.5);
 
-        // PID configs for conveyor
-        public static final double kP = 0; //! find all values
+        /* PID configs for indexer
+        public static final double kP = 0; // find all values
         public static final double kD = 0;
         public static final double kV = 0;
         public static final double kS = 0;
+        
 
         public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
         .withKP(kP)
         .withKD(kD)
         .withKV(kV)
         .withKS(kS);
+        */
     }
 }
