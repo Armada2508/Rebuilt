@@ -70,12 +70,12 @@ public class Constants {
         public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
        
         public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
-
+        /*
         public static final AngularVelocity maxRPM = DegreesPerSecond.of(0);
         public static final AngularVelocity minRPM = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
-
-        public static final Time jostleDuration = Seconds.of(0.5);
+        */
+        public static final Time jostleDuration = Seconds.of(0.25);
 
         /* PID configs for indexer
         public static final double kP = 0; // find all values
