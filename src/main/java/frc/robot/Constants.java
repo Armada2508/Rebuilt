@@ -25,10 +25,11 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.math.Matrix;
 
 public class Constants {
+    public static double degreesPerRotation = 360;
     
     public static class TurretK {
         public static final int talonId = 0; //! Find
-
+        
         //& Absolute Encoder
         public static final int channel = 0; //! Ask Electrical
         public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!

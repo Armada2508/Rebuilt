@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.TurretK;
 import frc.robot.lib.util.Util;
 
@@ -76,7 +77,6 @@ public class Turret extends SubsystemBase {
         // talon.setControl(yawControl.withPosition(translateYaw(targetAngle)));
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle.in(Rotations)); //^ Verify if we need to do the .in()
         talon.setControl(request);
-
     }
 
     /**
@@ -95,7 +95,21 @@ public class Turret extends SubsystemBase {
      * @return
      */
     public Angle getAngle() { //! Verify this
-        return Degrees.of((Rotations.of(absoluteEncoder.get()).in(Degrees) + TurretK.absoluteEncoderOffset.in(Degrees)) /* % Constants.degreesPerRotation */ ); //* Re-go over the and stuff for this.
+        double theta = Degrees.of(
+                    Rotations.of(absoluteEncoder.get())
+                    .plus(
+                        TurretK.absoluteEncoderOffset
+                    ).in(Rotations)
+                ).times(
+                    TurretK.encoderToTurretGearRatio
+                ).minus(
+                    Degrees.of(180)
+                ).in(Degrees) % Constants.degreesPerRotation;
+        return Degrees.of(theta); //^ pls work this is annoying to math out
+
+
+
+        // return Degrees.of((Rotations.of(absoluteEncoder.get() * TurretK.encoderToTurretGearRatio).in(Degrees) + TurretK.absoluteEncoderOffset.in(Degrees)) % Constants.degreesPerRotation ); //* Re-go over the and stuff for this.
         // return Degrees.of(realEncoderReading * TurretK.encoderToTurretGearRatio); //? Can we use the Degrees.of() here?
     }
 
