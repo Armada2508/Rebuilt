@@ -1,22 +1,17 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
-
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -25,34 +20,18 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.math.Matrix;
 
 
 public class Constants {
     public static class IntakeK {
-        public static final int armID = 0; //! find, may change
-        public static final int wheelsID = 1;     
-       
-        // PID & Feedforward for wheels
-        public static final double WkP = 0; //! find all values
-        public static final double WkD = 0;
-        public static final double WkV = 0;
-        public static final double WkS = 0;
+        public static final int wheelsID = 0; //! find, may change
+        public static final int extensionID = 1;
         
-        //PID & Feedforward for arm
-        public static final double AkP = 0; //! find all values
-        public static final double AkD = 0;
-        public static final double AkV = 0;
-        public static final double AkG = 0;
-        public static final double AkS = 0;
-
-
         // Limits
-        public static final Angle maxAngle = Degrees.of(0); //! find values
-        public static final Angle minAngle = Degrees.of(0);
-        public static final Angle stowAngle = Degrees.of(0);
-        public static final Angle intakeDepotAngle = Degrees.of(0);
-        public static final Angle intakeAngle = Degrees.of(0);
+        public static final Distance maxDistance = Inches.of(0); //! find values
 
         // Wheel current limit configs
         public static final CurrentLimitsConfigs wheelCurrentConfigs = new CurrentLimitsConfigs() //! find values
@@ -63,7 +42,7 @@ public class Constants {
         .withSupplyCurrentLimitEnable(true);
 
         // Arm current limit configs
-        public static final CurrentLimitsConfigs armCurrentConfigs = new CurrentLimitsConfigs() //! find values
+        public static final CurrentLimitsConfigs talonCurrentConfigs = new CurrentLimitsConfigs() //! find values
         .withStatorCurrentLimit(Amps.of(0))
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimit(Amps.of(0))
@@ -71,31 +50,21 @@ public class Constants {
         .withSupplyCurrentLimitEnable(true);
 
         public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
-        
-        // Wheel Slot0Configs
-        public static final Slot0Configs wheelPidConfig = new Slot0Configs()
-        .withKP(WkP)
-        .withKD(WkD)
-        .withKV(WkV)
-        .withKS(WkS);
+        public static final Voltage extendVoltage = Volts.of(0);
 
-        // Arm Slot0Configs
-        public static final Slot0Configs armPidConfig = new Slot0Configs()
-        .withKP(AkP)
-        .withKD(AkD)
-        .withKV(AkV)
-        .withKG(AkG)
-        .withKS(AkS);
+        public static final LinearVelocity maxVelocity = MetersPerSecond.of(0); //! find
+        public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(0);
 
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! find
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
-
-        public static final SoftwareLimitSwitchConfigs softwareLimitConfig = new SoftwareLimitSwitchConfigs()
+        // Software limit switch configs for arm
+        public static final SoftwareLimitSwitchConfigs softwareLimitConfigs = new SoftwareLimitSwitchConfigs()
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(maxAngle.in(Degrees))
-        .withReverseSoftLimitThreshold(maxAngle.in(Degrees));
+        .withForwardSoftLimitThreshold(maxDistance.in(Inches))
+        .withReverseSoftLimitThreshold(maxDistance.in(Inches));
 
+        public static final Distance wheelDiameter = Inches.of(1.32); //! double check?
+
+        public static final Voltage extendVolts = Volts.of(0); //! find
     }
 
         
