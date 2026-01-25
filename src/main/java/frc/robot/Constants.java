@@ -25,7 +25,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.math.Matrix;
@@ -43,7 +42,7 @@ public class Constants {
 
         public static final Angle minHoodAngle = Degrees.of(0); //! FIND
         public static final Angle maxHoodAngle = Degrees.of(0); //! FIND
-
+    }
     public static class TurretK {
         public static final int talonId = 0; //! Find
         
