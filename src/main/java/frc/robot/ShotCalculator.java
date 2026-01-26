@@ -18,14 +18,18 @@ import edu.wpi.first.units.measure.Time;
 
 /*
  * https://blog.eeshwark.com/robotblog/shooting-on-the-fly
+ * https://www.chiefdelphi.com/t/shoot-on-the-move-from-the-code-perspective/511815
  */
 public class ShotCalculator {
     private Pose2d targetPose;
-    private ChassisSpeeds robotVelocity;
+    private ChassisSpeeds robotVelocity; //! This must be field-centric velocity. Not robot-centric
     private Pose2d robotPose;
 
     private static final InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap flywheelRpmMap = new InterpolatingDoubleTreeMap();
+
+    private Time latency = Seconds.of(0.15); 
+
 
     static {
         hoodAngleMap.put(0.0, 0.0);
@@ -33,6 +37,7 @@ public class ShotCalculator {
 
         flywheelRpmMap.put(0.0, 0.0);
         //! Tune the rest of the map
+
     }
 
     /**
@@ -53,16 +58,11 @@ public class ShotCalculator {
         return RotationsPerSecond.of(flywheelRpmMap.get(distance.in(Inches)));
     }
 
-    private Time latency = Seconds.of(0.15); 
 
     public ShotCalculator(Pose2d targetPose, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> robotVelocity) {
         this.targetPose = targetPose;
         this.robotPose = robotPose.get();
         this.robotVelocity = robotVelocity.get();
-    }
-
-    static {
-
     }
 
     public ShotParameters getShotParameters() {
@@ -89,9 +89,8 @@ public class ShotCalculator {
         Angle newHoodAngle = Degrees.of(Math.acos(ratio));
 
         return new ShotParameters(turretAngle, newHoodAngle, RotationsPerSecond.of(totalExitVelocity)); //^ This is missing the "calcRPM" form the original, idk what that is/does.
-                                                                                //^ This will not work as of now because of it.
+                                                                                                    //^ This will not work as of now because of it.
     }
-    
 
     public record ShotParameters(
         Angle turretAngle,
