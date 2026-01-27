@@ -3,15 +3,9 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-
 import edu.wpi.first.units.measure.Voltage;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -20,51 +14,23 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.math.Matrix;
 
 
 public class Constants {
     public static class IntakeK {
         public static final int wheelsID = 0; //! find, may change
-        public static final int extensionID = 1;
-        
-        // Limits
-        public static final Distance maxDistance = Inches.of(0); //! find values
-
+        public static final int extenderID = 1;
+    
         // Wheel current limit configs
-        public static final CurrentLimitsConfigs wheelCurrentConfigs = new CurrentLimitsConfigs() //! find values
-        .withStatorCurrentLimit(Amps.of(0))
-        .withStatorCurrentLimitEnable(true)
-        .withSupplyCurrentLimit(Amps.of(0))
-        .withSupplyCurrentLowerLimit(Amps.of(0))
-        .withSupplyCurrentLimitEnable(true);
+        public static final int wheelsCurrentLimit = 0; //! find
 
         // Arm current limit configs
-        public static final CurrentLimitsConfigs talonCurrentConfigs = new CurrentLimitsConfigs() //! find values
-        .withStatorCurrentLimit(Amps.of(0))
-        .withStatorCurrentLimitEnable(true)
-        .withSupplyCurrentLimit(Amps.of(0))
-        .withSupplyCurrentLowerLimit(Amps.of(0))
-        .withSupplyCurrentLimitEnable(true);
+        public static final int extenderCurrentLimit = 0; //! find
 
+        // Voltage limits for both the wheels and the arm
         public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
         public static final Voltage extendVoltage = Volts.of(0);
-
-        public static final LinearVelocity maxVelocity = MetersPerSecond.of(0); //! find
-        public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(0);
-
-        // Software limit switch configs for arm
-        public static final SoftwareLimitSwitchConfigs softwareLimitConfigs = new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitEnable(true)
-        .withReverseSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(maxDistance.in(Inches))
-        .withReverseSoftLimitThreshold(maxDistance.in(Inches));
-
-        public static final Distance wheelDiameter = Inches.of(1.32); //! double check?
-
-        public static final Voltage extendVolts = Volts.of(0); //! find
     }
 
         
