@@ -13,18 +13,31 @@ public class Hopper {
     
     private final TimeOfFlight timeOfFlightTop = new TimeOfFlight(HopperK.timeOfFlightIdTop);
     private final TimeOfFlight timeOfFlightBottom = new TimeOfFlight(HopperK.timeOfFlightIdBottom);
+    /**
+     * Checks if the range of the top TOF sensor has a valid measurement after it measures a distance
+     * @return
+     */
     public boolean isTOFRangeValid() {
         return timeOfFlightTop.isRangeValid();
     }
-
+    /**
+     * Checks if the range of the bottom TOF sensor has a valid measurement after it measures a distance
+     * @return
+     */
     public boolean isTOFBottomRangeValid() {
         return timeOfFlightBottom.isRangeValid();
     }
-
+    /**
+     * Detects if the hopper if full
+     * @return
+     */
     public boolean isHopperFull() {
         return Util.inRange(timeOfFlightTop.getRange(), HopperK.hopperDetectionRange.in(Inches));
     }
-    
+    /**
+     * Detects if there is fuel in the hopper
+     * @return
+     */
     public boolean isThereFuel() {
         return Util.inRange(timeOfFlightBottom.getRange(), HopperK.hopperDetectionRange.in(Inches));
     }
