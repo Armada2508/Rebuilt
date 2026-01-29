@@ -9,6 +9,7 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 /**
  * Thanks to team 100 for the implementation
  * https://github.com/Team100/all26/blob/main/lib/src/main/java/org/team100/lib/util/NestedInterpolatingTreeMap.java
+ * TODO: Move this into the library after the season ends
  */
 public class NestedInterpolationTree<K extends Comparable<K>, V> {
     private final InverseInterpolator<K> keyInterpolator;

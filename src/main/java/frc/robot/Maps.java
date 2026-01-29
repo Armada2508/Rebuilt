@@ -18,7 +18,7 @@ public class Maps {
     private static final double defaultDistance = 0.0; //! Find and move into constants 
                                                        //? Might not be needed depending on implementation
 
-    //~ Create the maps.
+    //~ Create the maps
     // Distance (meters) -> Hood Angle (degrees)
     private static final InterpolatingTreeMap<Double, Double> hoodAngleMap 
         = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
