@@ -1,101 +1,110 @@
 package frc.robot.subsystems.shooting;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
-import frc.robot.Field;
+import frc.robot.Constants.ShooterK;
 
 /*``
- * https://blog.eeshwark.com/robotblog/shooting-on-the-fly
+ * https://blog.eeshwark.com/robotblog/shooting-on-the-fly-pt2
  * https://www.chiefdelphi.com/t/shoot-on-the-move-from-the-code-perspective/511815
  */
 public class ShotCalculator {
-    private final Pose2d targetPose;
-    private final Pose2d robotPose;
-    private final ChassisSpeeds robotVelocity;
+    // private final Pose2d targetPose;
+    // private final Pose2d robotPose;
+    // private final ChassisSpeeds robotVelocity;
 
     // private final Time latency = Seconds.of(0.5);
 
     private ShotParameters shotParametersInstance;
     private ShotCalculationParameters shotCalculationParametersInstance;
 
-    public ShotCalculator(Pose2d targetPose, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> robotVelocity) {
-        this.targetPose = targetPose;
-        this.robotPose = robotPose.get();
-        this.robotVelocity = robotVelocity.get();
+    public ShotCalculator(/* Pose2d targetPose, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> robotVelocity*/ ) {
+        // this.targetPose = targetPose;
+        // this.robotPose = robotPose.get();
+        // this.robotVelocity = robotVelocity.get();
 
         //^ Resets the parameter instances
         resetShotParameters();
-        resetShowCalculationParameters();
+        resetShotCalculationParameters();
     }
 
     public void calculate(Pose2d robotPose, ChassisSpeeds robotVelocity, Pose2d targetPosition, Time latencyCompensation) {
+        Translation2d robotVelocityVector = new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond);
 
         //^ 1. Predicts the future position of the robot based on current velocities
         Translation2d futurePos = robotPose.getTranslation()
-                                    .plus(new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond)
+                                    .plus(robotVelocityVector
                                         .times(latencyCompensation.in(Seconds))
                                     );
 
         //^ 2. Gets the target vector
         Translation2d toGoal = targetPosition.getTranslation().minus(futurePos);
         double distance = toGoal.getNorm(); //? Clarify what this does
-        Translation2d targetDirection = toGoal.div(distance);
+        Translation2d targetDirection = toGoal.div(distance); //? Why does this work?
 
-        //^ 3. Get baseline velocity 
+        //^ 3. Get baseline state
         ShotCalculationParameters baseline = new ShotCalculationParameters(
-            Degrees.of(Maps.getHoodAngle(distance)), 
-            RotationsPerSecond.of(Maps.getFlywheelVelocity(distance)), 
-            Seconds.of(Maps.getBallTimeOfFlight(Maps.getHoodAngle(distance), Maps.getFlywheelVelocity(distance)))
+            Degrees.of(Maps.getHoodAngle(distance)), // Baseline hood angle
+            RotationsPerSecond.of(Maps.getFlywheelVelocity(distance)), // Baseline flywheel velocity
+            Seconds.of(Maps.getBallTimeOfFlight(Maps.getFlywheelVelocity(distance), Maps.getHoodAngle(distance))) // Baseline air time
         );
 
-        double baselineVelocity = distance / baseline.fuelAirTime.in(Seconds);
+        //^ 4a. Build target velocity vector and apply SOTF subtraction
+        double baselineHorizontalVelocity = distance / baseline.fuelAirTime.in(Seconds);
 
+        Translation2d targetVelocityVector = targetDirection.times(baselineHorizontalVelocity);
+        Translation2d shotVelocityVector = targetVelocityVector.minus(robotVelocityVector);
 
-        double velocityRatio = requiredVelocity / baselineVelocity; //? what is this for?
+        double turretAngle = shotVelocityVector.getAngle().getDegrees();
+        double horizontalVelocityRequired = shotVelocityVector.getNorm();
 
-        // Split correction
+        //^ 5. Adjust both RPM and Hood Angle
+        double velocityRatio = horizontalVelocityRequired / baselineHorizontalVelocity; //? what is this for?
+
+        //^ 5a. Split correction equally between rpm and hood angle
         double rpmFactor = Math.sqrt(velocityRatio);
         double hoodFactor = Math.sqrt(velocityRatio);
 
-        // Apply RPM scaling
+        //^ 5b. Apply RPM scaling
         double adjustedRpm = baseline.rpm.in(RPM) * rpmFactor;
+        adjustedRpm = MathUtil.clamp(adjustedRpm, ShooterK.minRpm.in(RPM), ShooterK.maxRpm.in(RPM)); // Clamp results to be within physical limits
 
-        // Apply hood adjustment
-        double totalVelocity = baselineVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
-        double targetHorizontalFromHood = baselineVelocity * hoodFactor;
-        double ratio = MathUtil.clamp(targetHorizontalFromHood / totalVelocity, 0, 1);
+        //^ 5c. Find total exit velocity of the ball
+        double totalVelocity = baselineHorizontalVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
+        double totalExitVelocity = totalVelocity * (adjustedRpm / baseline.rpm.in(RPM));
+
+        //^ 5d. Find hood target to achieve total exit velocity
+        double horizontalVelocityFromHood = baselineHorizontalVelocity * hoodFactor;
+        double ratio = MathUtil.clamp(horizontalVelocityFromHood / totalExitVelocity, 0, 1);
         double adjustedHood = Math.toDegrees(Math.acos(ratio));
+        adjustedHood = MathUtil.clamp(adjustedHood, ShooterK.minHoodAngle.in(Degrees), ShooterK.maxHoodAngle.in(Degrees));
 
+        //^ 6. Store final parameters
         this.shotParametersInstance = new ShotParameters(Degrees.of(adjustedHood), RPM.of(adjustedRpm), Degrees.of(turretAngle));
     }
 
-    public double getFuelHorizontalVelocity(double distance) {
-        double speed = Maps.getFlywheelVelocity(distance);
-        return distance / Maps.getBallTimeOfFlight(speed, 0); //! Fix the zero.
-    } 
+    //? I do not believe we still need this method?
+    // public double getFuelHorizontalVelocity(double distance) {
+    //     double speed = Maps.getFlywheelVelocity(distance);
+    //     return distance / Maps.getBallTimeOfFlight(speed, 0); //! Fix the zero.
+    // } 
 
-    public double velocityAndHoodAngleToEffectiveDistance(double velocity, double hoodAngle) {
-        // for (Map.Entry<Double, InterpolatingTreeMap<Double, Double>> entry : Maps.fuelAirTimeMap.asMap().entrySet()) {
-        for ()
+    //? ditto?
+    // public double velocityAndHoodAngleToEffectiveDistance(double velocity, double hoodAngle) {
+    //     // for (Map.Entry<Double, InterpolatingTreeMap<Double, Double>> entry : Maps.fuelAirTimeMap.asMap().entrySet()) {
+    //     for ()
 
-    }
+    // }
 
     //~ Getters & Resetters
     public ShotParameters getShotParameters() {
@@ -110,7 +119,7 @@ public class ShotCalculator {
         return this.shotCalculationParametersInstance;
     }
 
-    private void resetShowCalculationParameters() {
+    private void resetShotCalculationParameters() {
         this.shotCalculationParametersInstance = new ShotCalculationParameters(Degrees.of(0), RPM.of(0), Seconds.of(0));
     }
 

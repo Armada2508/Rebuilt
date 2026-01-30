@@ -41,7 +41,7 @@ public class Maps {
 
         //~ Fill Flywheel RPM Map
         //^ This map assumes a static hood angle to fire at, use defaultFlywheelRpm
-        hoodAngleMap.put(0.0, 0.0);
+        flywheelRpmMap.put(0.0, 0.0);
         //! Fill the rest of this map, atleast 8-12 pairs
         
         //~ Fill Time of Flight Map

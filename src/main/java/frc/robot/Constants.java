@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Angle;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -42,6 +43,10 @@ public class Constants {
 
         public static final Angle minHoodAngle = Degrees.of(0); //! FIND
         public static final Angle maxHoodAngle = Degrees.of(0); //! FIND
+
+        public static final AngularVelocity minRpm = RPM.of(0);
+        public static final AngularVelocity maxRpm = RPM.of(0); //! Find
+        
     }
     public static class TurretK {
         public static final int talonId = 0; //! Find
