@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.TreeMap;
 
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
@@ -68,5 +70,8 @@ public class NestedInterpolationTree<K extends Comparable<K>, V> {
         return valueInterpolator.interpolate(
                 floorV1, ceilV1, interpolatedKey1);
     }
-    
+
+    public Map<K, InterpolatingTreeMap<K, V>> asMap() {
+        return Collections.unmodifiableMap(map);
+    }
 }

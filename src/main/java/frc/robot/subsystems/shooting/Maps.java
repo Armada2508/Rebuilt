@@ -1,8 +1,9 @@
-package frc.robot;
+package frc.robot.subsystems.shooting;
 
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
+import frc.robot.NestedInterpolationTree;
 /**
  * 2d Tree Map: https://github.com/Team100/all26/blob/main/lib/src/main/java/org/team100/lib/util/NestedInterpolatingTreeMap.java
  */
@@ -20,15 +21,16 @@ public class Maps {
 
     //~ Create the maps
     // Distance (meters) -> Hood Angle (degrees)
-    private static final InterpolatingTreeMap<Double, Double> hoodAngleMap 
+    public static final InterpolatingTreeMap<Double, Double> hoodAngleMap 
         = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
 
     // Distance (meters) -> Flywheel Velocity (rpm) //? Maybe RPS?
-    private static final InterpolatingTreeMap<Double, Double> flywheelRpmMap 
+    public static final InterpolatingTreeMap<Double, Double> flywheelRpmMap 
         = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
 
     // {Flywheel Velocity (rpm), Hood Angle (degrees)} -> Time of Flight (seconds)
-    private static final NestedInterpolationTree<Double, Double> ballTimeOfFlightMap 
+    //^ The two interpolating values MUST be the same, that is why there is only 2 parameters despite being a table of 3. The first Double represents both of the interpolating axises
+    public static final NestedInterpolationTree<Double, Double> fuelAirTimeMap 
         = new NestedInterpolationTree<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
 
     static {
@@ -44,7 +46,7 @@ public class Maps {
         
         //~ Fill Time of Flight Map
         //^ This map assumes a static distance to fire at.
-        ballTimeOfFlightMap.put(0.0, 0.0, 0.0);
+        fuelAirTimeMap.put(0.0, 0.0, 0.0);
         //! Fill the rest of this map, it should make a checkerboard like structure. Aim for an 8x8 - 12x12.
     }
 
@@ -73,7 +75,7 @@ public class Maps {
      * @return
      */
     public static double getBallTimeOfFlight(double rpm, double hoodAngle) {
-        return ballTimeOfFlightMap.get(rpm, hoodAngle);
+        return fuelAirTimeMap.get(rpm, hoodAngle);
     }
 
 }
