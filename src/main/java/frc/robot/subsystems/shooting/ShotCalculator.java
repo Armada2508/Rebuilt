@@ -53,18 +53,19 @@ public class ShotCalculator {
         //^ 2. Gets the target vector
         Translation2d toGoal = targetPosition.getTranslation().minus(futurePos);
         double distance = toGoal.getNorm(); //? Clarify what this does
-        Translation2d targetDirection = toGoal.div(distance); //? Why does this work?
+        Translation2d targetDirection = toGoal.div(distance); // Makes a lengthless vector
 
         //^ 3. Get baseline state
         ShotCalculationParameters baseline = new ShotCalculationParameters(
             Degrees.of(Maps.getHoodAngleFromDistance(distance)), // Baseline hood angle
             Seconds.of(Maps.getAirTimeFromDistance(distance)) // Baseline air time
         );
+        double baselineHorizontalVelocity = distance / baseline.fuelAirTime.in(Seconds); // Velocity of the ball
 
-        //^ 4a. Build target velocity vector and apply SOTF subtraction
-        double baselineHorizontalVelocity = distance / baseline.fuelAirTime.in(Seconds);
-
+        //^ 4a. Build target velocity vector
         Translation2d targetVelocityVector = targetDirection.times(baselineHorizontalVelocity);
+
+        //^ 4b. Subtract robot velocity
         Translation2d shotVelocityVector = targetVelocityVector.minus(robotVelocityVector);
 
         double turretAngle = shotVelocityVector.getAngle().getDegrees();
