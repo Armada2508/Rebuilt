@@ -14,11 +14,17 @@ public class Maps {
     public static InterpolatingDoubleTreeMap fuelAirTimeMap = new InterpolatingDoubleTreeMap();
 
     /**
+     * Makes an interpolating tree map for the distance from hood angle
+     */
+    public static InterpolatingDoubleTreeMap distanceHoodAngleMap = new InterpolatingDoubleTreeMap();
+
+    /**
      * Sets the values for the interpolating tree maps
      */
     static {
         hoodAngleMap.put(0.0, 0.0); //! find
         fuelAirTimeMap.put(0.0,0.0);
+        distanceHoodAngleMap.put(0.0, 0.0);
     }
     
     /**
@@ -46,6 +52,14 @@ public class Maps {
      */
     public static double getAirTimeFromDistance(double distance) {
         return fuelAirTimeMap.get(getHoodAngleFromDistance(distance));
+    }
+    /**
+     * Determines the distance from the hood angle
+     * @param hoodAngle
+     * @return
+     */
+    public static double getDistanceFromHoodAngle(double hoodAngle) {
+        return distanceHoodAngleMap.get(hoodAngle);
     }
 
 }
