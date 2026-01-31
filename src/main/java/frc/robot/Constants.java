@@ -45,6 +45,7 @@ public class Constants {
         public static final Angle maxHoodAngle = Degrees.of(0); //! FIND
 
         public static final AngularVelocity minRpm = RPM.of(0);
+        public static final AngularVelocity staticRpm = RPM.of(0); //! Final
         public static final AngularVelocity maxRpm = RPM.of(0); //! Find
         
     }
