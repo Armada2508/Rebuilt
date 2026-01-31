@@ -57,8 +57,8 @@ public class ShotCalculator {
 
         //^ 3. Get baseline state
         ShotCalculationParameters baseline = new ShotCalculationParameters(
-            Degrees.of(MapsOld.getHoodAngle(distance)), // Baseline hood angle
-            Seconds.of(MapsOld.getBallTimeOfFlight(MapsOld.getFlywheelVelocity(distance), MapsOld.getHoodAngle(distance))) // Baseline air time
+            Degrees.of(Maps.getHoodAngleFromDistance(distance)), // Baseline hood angle
+            Seconds.of(Maps.getAirTimeFromDistance(distance)) // Baseline air time
         );
 
         //^ 4a. Build target velocity vector and apply SOTF subtraction
@@ -77,15 +77,11 @@ public class ShotCalculator {
         double rpmFactor = Math.sqrt(velocityRatio);
         double hoodFactor = Math.sqrt(velocityRatio);
 
-        //^ 5b. Apply RPM scaling
-        double adjustedRpm = baseline.rpm.in(RPM) * rpmFactor;
-        adjustedRpm = MathUtil.clamp(adjustedRpm, ShooterK.minRpm.in(RPM), ShooterK.maxRpm.in(RPM)); // Clamp results to be within physical limits
-
-        //^ 5c. Find total exit velocity of the ball
+        //^ 5b. Find total exit velocity of the ball
         double totalVelocity = baselineHorizontalVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
         double totalExitVelocity = totalVelocity * (adjustedRpm / baseline.rpm.in(RPM));
 
-        //^ 5d. Find hood target to achieve total exit velocity
+        //^ 5c. Find hood target to achieve total exit velocity
         double horizontalVelocityFromHood = baselineHorizontalVelocity * hoodFactor;
         double ratio = MathUtil.clamp(horizontalVelocityFromHood / totalExitVelocity, 0, 1);
         double adjustedHood = Math.toDegrees(Math.acos(ratio));
