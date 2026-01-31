@@ -1,81 +1,51 @@
 package frc.robot.subsystems.shooting;
 
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
-// import frc.robot.NestedInterpolationTree;
-/**
- * 2d Tree Map: https://github.com/Team100/all26/blob/main/lib/src/main/java/org/team100/lib/util/NestedInterpolatingTreeMap.java
- */
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 public class Maps {
     /**
-     * Prevent this class from being instantiated because of private access modifier.
+     * Makes an interpolating tree map for the hood angle
      */
-    private Maps() {}
-
-    // private static final double defaultHoodAngle = 0.0; //! Find and move into constants
-    // private static final double defaultFlywheelRpm = 0.0; //! Find and move into constants
-    // private static final double defaultDistance = 0.0; //! Find and move into constants 
-                                                       //? Might not be needed depending on implementation
-
-    //~ Create the maps
-    // Distance (meters) -> Hood Angle (degrees)
-    public static final InterpolatingTreeMap<Double, Double> hoodAngleMap 
-        = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
-
-    // Distance (meters) -> Flywheel Velocity (rpm)
-    // public static final InterpolatingTreeMap<Double, Double> flywheelRpmMap 
-        // = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
-
-    // {Flywheel Velocity (rpm), Hood Angle (degrees)} -> Time of Flight (seconds)
-    //^ The two interpolating values MUST be the same, that is why there is only 2 parameters despite being a table of 3. The first Double represents both of the interpolating axises
-    // public static final NestedInterpolationTree<Double, Double> fuelAirTimeMap 
-        // = new NestedInterpolationTree<>(InverseInterpolator.forDouble(), Interpolator.forDouble());
-
-    static {
-        //~ Fill Hood Angle Map
-        //^ This map assumes a static RPM to fire at, use defaultFlywheelRpm
-        hoodAngleMap.put(0.0, 0.0);
-        //! Fill the rest of this map, atleast 8-12 pairs
-
-        //~ Fill Flywheel RPM Map
-        //^ This map assumes a static hood angle to fire at, use defaultFlywheelRpm
-        // flywheelRpmMap.put(0.0, 0.0);
-        //! Fill the rest of this map, atleast 8-12 pairs
-        
-        //~ Fill Time of Flight Map
-        //^ This map assumes a static distance to fire at.
-        // fuelAirTimeMap.put(0.0, 0.0, 0.0);
-        //! Fill the rest of this map, it should make a checkerboard like structure. Aim for an 8x8 - 12x12.
-    }
+    public static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
     /**
-     * Gets the ideal hood angle depending on the distance from the target
-     * @param distance distance to interpolate from
+     * Makes an interpolating tree map for the air time
+     */
+    public static InterpolatingDoubleTreeMap fuelAirTimeMap = new InterpolatingDoubleTreeMap();
+
+    /**
+     * Sets the values for the interpolating tree maps
+     */
+    static {
+        hoodAngleMap.put(0.0, 0.0); //! find
+        fuelAirTimeMap.put(0.0,0.0);
+    }
+    
+    /**
+     * Determines the hood angle from the distance to the target
+     * @param distance
      * @return
      */
-    public static double getHoodAngle(double distance) {
+    public static double getHoodAngleFromDistance(double distance) {
         return hoodAngleMap.get(distance);
     }
 
     /**
-     * Gets the ideal flywheel velocity depending on the distance from the target
-     * @param distance distance to interpolate from
+     * Determines the air time to the target from the hood angle
+     * @param hoodAngle
      * @return
      */
-    // public static double getFlywheelVelocity(double distance) {
-        // return flywheelRpmMap.get(distance);
-    // }
+    public static double getAirTimeFromHoodAngle(double hoodAngle) {
+        return fuelAirTimeMap.get(hoodAngle);
+    }
 
     /**
-     * Gets the time the projectile is in the air for depending on the rpm and hood angle of the shooter
-     * @param rpm The rpm the shooter's flywheel is at
-     * @param hoodAngle The angle the shooter's hood is at
+     * Determines the air time from the distance determined in getHoodAngleFromDistance()
+     * @param distance
      * @return
      */
-    // public static double getBallTimeOfFlight(double rpm, double hoodAngle) {
-        // return fuelAirTimeMap.get(rpm, hoodAngle);
-    // }
+    public static double getAirTimeFromDistance(double distance) {
+        return fuelAirTimeMap.get(getHoodAngleFromDistance(distance));
+    }
 
 }

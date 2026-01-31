@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.Map;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -40,6 +42,7 @@ public class ShotCalculator {
 
     public void calculate(Pose2d robotPose, ChassisSpeeds robotVelocity, Pose2d targetPosition, Time latencyCompensation) {
         Translation2d robotVelocityVector = new Translation2d(robotVelocity.vxMetersPerSecond, robotVelocity.vyMetersPerSecond);
+        
 
         //^ 1. Predicts the future position of the robot based on current velocities
         Translation2d futurePos = robotPose.getTranslation()
@@ -54,9 +57,8 @@ public class ShotCalculator {
 
         //^ 3. Get baseline state
         ShotCalculationParameters baseline = new ShotCalculationParameters(
-            Degrees.of(Maps.getHoodAngle(distance)), // Baseline hood angle
-            RotationsPerSecond.of(Maps.getFlywheelVelocity(distance)), // Baseline flywheel velocity
-            Seconds.of(Maps.getBallTimeOfFlight(Maps.getFlywheelVelocity(distance), Maps.getHoodAngle(distance))) // Baseline air time
+            Degrees.of(MapsOld.getHoodAngle(distance)), // Baseline hood angle
+            Seconds.of(MapsOld.getBallTimeOfFlight(MapsOld.getFlywheelVelocity(distance), MapsOld.getHoodAngle(distance))) // Baseline air time
         );
 
         //^ 4a. Build target velocity vector and apply SOTF subtraction
@@ -90,7 +92,7 @@ public class ShotCalculator {
         adjustedHood = MathUtil.clamp(adjustedHood, ShooterK.minHoodAngle.in(Degrees), ShooterK.maxHoodAngle.in(Degrees));
 
         //^ 6. Store final parameters
-        this.shotParametersInstance = new ShotParameters(Degrees.of(adjustedHood), RPM.of(adjustedRpm), Degrees.of(turretAngle));
+        this.shotParametersInstance = new ShotParameters(Degrees.of(adjustedHood), Degrees.of(turretAngle));
     }
 
     //? I do not believe we still need this method?
@@ -112,7 +114,7 @@ public class ShotCalculator {
     }
 
     private void resetShotParameters() {
-        this.shotParametersInstance = new ShotParameters(Degrees.of(0), RPM.of(0), Degrees.of(0));
+        this.shotParametersInstance = new ShotParameters(Degrees.of(0), Degrees.of(0));
     }
 
     public ShotCalculationParameters getShotCalculationParameters() {
@@ -120,18 +122,16 @@ public class ShotCalculator {
     }
 
     private void resetShotCalculationParameters() {
-        this.shotCalculationParametersInstance = new ShotCalculationParameters(Degrees.of(0), RPM.of(0), Seconds.of(0));
+        this.shotCalculationParametersInstance = new ShotCalculationParameters(Degrees.of(0), Seconds.of(0));
     }
 
     public record ShotCalculationParameters(
         Angle hoodAngle,
-        AngularVelocity rpm,
         Time fuelAirTime
     ) {}
 
     public record ShotParameters(
         Angle hoodAngle,
-        AngularVelocity rpm,
         Angle turretAngle
     ) {}
 
