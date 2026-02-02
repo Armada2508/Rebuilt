@@ -83,7 +83,7 @@ public class Shooter extends SubsystemBase {
         return setShooterVelocity(velocity);
     }
 
-    public Command hoodAngle(Angle targetAngle) {
+    public Command setHoodAngle(Angle targetAngle) {
         return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
     }
 
