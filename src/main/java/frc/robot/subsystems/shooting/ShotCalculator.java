@@ -10,6 +10,7 @@ import java.util.Map;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -60,10 +61,10 @@ public class ShotCalculator {
             Degrees.of(Maps.getHoodAngleFromDistance(distance)), // Baseline hood angle
             Seconds.of(Maps.getAirTimeFromDistance(distance)) // Baseline air time
         );
-        double baselineHorizontalVelocity = distance / baseline.fuelAirTime.in(Seconds); // Velocity of the ball
+        double baselineFuelVelocity = distance / baseline.fuelAirTime.in(Seconds); // Velocity of the ball
 
         //^ 4a. Build target velocity vector
-        Translation2d targetVelocityVector = targetDirection.times(baselineHorizontalVelocity);
+        Translation2d targetVelocityVector = targetDirection.times(baselineFuelVelocity);
 
         //^ 4b. Subtract robot velocity
         Translation2d shotVelocityVector = targetVelocityVector.minus(robotVelocityVector);
@@ -71,20 +72,13 @@ public class ShotCalculator {
         double turretAngle = shotVelocityVector.getAngle().getDegrees();
         double horizontalVelocityRequired = shotVelocityVector.getNorm();
 
-        //^ 5. Adjust both RPM and Hood Angle
-        double velocityRatio = horizontalVelocityRequired / baselineHorizontalVelocity; //? what is this for?
+        //^ 5. Find total exit velocity of the ball
+        double totalVelocity = baselineFuelVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
+        double effectiveDistance = Maps.getHoodAngleFromDistance(horizontalVelocityRequired);
+        double horizontalVelocityFromHood = Maps.getHoodAngleFromDistance(effectiveDistance);
 
-        //^ 5a. Split correction equally between rpm and hood angle
-        double rpmFactor = Math.sqrt(velocityRatio);
-        double hoodFactor = Math.sqrt(velocityRatio);
-
-        //^ 5b. Find total exit velocity of the ball
-        double totalVelocity = baselineHorizontalVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
-        double totalExitVelocity = totalVelocity * (adjustedRpm / baseline.rpm.in(RPM));
-
-        //^ 5c. Find hood target to achieve total exit velocity
-        double horizontalVelocityFromHood = baselineHorizontalVelocity * hoodFactor;
-        double ratio = MathUtil.clamp(horizontalVelocityFromHood / totalExitVelocity, 0, 1);
+        //^ 5a. Find hood target to achieve total exit velocity
+        double ratio = MathUtil.clamp(horizontalVelocityFromHood / totalVelocity, 0, 1);
         double adjustedHood = Math.toDegrees(Math.acos(ratio));
         adjustedHood = MathUtil.clamp(adjustedHood, ShooterK.minHoodAngle.in(Degrees), ShooterK.maxHoodAngle.in(Degrees));
 
