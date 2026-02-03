@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-import edu.wpi.first.wpilibj2.command.Command;
+
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,7 +16,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.ShooterK;
 import frc.robot.lib.util.Util;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,14 +42,26 @@ public class Superstructure {
     private final static Pose2d passTargetBlueLow = Field.passTargetBlueLow;
     private final static Pose2d passTargetRedHigh = Field.passTargetRedHigh;
     private final static Pose2d passTargetRedLow = Field.passTargetRedLow;
+    private final static Pose2d blueHub = Field.blueHub;
+    private final static Pose2d redHub = Field.redHub;
 
-    public static ShotParameters nerdystats;
+    ShotCalculator shotCalculatorPass = new ShotCalculator();
+    ShotCalculator shotCalculatorScore = new ShotCalculator();
+    public static ShotParameters passCalculations;
+    public static ShotParameters scoreCalculations;
+    
+
+    //~ Subsystems
+
+    private static Shooter shooter = new Shooter();
+    private static Turret turret = new Turret();
+
     /**
-     * Figures out the closest passing point from the robot's location.
+     * Figures out the closest passpoint from the robot's location.
      * 
-     * @return 
+     * @return The Pose2d of the closest passpoint of the robot's alliance.
      */
-    public static Pose2d getClosestPoint(Pose2d robotPose) {
+    public static Pose2d getClosestPassPoint(Pose2d robotPose) {
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
             double distanceBlueHigh = passTargetBlueHigh.getTranslation().getDistance(robotPose.getTranslation());
             double distanceBlueLow = passTargetBlueLow.getTranslation().getDistance(robotPose.getTranslation());
@@ -73,27 +87,61 @@ public class Superstructure {
         
     }
 
+    /**
+     * Method that tells us which Hub the <STRONG>score()</STRONG> command should target.
+     * @return Pose2d of our alliance's hub.
+     */
+    public static Pose2d whichHub() {
+        if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
+            return blueHub;  
+        }
+        else {
+            return redHub;
+        }
+    }   
+    @Logged
     public void periodic(Pose2d robotPose, ChassisSpeeds velocity, Time latency) { //! UPDATE WHEN SWERVE IS MERGED
-        ShotCalculator shotCalculator = new ShotCalculator(); 
-        shotCalculator.calculate(robotPose, null, getClosestPoint(robotPose), latency);
-        nerdystats = shotCalculator.getShotParameters();
+        passCalculations.resetShotCalculationParameters();  
+        scoreCalculations.resetShotCalculationParameters(); 
+        shotCalculatorPass.calculate(robotPose, velocity, getClosestPassPoint(robotPose), latency);
+        shotCalculatorScore.calculate(robotPose, velocity, whichHub(), latency);
+        passCalculations = shotCalculatorPass.getShotParameters();
+        scoreCalculations = shotCalculatorScore.getShotParameters();
     }
 
 
     public Command score() {
-        
+        return runOnce(() ->
+        shooter.setHoodAngle(scoreCalculations.hoodAngle())
+        .alongWith(
+            turret.setAngleCommand(scoreCalculations.turretAngle()))
+            .andThen(shooter.shootFuel(ShooterK.staticRpm))
+        );
     }
-
-    public Command Pass(AngularVelocity rpm) {
-        Shooter.setHoodAngle(nerdystats.hoodAngle());
-        return;
+    /**
+     * Command used to shoot fuel to the closest of one of two passpoints.
+     * @return 
+     */
+    public Command Pass() {
+        return runOnce(() -> 
+            shooter.setHoodAngle(passCalculations.hoodAngle())
+            .alongWith(
+            turret.setAngleCommand(passCalculations.turretAngle()))
+            .andThen(shooter.shootFuel(ShooterK.staticRpm))
+        );
     }
-
+    /**
+     * Command that sets the shooter to point towards the Hub.
+     * @return
+     */
     public Command trackHub() {
         // May not need due to the program's method of retriving data (shotCalculator)
     }
-
-    public Command zero() {
-
+    /**
+     * 
+     */
+    public void zero() {
+        shooter.setHoodAngle(ShooterK.minHoodAngle);
+        turret.setAngleCommand(Degrees.of(0));
     }
 }
