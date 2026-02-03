@@ -74,7 +74,7 @@ public class ShotCalculator {
 
         //^ 5. Find total exit velocity of the ball
         double totalVelocity = baselineFuelVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
-        double effectiveDistance = Maps.getHoodAngleFromDistance(horizontalVelocityRequired);
+        double effectiveDistance = Maps.getHoodAngleFromDistance(horizontalVelocityRequired); //! Double check this is correct
         double horizontalVelocityFromHood = Maps.getHoodAngleFromDistance(effectiveDistance);
 
         //^ 5a. Find hood target to achieve total exit velocity

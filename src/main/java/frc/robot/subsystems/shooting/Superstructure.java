@@ -122,7 +122,7 @@ public class Superstructure {
      * Command used to shoot fuel to the closest of one of two passpoints.
      * @return 
      */
-    public Command Pass() {
+    public Command pass() {
         return runOnce(() -> 
             shooter.setHoodAngle(passCalculations.hoodAngle())
             .alongWith(
