@@ -36,15 +36,7 @@ import frc.robot.subsystems.Vision;
 public class Superstructure {
     // ^ This class needs to have all of shooter and turret done in order to be made
 
-    //~ Variables
-
-    private final static Pose2d passTargetBlueHigh = Field.passTargetBlueHigh;
-    private final static Pose2d passTargetBlueLow = Field.passTargetBlueLow;
-    private final static Pose2d passTargetRedHigh = Field.passTargetRedHigh;
-    private final static Pose2d passTargetRedLow = Field.passTargetRedLow;
-    private final static Pose2d blueHub = Field.blueHub;
-    private final static Pose2d redHub = Field.redHub;
-
+    //~ Variables & Objects
     ShotCalculator shotCalculatorPass = new ShotCalculator();
     ShotCalculator shotCalculatorScore = new ShotCalculator();
     public static ShotParameters passCalculations;
@@ -52,39 +44,16 @@ public class Superstructure {
     
 
     //~ Subsystems
-
     private static Shooter shooter = new Shooter();
     private static Turret turret = new Turret();
 
+    //~ Methods
     /**
-     * Figures out the closest passpoint from the robot's location.
-     * 
-     * @return The Pose2d of the closest passpoint of the robot's alliance.
+     * Sets the Turret's angle to 0 and the Shooter's hood to it's lowest possible angle.
      */
-    public static Pose2d getClosestPassPoint(Pose2d robotPose) {
-        if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
-            double distanceBlueHigh = passTargetBlueHigh.getTranslation().getDistance(robotPose.getTranslation());
-            double distanceBlueLow = passTargetBlueLow.getTranslation().getDistance(robotPose.getTranslation());
-            
-            if (distanceBlueHigh <= distanceBlueLow) {
-                return passTargetBlueHigh;
-            }
-            else {
-                return passTargetBlueLow;
-            }
-        }
-        else {
-            double distanceRedHigh = passTargetRedHigh.getTranslation().getDistance(robotPose.getTranslation());
-            double distanceRedLow = passTargetRedLow.getTranslation().getDistance(robotPose.getTranslation());
-
-            if (distanceRedHigh <= distanceRedLow) {
-                return passTargetRedHigh;
-            }
-            else {
-                return passTargetRedLow;
-            }
-        }
-        
+    public void zero() {
+        shooter.setHoodAngle(ShooterK.minHoodAngle);
+        turret.setAngleCommand(Degrees.of(0));
     }
 
     /**
@@ -92,24 +61,25 @@ public class Superstructure {
      * @return Pose2d of our alliance's hub.
      */
     public static Pose2d whichHub() {
-        if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
-            return blueHub;  
-        }
-        else {
-            return redHub;
-        }
+        Pose2d hub = (DriverStation.getAlliance().get().equals(Alliance.Blue)) ? (hub = Field.blueHub) : (hub = Field.redHub); // yro'ue welcome chris
+        return hub;
     }   
+
+    //~ Commands
     @Logged
     public void periodic(Pose2d robotPose, ChassisSpeeds velocity, Time latency) { //! UPDATE WHEN SWERVE IS MERGED
         passCalculations.resetShotCalculationParameters();  
         scoreCalculations.resetShotCalculationParameters(); 
-        shotCalculatorPass.calculate(robotPose, velocity, getClosestPassPoint(robotPose), latency);
+        shotCalculatorPass.calculate(robotPose, velocity, Field.getClosestPassPoint(robotPose), latency);
         shotCalculatorScore.calculate(robotPose, velocity, whichHub(), latency);
         passCalculations = shotCalculatorPass.getShotParameters();
         scoreCalculations = shotCalculatorScore.getShotParameters();
     }
 
-
+    /**
+     * Command to score fuel into the hub.
+     * @return
+     */
     public Command score() {
         return runOnce(() ->
         shooter.setHoodAngle(scoreCalculations.hoodAngle())
@@ -118,6 +88,7 @@ public class Superstructure {
             .andThen(shooter.shootFuel(ShooterK.staticRpm))
         );
     }
+
     /**
      * Command used to shoot fuel to the closest of one of two passpoints.
      * @return 
@@ -130,6 +101,7 @@ public class Superstructure {
             .andThen(shooter.shootFuel(ShooterK.staticRpm))
         );
     }
+    
     /**
      * Command that sets the shooter to point towards the Hub.
      * @return
@@ -137,11 +109,5 @@ public class Superstructure {
     public Command trackHub() {
         // May not need due to the program's method of retriving data (shotCalculator)
     }
-    /**
-     * 
-     */
-    public void zero() {
-        shooter.setHoodAngle(ShooterK.minHoodAngle);
-        turret.setAngleCommand(Degrees.of(0));
-    }
+    
 }

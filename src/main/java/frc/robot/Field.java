@@ -46,4 +46,29 @@ public class Field {
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) return blueHub;
         return redHub; // If on red, return red hub 
     }
+    public static Pose2d getClosestPassPoint(Pose2d robotPose) {
+        if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
+            double distanceBlueHigh = passTargetBlueHigh.getTranslation().getDistance(robotPose.getTranslation());
+            double distanceBlueLow = passTargetBlueLow.getTranslation().getDistance(robotPose.getTranslation());
+            
+            if (distanceBlueHigh <= distanceBlueLow) {
+                return passTargetBlueHigh;
+            }
+            else {
+                return passTargetBlueLow;
+            }
+        }
+        else {
+            double distanceRedHigh = passTargetRedHigh.getTranslation().getDistance(robotPose.getTranslation());
+            double distanceRedLow = passTargetRedLow.getTranslation().getDistance(robotPose.getTranslation());
+
+            if (distanceRedHigh <= distanceRedLow) {
+                return passTargetRedHigh;
+            }
+            else {
+                return passTargetRedLow;
+            }
+        }
+        
+    }
 }
