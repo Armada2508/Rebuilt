@@ -34,7 +34,7 @@ public class Constants {
     
     public static class ShooterK { //! find motor ID and proper measurements
         public static final int talonID = 0;
-        public static final int sparkmaxHoodID = 1;
+        public static final int talonHoodID = 1;
 
         public static final Voltage fuelShootVoltage = Volts.of(1);
         public static final Time flywheelSpeedUpTime = Seconds.of(0.5);
