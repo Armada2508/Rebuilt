@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.reduxrobotics.canand.CanandEventLoop;
+
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -40,7 +42,12 @@ public class Robot extends TimedRobot {
 
     }
 
-        @Override
+    @Override
+    public void robotInit() {
+        CanandEventLoop.getInstance();
+    }
+
+    @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
     }
