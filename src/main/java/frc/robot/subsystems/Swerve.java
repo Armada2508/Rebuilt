@@ -25,6 +25,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.reduxrobotics.sensors.canandmag.Canandmag;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -67,6 +68,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backLeft;
     private final TalonFX backRight;
 
+    private final Canandmag backRightEncoder;
+
     private final SysIdRoutine sysIdRoutine; 
 
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
@@ -104,6 +107,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
         backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
         backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
+        backRightEncoder = (Canandmag) swerveDrive.getModules()[3].getAbsoluteEncoder().getAbsoluteEncoder();
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         sysIdRoutine = new SysIdRoutine(
             new SysIdRoutine.Config(

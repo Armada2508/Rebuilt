@@ -1,27 +1,27 @@
 {
   "location": {
-    "front": 12.75,
-    "left": 12.75
+    "front": 10.875,
+    "left": 10.875
   },
   "absoluteEncoderOffset": 0,
   "drive": {
-    "type": "talonfx",
-    "id": 0,
+    "type": "krakenx60",
+    "id": 6,
     "canbus": null
   },
   "angle": {
-    "type": "talonsrx",
-    "id": 4,
+    "type": "krakenx60",
+    "id": 7,
     "canbus": null
   },
   "encoder": {
-    "type": "talonsrx_pwm",
+    "type": "canandmag_can",
     "id": 0,
     "canbus": null
   },
   "inverted": {
-    "drive": true,
-    "angle": true
+    "drive": false,
+    "angle": false
   },
   "absoluteEncoderInverted": false
 }

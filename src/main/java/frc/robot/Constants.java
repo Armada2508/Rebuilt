@@ -105,8 +105,8 @@ public class Constants {
 
 public static class ControllerK {
         public static final int xboxPort = 0;
-        public static final double leftJoystickDeadband = 0.07;
-        public static final double rightJoystickDeadband = 0.07;
+        public static final double leftJoystickDeadband = 0.15;
+        public static final double rightJoystickDeadband = 0.15;
 
         // Teleop Alignment Overriding
         public static final double overrideThreshold = 0.14;
