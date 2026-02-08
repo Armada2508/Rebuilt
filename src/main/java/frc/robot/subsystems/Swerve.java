@@ -63,12 +63,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final SwerveDrive swerveDrive;
     private final Supplier<VisionResults> visionSource; 
 
-    private final TalonFX frontLeft;
-    private final TalonFX frontRight;
-    private final TalonFX backLeft;
-    private final TalonFX backRight;
+    private final TalonFX frontLeftDrive;
+    private final TalonFX frontRightDrive;
+    private final TalonFX backLeftDrive;
+    private final TalonFX backRightDrive;
 
-    private final Canandmag backRightEncoder;
+    private final TalonFX frontLeftSteer;
+    private final TalonFX frontRightSteer;
+    private final TalonFX backLeftSteer;
+    private final TalonFX backRightSteer;
 
     private final SysIdRoutine sysIdRoutine; 
 
@@ -103,11 +106,17 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         }
         swerveDrive = parser.createSwerveDrive(SwerveK.maxPossibleRobotSpeed.in(MetersPerSecond));
         swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(SwerveK.kS, SwerveK.kV, SwerveK.kA));
-        frontLeft = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
-        frontRight = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
-        backLeft = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
-        backRight = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
-        backRightEncoder = (Canandmag) swerveDrive.getModules()[3].getAbsoluteEncoder().getAbsoluteEncoder();
+
+        frontLeftDrive = (TalonFX) swerveDrive.getModules()[0].getDriveMotor().getMotor();
+        frontRightDrive = (TalonFX) swerveDrive.getModules()[1].getDriveMotor().getMotor();
+        backLeftDrive = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
+        backRightDrive = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
+
+        frontLeftSteer = (TalonFX) swerveDrive.getModules()[0].getAngleMotor().getMotor();
+        frontRightSteer = (TalonFX) swerveDrive.getModules()[1].getAngleMotor().getMotor();
+        backLeftSteer = (TalonFX) swerveDrive.getModules()[2].getAngleMotor().getMotor();
+        backRightSteer = (TalonFX) swerveDrive.getModules()[3].getAngleMotor().getMotor();
+
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         sysIdRoutine = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -130,10 +139,15 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
             )
         );
         setupPathPlanner();
-        frontLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
-        frontRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
-        backLeft.getConfigurator().apply(SwerveK.currentLimitsConfig);
-        backRight.getConfigurator().apply(SwerveK.currentLimitsConfig);
+        frontLeftDrive.getConfigurator().apply(SwerveK.driveCurrentLimitsConfig);
+        frontRightDrive.getConfigurator().apply(SwerveK.driveCurrentLimitsConfig);
+        backLeftDrive.getConfigurator().apply(SwerveK.driveCurrentLimitsConfig);
+        backRightDrive.getConfigurator().apply(SwerveK.driveCurrentLimitsConfig);
+
+        frontLeftSteer.getConfigurator().apply(SwerveK.steerCurrentLimitsConfig);
+        frontRightSteer.getConfigurator().apply(SwerveK.steerCurrentLimitsConfig);
+        backLeftSteer.getConfigurator().apply(SwerveK.steerCurrentLimitsConfig);
+        backRightSteer.getConfigurator().apply(SwerveK.steerCurrentLimitsConfig);
     }
 
     @Override

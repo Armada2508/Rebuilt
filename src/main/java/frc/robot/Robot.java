@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         CanandEventLoop.getInstance();
+        //^ This might not be needed, depends on if we need to initialize canandmag encoders in Swerve.java
     }
 
     @Override
