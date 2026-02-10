@@ -5,7 +5,7 @@
 package frc.robot;
 
 import com.reduxrobotics.canand.CanandEventLoop;
-
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -52,7 +52,9 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
     }
-
+    public void configureBindings() {
+        
+    }
     public Command teleopDriveCommand() {
         return swerve.driveCommand(
             () -> {
