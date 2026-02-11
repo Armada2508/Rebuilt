@@ -1,15 +1,11 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-
-import com.ctre.phoenix6.configs.Slot0Configs;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -17,8 +13,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
@@ -66,29 +60,10 @@ public class Constants {
     public static class IndexerK {
         public static final int talonID = 2; //! find
         
-          // indexer current limit configs
+        // indexer current limit configs
         public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
        
         public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
-        /*
-        public static final AngularVelocity maxRPM = DegreesPerSecond.of(0);
-        public static final AngularVelocity minRPM = DegreesPerSecond.of(0);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
-        */
         public static final Time jostleDuration = Seconds.of(0.25);
-
-        /* PID configs for indexer
-        public static final double kP = 0; // find all values
-        public static final double kD = 0;
-        public static final double kV = 0;
-        public static final double kS = 0;
-        
-
-        public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
-        .withKP(kP)
-        .withKD(kD)
-        .withKV(kV)
-        .withKS(kS);
-        */
     }
 }
