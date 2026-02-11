@@ -41,8 +41,8 @@ public class Constants {
         public static final AngularVelocity cruiseVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
 
-        public static final Angle minHoodAngle = Degrees.of(20);
-        public static final Angle maxHoodAngle = Degrees.of(60);
+        public static final Angle minHoodAngle = Degrees.of(62.8); //! double check that these seem ok before testing?
+        public static final Angle maxHoodAngle = Degrees.of(102.3);
 
         public static final AngularVelocity minRpm = RPM.of(0);
         public static final AngularVelocity staticRpm = RPM.of(0); //! Final
