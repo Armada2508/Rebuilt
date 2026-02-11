@@ -189,7 +189,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public Command driveCommand(DoubleSupplier TranslationX, DoubleSupplier TranslationY, DoubleSupplier angularVelocity, boolean fieldRelative, boolean openLoop) {
         return runOnce(() -> {
-            Translation2d translation = new Translation2d(TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity() );
+            Translation2d translation = new Translation2d(TranslationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(), TranslationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity());
             AngularVelocity rotation = RadiansPerSecond.of(angularVelocity.getAsDouble() * (swerveDrive.getMaximumChassisVelocity() / SwerveK.driveBaseRadius.in(Meters)));
             drive(Robot.onRedAlliance() ? translation.unaryMinus() : translation, rotation, fieldRelative, openLoop);
         }).withName("Swerve Drive");
