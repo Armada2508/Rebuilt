@@ -41,7 +41,7 @@ public class Turret extends SubsystemBase {
      */
     private void configTalons() {
         Util.factoryReset(talon);
-        Util.brakeMode(talon); // We likely want to use brake for the turret, double check though
+        Util.brakeMode(talon); // Ian says brakeMode should be ok
         talon.getConfigurator().apply(TurretK.pidConfig);
         talon.getConfigurator().apply(TurretK.softwareLimitSwitchConfig);
         talon.getConfigurator().apply(TurretK.currentLimitConfig);

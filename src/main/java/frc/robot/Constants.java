@@ -41,12 +41,23 @@ public class Constants {
         public static final AngularVelocity cruiseVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
 
-        public static final Angle minHoodAngle = Degrees.of(62.8); //! double check that these seem ok before testing?
-        public static final Angle maxHoodAngle = Degrees.of(102.3);
+        public static final Angle minHoodAngle = Degrees.of(23.35); //! double check that these seem ok before testing?
+        public static final Angle maxHoodAngle = Degrees.of(62.8);
 
         public static final AngularVelocity minRpm = RPM.of(0);
         public static final AngularVelocity staticRpm = RPM.of(0); //! Final
         public static final AngularVelocity maxRpm = RPM.of(0); //! Find
+
+        public static final double kP = 0; //! tune
+        public static final double kD = 0; //! tune
+        public static final double kS = 0; //! tune
+        public static final double kV = 0; //! tune
+
+        public static final Slot0Configs pidConfig = new Slot0Configs()
+        .withKP(kP)
+        .withKD(kD)
+        .withKS(kS)
+        .withKV(kV);
         
     }
     public static class TurretK {

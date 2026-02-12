@@ -46,18 +46,27 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * The talons NeutralMode need to be set as coastMode for the longevity of the motor
-     * (brakeMode may cause damage)
+     * talonShoter NeutralMode needs to be set as coastMode for the longevity of the motor
+     * (brakeMode may cause damage in a fast moving motor)
      */
     public void configTalons() {
         Util.factoryReset(talonShooter, talonHood);
-        Util.coastMode(talonShooter, talonHood);  //!Find out if talonHood needs to be set in coastmode
+        Util.coastMode(talonShooter);
+        talonShooter.getConfigurator().apply(ShooterK.softwareLimitSwitchConfig);
+        talonShooter.getConfigurator().apply(ShooterK.currentLimitConfig);
+        //! ask mechanical if we need gear ratio
+        Util.brakeMode(talonHood);
+        talonHood.getConfigurator().apply(ShooterK.pidConfig);
+        talonHood.getConfigurator().apply(ShooterK.softwareLimitSwitchConfig);
+        talonHood.getConfigurator().apply(ShooterK.currentLimitConfig);
+        talonHood.getConfigurator().apply(ShooterK.gearRatioConfig);
     }
 
     public void configMotionMagic() {
         MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
         .withMotionMagicAcceleration(ShooterK.maxAcceleration)
         .withMotionMagicCruiseVelocity(ShooterK.cruiseVelocity);
+        talonHood.getConfigurator().apply(motionMagicConfig);
     }
     
     //public void configMaxMotion(AngularVelocity velocity, AngularAcceleration acceleration) {
