@@ -36,28 +36,38 @@ public class Constants {
         public static final int talonID = 0;
         public static final int talonHoodID = 1;
 
+        //& ?
         public static final Voltage fuelShootVoltage = Volts.of(1);
-        public static final Time flywheelSpeedUpTime = Seconds.of(0.5);
+
+        //& Motion Magic
         public static final AngularVelocity cruiseVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
 
+        //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35); //! double check that these seem ok before testing?
         public static final Angle maxHoodAngle = Degrees.of(62.8);
 
+        //& Shooter rpm limit
         public static final AngularVelocity minRpm = RPM.of(0);
         public static final AngularVelocity staticRpm = RPM.of(0); //! Final
         public static final AngularVelocity maxRpm = RPM.of(0); //! Find
 
+        //& Gear Ratios
+        public static final double motorToHoodGearRatio = 0; //! ask mechanical and fix name if needed
+
+        //& PID
         public static final double kP = 0; //! tune
         public static final double kD = 0; //! tune
         public static final double kS = 0; //! tune
         public static final double kV = 0; //! tune
 
+        //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(0); //! Find / Verify
         public static final Current hoodMaxSupplyCurrent = Amps.of(0); //! Find / Verify
         public static final Current shooterMaxStatorCurrent = Amps.of(0); //! Find / Verify
         public static final Current shooterMaxSupplyCurrent = Amps.of(0); //! Find / Verify
 
+        //& Configs
         public static final Slot0Configs pidConfig = new Slot0Configs()
         .withKP(kP)
         .withKD(kD)
@@ -69,6 +79,12 @@ public class Constants {
         .withForwardSoftLimitThreshold(maxHoodAngle)
         .withReverseSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(maxHoodAngle);
+
+        public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(minRpm.in(RPM))
+        .withReverseSoftLimitEnable(true)
+        .withReverseSoftLimitThreshold(maxRpm.in(RPM));
         
         public static final CurrentLimitsConfigs hoodCurrentLimitsConfigs = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
@@ -81,6 +97,9 @@ public class Constants {
         .withSupplyCurrentLimitEnable(true)
         .withStatorCurrentLimit(shooterMaxStatorCurrent)
         .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
+
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
+        .withSensorToMechanismRatio(motorToHoodGearRatio);
     }
     public static class TurretK {
         public static final int talonId = 0; //! Find

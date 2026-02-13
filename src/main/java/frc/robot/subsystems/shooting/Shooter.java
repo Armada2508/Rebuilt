@@ -46,22 +46,26 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * talonShoter NeutralMode needs to be set as coastMode for the longevity of the motor
+     * Configures the motors
+     * talonShooter NeutralMode needs to be set as coastMode for the longevity of the motor
      * (brakeMode may cause damage in a fast moving motor)
      */
     public void configTalons() {
         Util.factoryReset(talonShooter, talonHood);
         Util.coastMode(talonShooter);
-        talonShooter.getConfigurator().apply(ShooterK.softwareLimitSwitchConfig);
-        talonShooter.getConfigurator().apply(ShooterK.currentLimitConfig);
-        //! ask mechanical if we need gear ratio
+        talonShooter.getConfigurator().apply(ShooterK.shooterSoftwareLimitSwitchConfig);
+        talonShooter.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
+        //! ask mechanical if we need gear ratio, we probably won't though
         Util.brakeMode(talonHood);
         talonHood.getConfigurator().apply(ShooterK.pidConfig);
-        talonHood.getConfigurator().apply(ShooterK.softwareLimitSwitchConfig);
-        talonHood.getConfigurator().apply(ShooterK.currentLimitConfig);
+        talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
+        talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
         talonHood.getConfigurator().apply(ShooterK.gearRatioConfig);
     }
 
+    /**
+     * Configures MotionMagic and applies it to talonHood
+     */
     public void configMotionMagic() {
         MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
         .withMotionMagicAcceleration(ShooterK.maxAcceleration)
@@ -84,8 +88,6 @@ public class Shooter extends SubsystemBase {
     }
     /**
      * Function that returns the Angular Velocity of talonShooter
-     *
-     *
      * @return
      */
     public AngularVelocity getMotorVelocity() {
@@ -106,6 +108,9 @@ public class Shooter extends SubsystemBase {
         return runOnce(() -> talonHood.setPosition(targetAngle.in(Degrees)));
     }
 
+    /**
+     * sets talonShooter to its NeutralMode so the motor stops moving
+     */
     public void stop() {
         talonShooter.setControl(new NeutralOut());
     }
