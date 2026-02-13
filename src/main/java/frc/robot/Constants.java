@@ -53,12 +53,34 @@ public class Constants {
         public static final double kS = 0; //! tune
         public static final double kV = 0; //! tune
 
+        public static final Current hoodMaxStatorCurrent = Amps.of(0); //! Find / Verify
+        public static final Current hoodMaxSupplyCurrent = Amps.of(0); //! Find / Verify
+        public static final Current shooterMaxStatorCurrent = Amps.of(0); //! Find / Verify
+        public static final Current shooterMaxSupplyCurrent = Amps.of(0); //! Find / Verify
+
         public static final Slot0Configs pidConfig = new Slot0Configs()
         .withKP(kP)
         .withKD(kD)
         .withKS(kS)
         .withKV(kV);
+
+        public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(maxHoodAngle)
+        .withReverseSoftLimitEnable(true)
+        .withReverseSoftLimitThreshold(maxHoodAngle);
         
+        public static final CurrentLimitsConfigs hoodCurrentLimitsConfigs = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(hoodMaxStatorCurrent)
+        .withSupplyCurrentLimit(hoodMaxSupplyCurrent);
+
+        public static final CurrentLimitsConfigs shooterCurrentLimitsConfigs = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(shooterMaxStatorCurrent)
+        .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
     }
     public static class TurretK {
         public static final int talonId = 0; //! Find

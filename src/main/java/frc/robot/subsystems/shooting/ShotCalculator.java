@@ -104,7 +104,7 @@ public class ShotCalculator {
         return this.shotParametersInstance;
     }
 
-    private void resetShotParameters() {
+    public void resetShotParameters() {
         this.shotParametersInstance = new ShotParameters(Degrees.of(0), Degrees.of(0));
     }
 
@@ -112,7 +112,7 @@ public class ShotCalculator {
         return this.shotCalculationParametersInstance;
     }
 
-    private void resetShotCalculationParameters() {
+    public void resetShotCalculationParameters() {
         this.shotCalculationParametersInstance = new ShotCalculationParameters(Degrees.of(0), Seconds.of(0));
     }
 

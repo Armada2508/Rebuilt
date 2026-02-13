@@ -68,8 +68,8 @@ public class Superstructure {
     //~ Commands
     @Logged
     public void periodic(Pose2d robotPose, ChassisSpeeds velocity, Time latency) { //! UPDATE WHEN SWERVE IS MERGED
-        passCalculations.resetShotCalculationParameters();  
-        scoreCalculations.resetShotCalculationParameters(); 
+        shotCalculatorPass.resetShotCalculationParameters();  
+        shotCalculatorScore.resetShotCalculationParameters(); 
         shotCalculatorPass.calculate(robotPose, velocity, Field.getClosestPassPoint(robotPose), latency);
         shotCalculatorScore.calculate(robotPose, velocity, whichHub(), latency);
         passCalculations = shotCalculatorPass.getShotParameters();
