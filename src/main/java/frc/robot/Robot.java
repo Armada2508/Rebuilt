@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
@@ -25,7 +27,7 @@ import frc.robot.subsystems.Vision;
 
 @Logged
 public class Robot extends TimedRobot {
-    private final XboxController xboxController = new XboxController(ControllerK.xboxPort);
+    private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
 
     @Logged
     private Vision vision = new Vision();
@@ -39,7 +41,7 @@ public class Robot extends TimedRobot {
         DriverStation.silenceJoystickConnectionWarning(true);
         Epilogue.bind(this);
         swerve.setDefaultCommand(teleopDriveCommand());
-
+        configureBindings();
     }
 
     @Override
@@ -52,9 +54,13 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
     }
+
     public void configureBindings() {
-        
+        xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
+        xboxController.a().whileTrue(swerve.faceWheelsForward());
+        xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
     }
+
     public Command teleopDriveCommand() {
         return swerve.driveCommand(
             () -> {

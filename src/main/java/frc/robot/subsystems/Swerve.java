@@ -112,6 +112,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         backLeftDrive = (TalonFX) swerveDrive.getModules()[2].getDriveMotor().getMotor();
         backRightDrive = (TalonFX) swerveDrive.getModules()[3].getDriveMotor().getMotor();
 
+        frontLeftDrive.getPosition();
+
         frontLeftSteer = (TalonFX) swerveDrive.getModules()[0].getAngleMotor().getMotor();
         frontRightSteer = (TalonFX) swerveDrive.getModules()[1].getAngleMotor().getMotor();
         backLeftSteer = (TalonFX) swerveDrive.getModules()[2].getAngleMotor().getMotor();

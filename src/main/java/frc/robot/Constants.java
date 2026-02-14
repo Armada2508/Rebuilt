@@ -50,13 +50,13 @@ import edu.wpi.first.wpilibj.Filesystem;
 
 public class Constants {
     public static class SwerveK {
-        public static final Distance driveBaseRadius = Inches.of(Math.hypot(12.75, 12.75));
-        public static final Distance driveBaseLength = Inches.of(35); // Base is a square so this is the same as the width
+        public static final Distance driveBaseRadius = Inches.of(15.37957);
+        public static final Distance driveBaseLength = Inches.of(27); // Base is a square so this is the same as the width
         public static final Time coastDisableTime = Seconds.of(10);
 
         // Currently Unused
-        public static final double steerGearRatio = 41.25; 
-        public static final double driveGearRatio = 4.4;
+        // public static final double steerGearRatio = 41.25; 
+        // public static final double driveGearRatio = 4.4;
 
         public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
         public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
@@ -122,16 +122,16 @@ public static class ControllerK {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 1;
-        public static final double rotationSpeedModifier = 1;
+        public static final double driveSpeedModifier = 0.1;
+        public static final double rotationSpeedModifier = 0.1;
         public static final double exponentialControl = 1.75;
     }
   
     public static class VisionK {
-        public static final String frontCameraName = "ArducamFront"; // 7.5, 34.77, 5.22
-        public static final String backCameraName = "ArducamBack"; 
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(0.577), Inches.of(-1.023), Inches.of(29.223), new Rotation3d(Degrees.of(11.5), Degrees.of(30.75), Degrees.of(5.8)));
-        public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
+        public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
+        // public static final String backCameraName = "ArducamBack";
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(-2), Inches.of(13), Inches.of(4.25), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+        // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);
