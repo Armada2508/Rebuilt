@@ -81,11 +81,13 @@ public class Shooter extends SubsystemBase {
     //    sparkmaxHood.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     //}
 
-    public Command setShooterVoltage(Voltage voltage) {
-        return runOnce(() -> {
-            talonShooter.setControl(new VoltageOut(voltage.in(Volts)));
-        }).withName("Set Shooter Voltage");
-    }
+    //public Command setShooterVoltage(Voltage voltage) {
+    //    return runOnce(() -> {
+    //        talonShooter.setControl(new VoltageOut(voltage.in(Volts)));
+    //    }).withName("Set Shooter Voltage");
+    //}
+    //^ I don't think we're using voltage to control the shooter so I don't believe this is needed
+
     /**
      * Function that returns the Angular Velocity of talonShooter
      * @return

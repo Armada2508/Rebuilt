@@ -106,8 +106,7 @@ public class Superstructure {
      * Command that sets the shooter to point towards the Hub.
      * @return
      */
-    public Command trackHub() {
-        // May not need due to the program's method of retriving data (shotCalculator)
-    }
-    
+    //public Command trackHub() {
+    //}
+        //^ May not need due to the program's method of retriving data (shotCalculator)
 }
