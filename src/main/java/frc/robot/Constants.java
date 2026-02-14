@@ -36,15 +36,12 @@ public class Constants {
         public static final int talonID = 0;
         public static final int talonHoodID = 1;
 
-        //& ?
-        public static final Voltage fuelShootVoltage = Volts.of(1);
-
         //& Motion Magic
         public static final AngularVelocity cruiseVelocity = DegreesPerSecond.of(0);
         public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
 
         //& Hood angle limit
-        public static final Angle minHoodAngle = Degrees.of(23.35); //! double check that these seem ok before testing?
+        public static final Angle minHoodAngle = Degrees.of(23.35);
         public static final Angle maxHoodAngle = Degrees.of(62.8);
 
         //& Shooter rpm limit
@@ -53,7 +50,8 @@ public class Constants {
         public static final AngularVelocity maxRpm = RPM.of(0); //! Find
 
         //& Gear Ratios
-        public static final double motorToHoodGearRatio = 0; //! ask mechanical and fix name if needed
+        public static final double motorToEncoderGearRatio = 20/1; //these numbers should be right now
+        public static final double motorToHoodGearRatio = 800/350;
 
         //& PID
         public static final double kP = 0; //! tune
@@ -111,8 +109,8 @@ public class Constants {
         public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
         
         //& Gear Ratios
-        public static final double krakenToTurretGearRatio = 0; //! Ask mechanical
-        public static final double encoderToTurretGearRatio = 0; //! Ask Mechanical
+        public static final double krakenToTurretGearRatio = 50/1; //these numbers should be right now
+        public static final double encoderToTurretGearRatio = 10/1;
 
         //& Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! Find
