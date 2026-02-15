@@ -1,79 +1,38 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerK;
+import frc.robot.lib.util.Util;
 
-import static edu.wpi.first.units.Units.Volts;
+@Logged
+public class Indexer extends SubsystemBase{
+    //! This is a TEMPORARY class for week 0 because of current archcitechture.
+    //! This should eventually be put inside IndexerOld.java before Winona
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+    private TalonFX talon = new TalonFX(IndexerK.id);
 
-public class Indexer extends SubsystemBase {
-    private final TalonSRX indexer = new TalonSRX(IndexerK.talonID);
-
-    /**
-     * The method for running the indexer
-     */
     public Indexer() {
         configTalons();
     }
 
-    /**
-     * Resets then applies the configurations to the motors
-     */
-    private void configTalons() {
-        indexer.configFactoryDefault();
-        indexer.setNeutralMode(NeutralMode.Coast);
+    public void configTalons() {
+        Util.factoryReset(talon);
+        Util.coastMode(talon);
+        talon.getConfigurator().apply(IndexerK.currentLimitConfig);
     }
 
-    /**
-     * sets the Indexer to spin forward
-     */
-    public void spinIndexer() {
-        //indexer.set(ControlMode.MotionMagic, IndexerK.spinIndexerVoltage.in(Volts));
-        indexer.set(ControlMode.Velocity, IndexerK.spinindexerVoltage.in(Volts));
+    public void index() {
+        talon.setVoltage(IndexerK.indexingVoltage.in(Volts));
     }
 
-    /**
-     * sets Indexer to spin backwards
-     */
-     public void spinIndexerNegative() {
-        //indexer.set(ControlMode.MotionMagic, -IndexerK.spinIndexerVoltage.in(Volts));
-        indexer.set(ControlMode.Velocity, -IndexerK.spinindexerVoltage.in(Volts));
-    }
-
-    /**
-     * Moves the indexer back and forth to jostle the fuel
-     */
-    public Command jostle() {
-       return runOnce(() -> {
-            spinIndexer();
-    })
-        .withTimeout(IndexerK.jostleDuration)
-        .andThen(() -> {
-                spinIndexerNegative();
-    })
-        .withTimeout(IndexerK.jostleDuration)
-        .andThen(() -> {
-                spinIndexer();
-    })
-        .withTimeout(IndexerK.jostleDuration)
-        .andThen(() -> {
-                spinIndexerNegative();
-    })
-        .withTimeout(IndexerK.jostleDuration);
-    }
-
-    /** 
-     * Sets motor to neutral so it stops running
-     */
-    public void stop() {
-        indexer.neutralOutput();
+    public Command setAngleCommand(Angle targetAngle) {
+        return runOnce(() -> index()); //! Check
     }
 }
-
-
-
-
