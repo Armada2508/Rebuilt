@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
+import frc.robot.commands.Routines;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
         Epilogue.bind(this);
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
+        
     }
 
     @Override
@@ -59,6 +61,9 @@ public class Robot extends TimedRobot {
         xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         xboxController.a().whileTrue(swerve.faceWheelsForward());
         xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
+
+        xboxController.y().onTrue(Routines.alignToHubPID(swerve));
+    
     }
 
     public Command teleopDriveCommand() {

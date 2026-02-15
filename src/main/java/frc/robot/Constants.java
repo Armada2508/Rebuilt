@@ -122,15 +122,16 @@ public static class ControllerK {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.1;
-        public static final double rotationSpeedModifier = 0.1;
+        public static final double driveSpeedModifier = 0.167;
+        public static final double rotationSpeedModifier = 0.167;
         public static final double exponentialControl = 1.75;
     }
   
     public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         // public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(-2), Inches.of(13), Inches.of(4.25), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(16), Degrees.of(0)));
+        //                                                                      
         // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);

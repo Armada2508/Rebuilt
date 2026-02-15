@@ -26,8 +26,6 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
-import frc.robot.Constants.VisionK;
-import frc.robot.Field;
 
 @Logged
 public class Vision extends SubsystemBase {
@@ -40,7 +38,7 @@ public class Vision extends SubsystemBase {
     private final StructPublisher<Pose3d> pubFront = table.getStructTopic(VisionK.frontCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
     // private final StructPublisher<Pose3d> pubBack = table.getStructTopic(VisionK.backCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
     private PhotonPipelineResult frontLatestResult;
-    private PhotonPipelineResult backLatestResult;
+    // private PhotonPipelineResult backLatestResult;
 
     @SuppressWarnings("removal")
     @Override
@@ -123,10 +121,10 @@ public class Vision extends SubsystemBase {
         }
         if (numTags == 0) return VisionK.untrustedStdDevs;
         Matrix<N3, N1> stdDevs;
+        stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
         if (numTags == 1) {
             stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
         }
-        stdDevs = VisionK.multiTagStdDevs.times(stdevScalar);
         // if (name == VisionK.backCameraName) {
             // stdDevs = stdDevs.times(4);
         // }

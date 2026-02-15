@@ -93,7 +93,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     //~ ============ GENERAL / SETUP =============================================================================================
 
-    public Swerve(Supplier<VisionResults> visionSource /* NOT IN REBUILT */, BooleanSupplier overridePathFollowing) {
+    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.visionSource = visionSource; 
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
