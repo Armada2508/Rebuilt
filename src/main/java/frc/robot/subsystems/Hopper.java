@@ -17,7 +17,7 @@ public class Hopper {
      * Checks if the range of the top TOF sensor has a valid measurement after it measures a distance
      * @return
      */
-    public boolean isTOFRangeValid() {
+    public boolean isTOFTopRangeValid() {
         return timeOfFlightTop.isRangeValid();
     }
     /**
@@ -31,14 +31,14 @@ public class Hopper {
      * Detects if the hopper if full
      * @return
      */
-    public boolean isHopperFull() {
-        return Util.inRange(timeOfFlightTop.getRange(), HopperK.hopperDetectionRange.in(Inches));
+    public boolean isFull() {
+        return Util.inRange(timeOfFlightTop.getRange(), HopperK.hopperTopDetectionRange.in(Inches));
     }
     /**
      * Detects if there is fuel in the hopper
      * @return
      */
-    public boolean isThereFuel() {
-        return Util.inRange(timeOfFlightBottom.getRange(), HopperK.hopperDetectionRange.in(Inches));
+    public boolean hasFuel() {
+        return Util.inRange(timeOfFlightBottom.getRange(), HopperK.hopperBottomDetectionRange.in(Inches));
     }
 }
