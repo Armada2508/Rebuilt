@@ -50,14 +50,18 @@ public class Constants {
         public static final AngularVelocity maxRpm = RPM.of(0); //! Find
 
         //& Gear Ratios
-        public static final double motorToEncoderGearRatio = 20/1; //these numbers should be right now
+        public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
         public static final double motorToHoodGearRatio = 800/350;
 
         //& PID
-        public static final double kP = 0; //! tune
-        public static final double kD = 0; //! tune
-        public static final double kS = 0; //! tune
-        public static final double kV = 0; //! tune
+        public static final double hkP = 0; //! tune
+        public static final double hkD = 0; //! tune
+        public static final double hkS = 0; //! tune
+        public static final double hkV = 0; //! tune
+
+        public static final double skP = 0; //! tune
+        public static final double skD = 0; //! tune
+        public static final double skV = 0; //! tune
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(0); //! Find / Verify
@@ -66,11 +70,16 @@ public class Constants {
         public static final Current shooterMaxSupplyCurrent = Amps.of(0); //! Find / Verify
 
         //& Configs
-        public static final Slot0Configs pidConfig = new Slot0Configs()
-        .withKP(kP)
-        .withKD(kD)
-        .withKS(kS)
-        .withKV(kV);
+        public static final Slot0Configs hoodPidConfig = new Slot0Configs()
+        .withKP(hkP)
+        .withKD(hkD)
+        .withKS(hkS)
+        .withKV(hkV);
+
+        public static final Slot0Configs shooterPidConfig = new Slot0Configs()
+        .withKP(skP)
+        .withKD(skD)
+        .withKV(skV);
 
         public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
         .withForwardSoftLimitEnable(true)
@@ -109,8 +118,8 @@ public class Constants {
         public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
         
         //& Gear Ratios
-        public static final double krakenToTurretGearRatio = 50/1; //these numbers should be right now
-        public static final double encoderToTurretGearRatio = 10/1;
+        public static final double krakenToTurretGearRatio = 50; //these numbers should be right now
+        public static final double encoderToTurretGearRatio = 10;
 
         //& Motion Magic
         public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! Find
@@ -156,10 +165,7 @@ public class Constants {
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
         .withSensorToMechanismRatio(krakenToTurretGearRatio);
     }
-
-    public static class SuperstructureK {
-        //? Might not be needed?
-    }
+    
     public static class VisionK {
         public static final String frontCameraName = "ArducamFront"; // 7.5, 34.77, 5.22
         public static final String backCameraName = "ArducamBack"; 

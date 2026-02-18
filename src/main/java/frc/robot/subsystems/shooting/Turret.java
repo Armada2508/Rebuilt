@@ -28,7 +28,6 @@ public class Turret extends SubsystemBase {
      */
     private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(TurretK.channel, TurretK.fullRange.in(Degrees), TurretK.expectedZero.in(Degrees));
 
-
     public Turret() {
         configTalons();
         configMotionMagic();
@@ -41,7 +40,7 @@ public class Turret extends SubsystemBase {
      */
     private void configTalons() {
         Util.factoryReset(talon);
-        Util.brakeMode(talon); // Ian says brakeMode should be ok
+        Util.brakeMode(talon);
         talon.getConfigurator().apply(TurretK.pidConfig);
         talon.getConfigurator().apply(TurretK.softwareLimitSwitchConfig);
         talon.getConfigurator().apply(TurretK.currentLimitConfig);
@@ -58,16 +57,12 @@ public class Turret extends SubsystemBase {
         .withMotionMagicAcceleration(TurretK.maxAcceleration)
         .withMotionMagicCruiseVelocity(TurretK.maxVelocity);
         talon.getConfigurator().apply(motionMagicConfig);
-
     }
 
     private void configAbsoluteEncoder() {
         absoluteEncoder.setInverted(false); //! Verify this, because the dead gear and the turret gear spin in different directions, this may be needed
-        absoluteEncoder.setAssumedFrequency(0); //^ 1000 Hz if we use the REV Throughbore, 244 Hz if we use the CTRE Mag Encoder
-    }
-
-    @Override
-    public void periodic() {
+       absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
+        //! Verify if it is a throughbore v1 or v2 when possible
     }
 
     /**
@@ -75,7 +70,6 @@ public class Turret extends SubsystemBase {
      * @param targetAngle The target angle
      */
     public void setAngle(Angle targetAngle) {
-        // talon.setControl(yawControl.withPosition(translateYaw(targetAngle)));
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle.in(Rotations)); //^ Verify if we need to do the .in()
         talon.setControl(request);
     }
@@ -88,7 +82,6 @@ public class Turret extends SubsystemBase {
      */
     public Command setAngleCommand(Angle targetAngle) {
         return runOnce(() -> setAngle(targetAngle)); //! Check
-
     }
 
     /**
@@ -123,5 +116,4 @@ public class Turret extends SubsystemBase {
     public void stop() {
         talon.setControl(new NeutralOut());
     }
-
 }

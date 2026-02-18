@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Degrees;
 // import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 // import com.ctre.phoenix6.controls.Volt;
 
@@ -53,11 +54,12 @@ public class Shooter extends SubsystemBase {
     public void configTalons() {
         Util.factoryReset(talonShooter, talonHood);
         Util.coastMode(talonShooter);
-        talonShooter.getConfigurator().apply(ShooterK.shooterSoftwareLimitSwitchConfig);
-        talonShooter.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
-        //! ask mechanical if we need gear ratio, we probably won't though
         Util.brakeMode(talonHood);
-        talonHood.getConfigurator().apply(ShooterK.pidConfig);
+
+        talonShooter.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
+        talonShooter.getConfigurator().apply(ShooterK.shooterPidConfig);
+        //! ask mechanical if we need gear ratio, we probably won't though
+        talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
         talonHood.getConfigurator().apply(ShooterK.gearRatioConfig);
@@ -96,24 +98,46 @@ public class Shooter extends SubsystemBase {
         return talonShooter.getVelocity().getValue().div(60);
     }
 
+    /**
+     * Sets the shooter to a set RPM
+     * @param rpm The RPM to shoot at
+     * @return
+     */
     public Command setShooterVelocity(AngularVelocity rpm) {
         return runOnce(() -> talonShooter.setControl(new VelocityVoltage(rpm)));
     }
 
-    public Command shootFuel(AngularVelocity velocity) {
-        return setShooterVelocity(velocity);
-    }
-
-    //! double check if this is right
-    public Command setHoodAngle(Angle targetAngle) {
-        //return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
-        return runOnce(() -> talonHood.setPosition(targetAngle.in(Degrees)));
+    /**
+     * Shoots the fuel at a static RPM
+     * @return
+     */
+    public Command shootFuel() {
+        return setShooterVelocity(ShooterK.staticRpm);
     }
 
     /**
-     * sets talonShooter to its NeutralMode so the motor stops moving
+     * Sets the hood to a target angle using Motion Magic
+     * @param targetAngle Angle to set the hood to
+     * @return runnable containing a command to command the talon
+     */
+    public Command setHoodAngle(Angle targetAngle) {
+        //return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
+        MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
+        return runOnce(() -> talonHood.setControl(request));
+    }
+
+    /**
+     * Sets the hood to its minimum angle
+     */
+    public void zeroHood() {
+        talonHood.setPosition(ShooterK.minHoodAngle);
+    }
+
+    /**
+     * Stops the shooter and the hood motors from moving
      */
     public void stop() {
         talonShooter.setControl(new NeutralOut());
+        talonHood.setControl(new NeutralOut());
     }
 }

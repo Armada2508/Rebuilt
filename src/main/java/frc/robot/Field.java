@@ -46,6 +46,7 @@ public class Field {
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) return blueHub;
         return redHub; // If on red, return red hub 
     }
+
     public static Pose2d getClosestPassPoint(Pose2d robotPose) {
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
             double distanceBlueHigh = passTargetBlueHigh.getTranslation().getDistance(robotPose.getTranslation());

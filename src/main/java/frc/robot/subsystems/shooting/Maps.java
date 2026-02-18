@@ -5,16 +5,19 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 public class Maps {
     /**
      * Makes an interpolating tree map for the hood angle
+     * (Distance, Hood Angle)
      */
     public static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
     /**
      * Makes an interpolating tree map for the air time
+     * (Hood Angle, Fuel Air Time)
      */
     public static InterpolatingDoubleTreeMap fuelAirTimeMap = new InterpolatingDoubleTreeMap();
 
     /**
      * Makes an interpolating tree map for the distance from hood angle
+     * (Hood Angle, Distance)
      */
     public static InterpolatingDoubleTreeMap distanceHoodAngleMap = new InterpolatingDoubleTreeMap();
 
