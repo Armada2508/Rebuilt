@@ -3,9 +3,13 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Voltage;
@@ -16,9 +20,10 @@ import frc.robot.Constants.IntakeK;
 @Logged
 public class Intake extends SubsystemBase{
 
+
     private final SparkMax extender = new SparkMax(IntakeK.extenderID, MotorType.kBrushless);
     private final SparkMax wheels = new SparkMax(IntakeK.wheelsID, MotorType.kBrushless);
-
+    
     public Intake() {
         configSparkMaxs();
     }
@@ -27,10 +32,10 @@ public class Intake extends SubsystemBase{
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
         SparkMaxConfig wheelsConfig = new SparkMaxConfig();
         
-        extenderConfig.idleMode(IdleMode.kCoast);
+        extenderConfig.idleMode(IdleMode.kBrake);
         extenderConfig.smartCurrentLimit(IntakeK.extenderCurrentLimit);
 
-        wheelsConfig.idleMode(IdleMode.kBrake);
+        wheelsConfig.idleMode(IdleMode.kCoast);
         wheelsConfig.smartCurrentLimit(IntakeK.wheelsCurrentLimit);
 
         extenderConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
@@ -38,20 +43,42 @@ public class Intake extends SubsystemBase{
 
         wheelsConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         wheels.configure(wheelsConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-         
-    }
+
+    SparkMaxConfig config = new SparkMaxConfig();
+
+    config.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
+    config.limitSwitch.forwardLimitSwitchType(
+        LimitSwitchConfig.Type.kNormallyOpen
+    );
+
+    extender.configure(config, SparkMax.ResetMode.kResetSafeParameters,
+                        SparkMax.PersistMode.kPersistParameters);
+}
+    
 
     /**
-     * Declares that it is a voltage output for both extender and wheels
+     * Declares that it is a voltage output for extender
      * @param volts
      * @return
      */
-    private Command setVoltage(Voltage volts) {
+    private Command setVoltageExtender(Voltage volts) {
         return runOnce(() -> {
             extender.setVoltage(volts);
             wheels.setVoltage(volts);
         })
-        .withName("Set Voltage");
+        .withName("Set Extender Voltage");
+    }
+    /**
+     * Declares that it is a voltage output for wheels
+     * @param volts
+     * @return
+     */
+    private Command setVoltageWheels(Voltage volts) {
+        return runOnce(() -> {
+            extender.setVoltage(volts);
+            wheels.setVoltage(volts);
+        })
+        .withName("Set Wheels Voltage");
     }
     
     /**
@@ -60,7 +87,7 @@ public class Intake extends SubsystemBase{
      */
     public Command extend() { 
         return runOnce(() -> {
-            setVoltage(IntakeK.extendVoltage);
+            setVoltageExtender(IntakeK.extendVoltage);
        })
        .withName("Extended");
     }
@@ -71,7 +98,7 @@ public class Intake extends SubsystemBase{
      */
     public Command retract() {
         return runOnce(() -> {
-            setVoltage(IntakeK.extendVoltage.unaryMinus());
+            setVoltageWheels(IntakeK.extendVoltage.unaryMinus());
         })
         .withName("Retracted");
     }
@@ -79,8 +106,12 @@ public class Intake extends SubsystemBase{
     /**
      * Spins intake wheels/motors via spinWheelsVoltage
      */
-    public void spinWheels() { 
-        wheels.setVoltage(IntakeK.spinWheelsVoltage); //! find value
+
+    public Command spinWheels() { 
+        return runOnce(() -> {
+            wheels.setVoltage(IntakeK.spinWheelsVoltage); //! find value
+        })
+        .withName("Spinning");
     }
 
     /**

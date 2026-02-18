@@ -3,6 +3,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.revrobotics.spark.config.SoftLimitConfig;
+
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.Inches;
@@ -27,10 +29,14 @@ public class Constants {
 
         // Arm current limit configs
         public static final int extenderCurrentLimit = 0; //! find
+        public static final int extenderForwardLimit = 0;
+        public static final int extenderReverseLimit = 0;
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
         public static final Voltage extendVoltage = Volts.of(0);
+
+        
     }
 
         
