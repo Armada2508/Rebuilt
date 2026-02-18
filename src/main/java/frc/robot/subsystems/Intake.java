@@ -33,15 +33,8 @@ public class Intake extends SubsystemBase {
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
         SparkMaxConfig wheelsConfig = new SparkMaxConfig();
         
-        extenderConfig.idleMode(IdleMode.kBrake);
-        extenderConfig.smartCurrentLimit(IntakeK.extenderCurrentLimit);
-
         wheelsConfig.idleMode(IdleMode.kCoast);
         wheelsConfig.smartCurrentLimit(IntakeK.wheelsCurrentLimit);
-
-        extenderConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
-        extender.configure(extenderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
         wheelsConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         wheels.configure(wheelsConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -49,43 +42,35 @@ public class Intake extends SubsystemBase {
         extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
         extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
         extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches))).reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches)).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
-        extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters,
-                        SparkMax.PersistMode.kPersistParameters);
+        extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
     
-
     /**
      * Declares that it is a voltage output for extender
      * @param volts
      * @return
      */
-    private Command setVoltageExtender(Voltage volts) {
+    private Command setExtenderVoltage(Voltage volts) {
         return runOnce(() -> {
             extender.setVoltage(volts);
-            wheels.setVoltage(volts);
         })
         .withName("Set Extender Voltage");
     }
-    /**
-     * Declares that it is a voltage output for wheels
-     * @param volts
-     * @return
-     */
-    private Command setVoltageWheels(Voltage volts) {
+    
+    private Command setWheelsVoltage(Voltage wheelsVolts) {
         return runOnce(() -> {
-            extender.setVoltage(volts);
-            wheels.setVoltage(volts);
+            wheels.setVoltage(wheelsVolts);
         })
         .withName("Set Wheels Voltage");
     }
-    
+
     /**
      * Extends the arm mechanism by setting the voltage using .extendVoltage
      * @return
      */
     public Command extend() { 
         return runOnce(() -> {
-            setVoltageExtender(IntakeK.extendVoltage);
+            setExtenderVoltage(IntakeK.extendVoltage);
        })
        .withName("Extended");
     }
@@ -96,7 +81,7 @@ public class Intake extends SubsystemBase {
      */
     public Command retract() {
         return runOnce(() -> {
-            setVoltageWheels(IntakeK.extendVoltage.unaryMinus());
+            setExtenderVoltage(IntakeK.extendVoltage.unaryMinus());
         })
         .withName("Retracted");
     }
@@ -104,12 +89,11 @@ public class Intake extends SubsystemBase {
     /**
      * Spins intake wheels/motors via spinWheelsVoltage
      */
-
     public Command spinWheels() { 
         return runOnce(() -> {
-            wheels.setVoltage(IntakeK.spinWheelsVoltage); //! find value
+            setWheelsVoltage(IntakeK.spinWheelsVoltage);
         })
-        .withName("Spinning");
+        .withName("Spinning Wheels");
     }
 
     /**
