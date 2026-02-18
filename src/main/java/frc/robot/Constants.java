@@ -30,16 +30,14 @@ public class Constants {
 
         // Arm current limit configs
         public static final int extenderCurrentLimit = 0; //! find
-        public static final int extenderForwardLimit = 0;
-        public static final int extenderReverseLimit = 0;
-
-        // Voltage limits for both the wheels and the arm
-        public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
-        public static final Voltage extendVoltage = Volts.of(0);
 
         // Soft switch limits
         public static final Distance forwardSoftLimit = Inches.of(0); //! find
         public static final Distance reverseSoftLimit = Inches.of(0); //! find
+
+        // Voltage limits for both the wheels and the arm
+        public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
+        public static final Voltage extendVoltage = Volts.of(0);
     }
 
         

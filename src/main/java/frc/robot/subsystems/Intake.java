@@ -4,10 +4,8 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Inches;
 
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -47,14 +45,13 @@ public class Intake extends SubsystemBase {
         wheelsConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         wheels.configure(wheelsConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    SparkMaxConfig config = new SparkMaxConfig();
-
-    config.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
-    config.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
-    extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit)).reverseSoftLimit(IntakeK.reverseSoftLimit).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
-    extender.configure(config, SparkMax.ResetMode.kResetSafeParameters,
+        // Limit switch/soft limit for arm
+        extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
+        extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+        extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches))).reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches)).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
+        extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters,
                         SparkMax.PersistMode.kPersistParameters);
-}
+    }
     
 
     /**
