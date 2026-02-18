@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -36,7 +37,9 @@ public class Constants {
         public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
         public static final Voltage extendVoltage = Volts.of(0);
 
-        
+        // Soft switch limits
+        public static final Distance forwardSoftLimit = Inches.of(0); //! find
+        public static final Distance reverseSoftLimit = Inches.of(0); //! find
     }
 
         

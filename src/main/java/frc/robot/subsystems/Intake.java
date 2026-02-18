@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkMax;
@@ -18,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
 
 @Logged
-public class Intake extends SubsystemBase{
+public class Intake extends SubsystemBase {
 
 
     private final SparkMax extender = new SparkMax(IntakeK.extenderID, MotorType.kBrushless);
@@ -47,10 +50,8 @@ public class Intake extends SubsystemBase{
     SparkMaxConfig config = new SparkMaxConfig();
 
     config.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
-    config.limitSwitch.forwardLimitSwitchType(
-        LimitSwitchConfig.Type.kNormallyOpen
-    );
-
+    config.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+    extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit)).reverseSoftLimit(IntakeK.reverseSoftLimit).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
     extender.configure(config, SparkMax.ResetMode.kResetSafeParameters,
                         SparkMax.PersistMode.kPersistParameters);
 }
