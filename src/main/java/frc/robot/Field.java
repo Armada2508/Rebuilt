@@ -25,8 +25,8 @@ public class Field {
     public static final Pose2d blueOutpost = new Pose2d(new Translation2d(Inches.of(0), Inches.of(26.22)), Rotation2d.kZero);
     public static final Pose2d blueTrenchRight = new Pose2d(new Translation2d(Inches.of(182.11), Inches.of(24.92)), Rotation2d.k180deg);
     public static final Pose2d blueTrenchLeft = new Pose2d(new Translation2d(blueTrenchRight.getMeasureX(), fieldWidth.minus(blueTrenchRight.getMeasureY())), Rotation2d.k180deg); 
-    public static final Pose2d passTargetBlueHigh = new Pose2d(new Translation2d(blueTower.getMeasureX().times(0.75), blueTower.getMeasureY().times(11/6)), Rotation2d.kZero);
-    public static final Pose2d passTargetBlueLow = new Pose2d(new Translation2d(blueTower.getMeasureX().times(0.75), blueTower.getMeasureY().times(1/6)), Rotation2d.kZero);
+    public static final Pose2d passTargetBlueHigh = new Pose2d(new Translation2d(blueHub.getMeasureX().times(0.60), blueHub.getMeasureY().times(0.375)), Rotation2d.kZero);
+    public static final Pose2d passTargetBlueLow = new Pose2d(new Translation2d(blueHub.getMeasureX().times(0.60), blueHub.getMeasureY().times(1.625)), Rotation2d.kZero);
     
     // Red side
     public static final Pose2d redHub = new Pose2d(new Translation2d(fieldLength.minus(blueHub.getMeasureX()), (fieldWidth.minus(blueHub.getMeasureY()))), Rotation2d.kZero); 
@@ -35,8 +35,8 @@ public class Field {
     public static final Pose2d redOutpost = new Pose2d(new Translation2d(fieldLength.minus(blueOutpost.getMeasureX()), (fieldWidth.minus(blueOutpost.getMeasureY()))), Rotation2d.k180deg);
     public static final Pose2d redTrenchRight = new Pose2d(new Translation2d(fieldLength.minus(blueTrenchRight.getMeasureX()), (fieldWidth.minus(blueTrenchRight.getMeasureY()))), Rotation2d.kZero);
     public static final Pose2d redTrenchLeft = new Pose2d(new Translation2d(fieldLength.minus(blueTrenchLeft.getMeasureX()), (fieldWidth.minus(blueTrenchLeft.getMeasureY()))), Rotation2d.kZero);
-    public static final Pose2d passTargetRedHigh = new Pose2d(new Translation2d(blueTower.getMeasureX().times(1.25), blueTower.getMeasureY().times(11/6)), Rotation2d.kZero);
-    public static final Pose2d passTargetRedLow = new Pose2d(new Translation2d(redTower.getMeasureX().times(1.25), blueTower.getMeasureY().times(1/6)), Rotation2d.kZero);
+    public static final Pose2d passTargetRedHigh = new Pose2d(new Translation2d(redHub.getMeasureX().times(1.15), redHub.getMeasureY().times(0.375)), Rotation2d.kZero);
+    public static final Pose2d passTargetRedLow = new Pose2d(new Translation2d(redHub.getMeasureX().times(1.15), redHub.getMeasureY().times(1.625)), Rotation2d.kZero);
     
     /**
      * Get the hub depending on your alliance

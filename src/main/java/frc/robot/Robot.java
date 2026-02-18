@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
         field.getObject("Blue Depot").setPose(Field.blueDepot);
         field.getObject("Blue Trench Left").setPose(Field.blueTrenchLeft);
         field.getObject("Blue Trench Right").setPose(Field.blueTrenchRight);
+        field.getObject("Pass Target Blue High").setPose(Field.passTargetBlueHigh);
+        field.getObject("Pass Target Blue Low").setPose(Field.passTargetBlueLow);
 
         field.getObject("Red Hub").setPose(Field.redHub);
         field.getObject("Red Tower").setPose(Field.redTower);
@@ -34,6 +36,8 @@ public class Robot extends TimedRobot {
         field.getObject("Red Depot").setPose(Field.redDepot);
         field.getObject("Red Trench Left").setPose(Field.redTrenchLeft);
         field.getObject("Red Trench Right").setPose(Field.redTrenchRight);
+        field.getObject("Pass Target Red High").setPose(Field.passTargetRedHigh);
+        field.getObject("Pass Target Red Low").setPose(Field.passTargetRedLow);
     }
 
     @Override
