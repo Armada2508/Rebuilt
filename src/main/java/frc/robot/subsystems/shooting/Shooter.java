@@ -1,16 +1,9 @@
 package frc.robot.subsystems.shooting;
 
-import static edu.wpi.first.units.Units.Degrees;
-// import static edu.wpi.first.units.Units.RotationsPerSecond;
-// import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-// import com.ctre.phoenix6.controls.Volt;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
@@ -24,9 +17,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
-// import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterK;
@@ -58,7 +49,7 @@ public class Shooter extends SubsystemBase {
 
         talonShooter.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
         talonShooter.getConfigurator().apply(ShooterK.shooterPidConfig);
-        //! ask mechanical if we need gear ratio, we probably won't though
+
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
@@ -91,7 +82,7 @@ public class Shooter extends SubsystemBase {
     //^ I don't think we're using voltage to control the shooter so I don't believe this is needed
 
     /**
-     * Function that returns the Angular Velocity of talonShooter
+     * Returns the velocity in rpm of the shooting motor
      * @return
      */
     public AngularVelocity getMotorVelocity() {

@@ -2,13 +2,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.units.measure.Angle;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Amps;
@@ -108,6 +104,7 @@ public class Constants {
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
         .withSensorToMechanismRatio(motorToHoodGearRatio);
     }
+    
     public static class TurretK {
         public static final int talonId = 0; //! Find
         

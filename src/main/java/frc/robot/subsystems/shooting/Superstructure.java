@@ -14,14 +14,15 @@ import frc.robot.Constants.ShooterK;
 import frc.robot.subsystems.shooting.ShotCalculator.ShotParameters;
 import frc.robot.Field;
 
+@Logged
 public class Superstructure extends SubsystemBase {
     // ^ This class needs to have all of shooter and turret done in order to be made
 
     //~ Variables & Objects
     ShotCalculator shotCalculatorPass = new ShotCalculator();
     ShotCalculator shotCalculatorScore = new ShotCalculator();
-    public static ShotParameters passCalculations;
-    public static ShotParameters scoreCalculations;
+    public static ShotParameters passParameters;
+    public static ShotParameters scoreParameters;
     
     //~ Subsystems
     private static Shooter shooter = new Shooter();
@@ -37,14 +38,14 @@ public class Superstructure extends SubsystemBase {
     }
   
     //~ Commands
-    @Logged
+
     public void periodic(Pose2d robotPose, ChassisSpeeds velocity, Time latency) { //! UPDATE WHEN SWERVE IS MERGED
         shotCalculatorPass.resetShotCalculationParameters();  
         shotCalculatorScore.resetShotCalculationParameters(); 
         shotCalculatorPass.calculate(robotPose, velocity, Field.getClosestPassPoint(robotPose), latency);
         shotCalculatorScore.calculate(robotPose, velocity, Field.getAllianceHub(), latency);
-        passCalculations = shotCalculatorPass.getShotParameters();
-        scoreCalculations = shotCalculatorScore.getShotParameters();
+        passParameters = shotCalculatorPass.getShotParameters();
+        scoreParameters = shotCalculatorScore.getShotParameters();
     }
 
     /**
@@ -53,9 +54,9 @@ public class Superstructure extends SubsystemBase {
      */
     public Command score() {
         return runOnce(() ->
-            shooter.setHoodAngle(scoreCalculations.hoodAngle())
+            shooter.setHoodAngle(scoreParameters.hoodAngle())
             .alongWith(
-                turret.setAngleCommand(scoreCalculations.turretAngle()))
+                turret.setAngleCommand(scoreParameters.turretAngle()))
         ).andThen(shooter.shootFuel());
     }
 
@@ -65,9 +66,9 @@ public class Superstructure extends SubsystemBase {
      */
     public Command pass() {
         return runOnce(() -> 
-            shooter.setHoodAngle(passCalculations.hoodAngle())
+            shooter.setHoodAngle(passParameters.hoodAngle())
             .alongWith(
-                turret.setAngleCommand(passCalculations.turretAngle()))
+                turret.setAngleCommand(passParameters.turretAngle()))
         ).andThen(shooter.shootFuel());
     }
     

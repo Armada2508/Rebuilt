@@ -1,19 +1,13 @@
 package frc.robot.subsystems.shooting;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
-
-import java.util.Map;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Constants.ShooterK;
 
@@ -85,19 +79,6 @@ public class ShotCalculator {
         //^ 6. Store final parameters
         this.shotParametersInstance = new ShotParameters(Degrees.of(adjustedHood), Degrees.of(turretAngle));
     }
-
-    //? I do not believe we still need this method?
-    // public double getFuelHorizontalVelocity(double distance) {
-    //     double speed = Maps.getFlywheelVelocity(distance);
-    //     return distance / Maps.getBallTimeOfFlight(speed, 0); //! Fix the zero.
-    // } 
-
-    //? ditto?
-    // public double velocityAndHoodAngleToEffectiveDistance(double velocity, double hoodAngle) {
-    //     // for (Map.Entry<Double, InterpolatingTreeMap<Double, Double>> entry : Maps.fuelAirTimeMap.asMap().entrySet()) {
-    //     for ()
-
-    // }
 
     //~ Getters & Resetters
     public ShotParameters getShotParameters() {
