@@ -13,7 +13,7 @@ import frc.robot.lib.util.Util;
 
 @Logged
 public class Indexer extends SubsystemBase{
-    //! This is a TEMPORARY class for week 0 because of current archcitechture.
+    //! This is a TEMPORARY class for week 0 because of current architecture.
     //! This should eventually be put inside IndexerOld.java before Winona
 
     private TalonFX talon = new TalonFX(IndexerK.id);
@@ -32,7 +32,7 @@ public class Indexer extends SubsystemBase{
         talon.setVoltage(IndexerK.indexingVoltage.in(Volts));
     }
 
-    public Command setAngleCommand(Angle targetAngle) {
+    public Command indexCommand(Angle targetAngle) {
         return runOnce(() -> index()); //! Check
     }
 }
