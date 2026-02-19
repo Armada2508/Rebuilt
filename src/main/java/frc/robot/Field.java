@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class Field {
     // X is left to right, Y is top to bottom
@@ -33,5 +35,13 @@ public class Field {
     public static final Pose2d redTrenchRight = new Pose2d(new Translation2d(fieldLength.minus(blueTrenchRight.getMeasureX()), (fieldWidth.minus(blueTrenchRight.getMeasureY()))), Rotation2d.kZero);
     public static final Pose2d redTrenchLeft = new Pose2d(new Translation2d(fieldLength.minus(blueTrenchLeft.getMeasureX()), (fieldWidth.minus(blueTrenchLeft.getMeasureY()))), Rotation2d.kZero);
 
-
+    /**
+     * Get the hub depending on your alliance
+     * @return The alliances hub
+     */
+    public static Pose2d getAllianceHub() {
+        if (DriverStation.getAlliance().get().equals(Alliance.Blue)) return blueHub;
+        return redHub; // If on red, return red hub 
+    }
 }
+
