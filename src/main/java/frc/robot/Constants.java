@@ -25,6 +25,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -143,5 +144,13 @@ public static class ControllerK {
         public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(Units.feetToMeters(3), Units.feetToMeters(3), Units.degreesToRadians(360));
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }
+
+    public static class HopperK {
+        public static final int timeOfFlightIdTop = 0; //! find these
+        public static final int timeOfFlightIdBottom = 1; //! find these
+        public static final Distance hopperBottomDetectionRange = Inches.of(0);
+        public static final Distance hopperTopDetectionRange = Inches.of(0);
+    }
   }
 }
