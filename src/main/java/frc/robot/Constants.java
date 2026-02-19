@@ -33,8 +33,8 @@ public class Constants {
         public static final int talonHoodID = 1;
 
         //& Motion Magic
-        public static final AngularVelocity cruiseVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0);
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35);
@@ -119,8 +119,8 @@ public class Constants {
         public static final double encoderToTurretGearRatio = 10;
 
         //& Motion Magic
-        public static final AngularVelocity maxVelocity = DegreesPerSecond.of(0); //! Find
-        public static final AngularAcceleration maxAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0); //! Find
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
 
         //& Angles
         public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing. This is 

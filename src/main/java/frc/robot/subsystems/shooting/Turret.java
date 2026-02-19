@@ -54,8 +54,8 @@ public class Turret extends SubsystemBase {
      */
     private void configMotionMagic() {
         MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
-        .withMotionMagicAcceleration(TurretK.maxAcceleration)
-        .withMotionMagicCruiseVelocity(TurretK.maxVelocity);
+        .withMotionMagicAcceleration(TurretK.motionMagicAcceleration)
+        .withMotionMagicCruiseVelocity(TurretK.motionMagicVelocity);
         talon.getConfigurator().apply(motionMagicConfig);
     }
 
@@ -96,14 +96,12 @@ public class Turret extends SubsystemBase {
                     ).in(Rotations)
                 ).times(
                     TurretK.encoderToTurretGearRatio
-                ).minus(
-                    Degrees.of(180)
-                ).in(Degrees) % Constants.degreesPerRotation;
+                ).in(Degrees);
         return Degrees.of(theta); //^ pls work this is annoying to math out
     }
 
     /**
-     * Get the angular velocity of the main turret gear
+     * Get the angular velocity of the main turret gear in rps
      * @return Angular velocity in rotations per second
      */
     public AngularVelocity getVelocity() {

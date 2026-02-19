@@ -34,7 +34,7 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         configTalons();
         configMotionMagic();
-        //configMaxMotion(ShooterK.cruiseVelocity, ShooterK.maxAcceleration); //!figure this out (might've figured it out)
+        //configMaxMotion(ShooterK.motionMagicVelocity, ShooterK.motionMagicAcceleration); //!figure this out (might've figured it out)
     }
 
     /**
@@ -61,16 +61,16 @@ public class Shooter extends SubsystemBase {
      */
     public void configMotionMagic() {
         MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
-        .withMotionMagicAcceleration(ShooterK.maxAcceleration)
-        .withMotionMagicCruiseVelocity(ShooterK.cruiseVelocity);
+        .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration)
+        .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
         talonHood.getConfigurator().apply(motionMagicConfig);
     }
     
     //public void configMaxMotion(AngularVelocity velocity, AngularAcceleration acceleration) {
     //    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
     //    
-    //    sparkMaxConfig.closedLoop.maxMotion.cruiseVelocity(velocity.in(RotationsPerSecond));
-    //    sparkMaxConfig.closedLoop.maxMotion.maxAcceleration(acceleration.in(RotationsPerSecondPerSecond));
+    //    sparkMaxConfig.closedLoop.maxMotion.motionMagicVelocity(velocity.in(RotationsPerSecond));
+    //    sparkMaxConfig.closedLoop.maxMotion.motionMagicAcceleration(acceleration.in(RotationsPerSecondPerSecond));
     //    sparkmaxHood.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     //}
 

@@ -39,7 +39,7 @@ public class Superstructure extends SubsystemBase {
   
     //~ Commands
 
-    public void periodic(Pose2d robotPose, ChassisSpeeds velocity, Time latency) { //! UPDATE WHEN SWERVE IS MERGED
+    public void periodic(Pose2d robotPose, ChassisSpeeds velocity, Time latency) {
         shotCalculatorPass.resetShotCalculationParameters();  
         shotCalculatorScore.resetShotCalculationParameters(); 
         shotCalculatorPass.calculate(robotPose, velocity, Field.getClosestPassPoint(robotPose), latency);
