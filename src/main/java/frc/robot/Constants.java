@@ -1,6 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -29,8 +28,15 @@ import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
+
 import static edu.wpi.first.units.Units.Volts;
 
+import com.revrobotics.spark.config.SoftLimitConfig;
+
+import edu.wpi.first.units.measure.Voltage;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -44,12 +50,34 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+
+import edu.wpi.first.math.Matrix;
+
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Filesystem
 
 public class Constants {
+    public static class IntakeK {
+        public static final int wheelsID = 0; //! find, may change
+        public static final int extenderID = 1;
+    
+        // Wheel current limit configs
+        public static final int wheelsCurrentLimit = 0; //! find
+
+        // Arm current limit configs
+        public static final int extenderCurrentLimit = 0; //! find
+
+        // Soft switch limits
+        public static final Distance forwardSoftLimit = Inches.of(0); //! find
+        public static final Distance reverseSoftLimit = Inches.of(0); //! find
+
+        // Voltage limits for both the wheels and the arm
+        public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
+        public static final Voltage extendVoltage = Volts.of(0);
+    }   
+
     public static class SwerveK {
         public static final Distance driveBaseRadius = Inches.of(15.37957);
         public static final Distance driveBaseLength = Inches.of(27); // Base is a square so this is the same as the width
@@ -108,7 +136,7 @@ public class Constants {
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
 
-public static class ControllerK {
+  public static class ControllerK {
         public static final int xboxPort = 0;
         public static final double leftJoystickDeadband = 0.15;
         public static final double rightJoystickDeadband = 0.15;
