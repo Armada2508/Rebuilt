@@ -1,14 +1,34 @@
 package frc.robot;
 
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
+
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Millimeters;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
+
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,45 +40,158 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Pair;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Millimeters;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-
-import static edu.wpi.first.units.Units.Volts;
-
 import com.revrobotics.spark.config.SoftLimitConfig;
-
-import edu.wpi.first.units.measure.Voltage;
-
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
-
 import edu.wpi.first.math.Matrix;
 
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.Filesystem
+import edu.wpi.first.wpilibj.Filesystem;
 
 public class Constants {
+
+    public static class ShooterK { //! find motor ID and proper measurements
+        public static final int talonID = 0;
+        public static final int talonHoodID = 1;
+
+        //& Motion Magic
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
+
+        //& Hood angle limit
+        public static final Angle minHoodAngle = Degrees.of(23.35);
+        public static final Angle maxHoodAngle = Degrees.of(62.8);
+
+        //& Shooter rpm limit
+        public static final AngularVelocity minRpm = RPM.of(0);
+        public static final AngularVelocity staticRpm = RPM.of(0); //! Final
+        public static final AngularVelocity maxRpm = RPM.of(0); //! Find
+
+        //& Gear Ratios
+        public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
+        public static final double motorToHoodGearRatio = 800/350;
+
+        //& PID
+        public static final double hkP = 0; //! tune
+        public static final double hkD = 0; //! tune
+        public static final double hkS = 0; //! tune
+        public static final double hkV = 0; //! tune
+
+        public static final double skP = 0; //! tune
+        public static final double skD = 0; //! tune
+        public static final double skV = 0; //! tune
+
+        //& Current Limits
+        public static final Current hoodMaxStatorCurrent = Amps.of(0); //! Find / Verify
+        public static final Current hoodMaxSupplyCurrent = Amps.of(0); //! Find / Verify
+        public static final Current shooterMaxStatorCurrent = Amps.of(0); //! Find / Verify
+        public static final Current shooterMaxSupplyCurrent = Amps.of(0); //! Find / Verify
+
+        //& Configs
+        public static final Slot0Configs hoodPidConfig = new Slot0Configs()
+        .withKP(hkP)
+        .withKD(hkD)
+        .withKS(hkS)
+        .withKV(hkV);
+
+        public static final Slot0Configs shooterPidConfig = new Slot0Configs()
+        .withKP(skP)
+        .withKD(skD)
+        .withKV(skV);
+
+        public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(maxHoodAngle)
+        .withReverseSoftLimitEnable(true)
+        .withReverseSoftLimitThreshold(maxHoodAngle);
+
+        public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(minRpm.in(RPM))
+        .withReverseSoftLimitEnable(true)
+        .withReverseSoftLimitThreshold(maxRpm.in(RPM));
+        
+        public static final CurrentLimitsConfigs hoodCurrentLimitsConfigs = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(hoodMaxStatorCurrent)
+        .withSupplyCurrentLimit(hoodMaxSupplyCurrent);
+
+        public static final CurrentLimitsConfigs shooterCurrentLimitsConfigs = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(shooterMaxStatorCurrent)
+        .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
+
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
+        .withSensorToMechanismRatio(motorToHoodGearRatio);
+    }
+    
+    public static class TurretK {
+        public static final int talonId = 0; //! Find
+        
+        //& Absolute Encoder
+        public static final int channel = 0; //! Ask Electrical
+        public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
+        public static final Angle expectedZero = Degrees.of(180); //! VERIFY THIS!!!!!
+        public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
+        
+        //& Gear Ratios
+        public static final double krakenToTurretGearRatio = 50; //these numbers should be right now
+        public static final double encoderToTurretGearRatio = 10;
+
+        //& Motion Magic
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0); //! Find
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
+
+        //& Angles
+        public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing. This is 
+                                                                  //^ This is likely outdated with us using an absolute encoder now. Up to testing & Debugging
+
+        // We dont go the maximum rotation to avoid wrap-around error and risk confusing the Absolute encoder, might not be needed though.
+        public static final Angle maxAngle = Degrees.of(179.5);  //! Verify / Check
+        public static final Angle minAngle = Degrees.of(-179.5); //! Verify / Check
+
+        //& Currents
+        public static final Current maxStatorCurrent = Amps.of(0); //! Find / Verify
+        public static final Current maxSupplyCurrent = Amps.of(0); //! Find / Verify
+
+        //& PID
+        public static final double kP = 0; //! Tune
+        public static final double kD = 0; //! Tune
+        public static final double kS = 0; //! Tune
+        public static final double kV = 0; //! Tune
+
+        //& Configs
+        public static final Slot0Configs pidConfig = new Slot0Configs()
+        .withKP(kP)
+        .withKD(kD)
+        .withKS(kS)
+        .withKV(kV);
+
+        public static final SoftwareLimitSwitchConfigs softwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(true)
+        .withForwardSoftLimitThreshold(maxAngle)
+        .withReverseSoftLimitEnable(true)
+        .withReverseSoftLimitThreshold(minAngle);
+
+        public static final CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(maxStatorCurrent)
+        .withSupplyCurrentLimit(maxSupplyCurrent);
+
+        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
+        .withSensorToMechanismRatio(krakenToTurretGearRatio);
+    }
+    
     public static class IntakeK {
         public static final int wheelsID = 0; //! find, may change
         public static final int extenderID = 1;
@@ -145,6 +278,7 @@ public class Constants {
         public static final double overrideThreshold = 0.14;
         public static final Time overrideTime = Seconds.of(0.25);
     }
+  
     public static class DriveK {
         // Larger number = faster rate of change, limit is in units of (units)/second. In this case the joystick [-1, 1].
         public static final Pair<Double, Double> translationAccelLimits = Pair.of(1.25, 2.0); 
