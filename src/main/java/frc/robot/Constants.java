@@ -11,6 +11,8 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
@@ -40,6 +42,9 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.revrobotics.spark.config.SoftLimitConfig;
 
 import edu.wpi.first.math.VecBuilder;
@@ -51,6 +56,13 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.math.Matrix;
 
 import edu.wpi.first.wpilibj.Filesystem;
@@ -307,6 +319,41 @@ public class Constants {
         public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(Units.feetToMeters(1.5), Units.feetToMeters(1.5), Units.degreesToRadians(180));
         public static final Matrix<N3, N1> untrustedStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }
+  
+    public static class IndexerOldK {
+        public static final int talonID = 2; //! find
+        
+        // indexer current limit configs
+        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
+       
+        public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
+        public static final Time jostleDuration = Seconds.of(0.25);
+
+        /* PID configs for indexer
+        public static final double kP = 0; // find all values
+        public static final double kD = 0;
+        public static final double kV = 0;
+        public static final double kS = 0;
+        
+
+        public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
+        .withKP(kP)
+        .withKD(kD)
+        .withKV(kV)
+        .withKS(kS);
+        */
+    }
+
+    public static class IndexerK {
+        public static final int id = 0; //! Find
+        public static final Voltage indexingVoltage = Volts.of(0); //! Find
+        public static final CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withStatorCurrentLimit(Amps.of(0)) //! Find
+        .withSupplyCurrentLimit(Amps.of(0)); //! Find
+    }
+}
 
     public static class HopperK {
         public static final int timeOfFlightIdTop = 0; //! find these
@@ -316,3 +363,4 @@ public class Constants {
     }
   }
 }
+
