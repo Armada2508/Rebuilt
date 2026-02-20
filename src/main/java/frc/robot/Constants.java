@@ -14,10 +14,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -26,6 +24,8 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -38,13 +38,10 @@ import java.util.List;
 
 import org.json.simple.parser.ParseException;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.revrobotics.spark.config.SoftLimitConfig;
 
 import edu.wpi.first.math.VecBuilder;
@@ -56,14 +53,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.math.Matrix;
 
 import edu.wpi.first.wpilibj.Filesystem;
 
@@ -353,14 +342,11 @@ public class Constants {
         .withStatorCurrentLimit(Amps.of(0)) //! Find
         .withSupplyCurrentLimit(Amps.of(0)); //! Find
     }
-}
 
-    public static class HopperK {
+        public static class HopperK {
         public static final int timeOfFlightIdTop = 0; //! find these
         public static final int timeOfFlightIdBottom = 1; //! find these
         public static final Distance hopperBottomDetectionRange = Inches.of(0);
         public static final Distance hopperTopDetectionRange = Inches.of(0);
     }
-  }
 }
-

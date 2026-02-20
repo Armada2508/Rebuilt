@@ -37,15 +37,6 @@ public class Field {
     public static final Pose2d redTrenchLeft = new Pose2d(new Translation2d(fieldLength.minus(blueTrenchLeft.getMeasureX()), (fieldWidth.minus(blueTrenchLeft.getMeasureY()))), Rotation2d.kZero);
     public static final Pose2d passTargetRedHigh = new Pose2d(new Translation2d(redHub.getMeasureX().times(1.15), redHub.getMeasureY().times(0.375)), Rotation2d.kZero);
     public static final Pose2d passTargetRedLow = new Pose2d(new Translation2d(redHub.getMeasureX().times(1.15), redHub.getMeasureY().times(1.625)), Rotation2d.kZero);
-    
-    /**
-     * Get the hub depending on your alliance
-     * @return The alliances hub
-     */
-    public static Pose2d getAllianceHub() {
-        if (DriverStation.getAlliance().get().equals(Alliance.Blue)) return blueHub;
-        return redHub; // If on red, return red hub 
-    }
 
     public static Pose2d getClosestPassPoint(Pose2d robotPose) {
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {

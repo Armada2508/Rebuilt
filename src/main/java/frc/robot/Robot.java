@@ -30,6 +30,8 @@ import frc.robot.subsystems.Vision;
 public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
 
+    Field2d field = new Field2d();
+
     @Logged
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
