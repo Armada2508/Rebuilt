@@ -38,14 +38,15 @@ public class Robot extends TimedRobot {
     Field2d field = new Field2d();
     @Logged(name = "Intake")
     Intake intake = new Intake();
-    @Logged(name = "Shooter")
+    // @Logged(name = "Shooter")
     Shooter shooter = new Shooter();
+    // @Logged(name = "Turret")
+    Turret turret = new Turret(); // For logging
     @Logged(name = "Superstructure")
-    Superstructure superstructure = new Superstructure();
+    Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
     Indexer indexer = new Indexer();
-    @Logged(name = "Turret")
-    Turret turret = new Turret(); // For logging
+
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
@@ -100,7 +101,7 @@ public class Robot extends TimedRobot {
 
     public void configureBindings() {
         xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
-        xboxController.a().whileTrue(swerve.faceWheelsForward());
+        // xboxController.a().whileTrue(swerve.faceWheelsForward());
         xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
        
         // Intake
@@ -110,12 +111,13 @@ public class Robot extends TimedRobot {
          .onFalse(stopIntakeRoutine);
         
         // Shooter
-        Command shootRoutine = Routines.shoot(shooter);
+        Command shootRoutine = Routines.shoot(indexer, shooter);
         xboxController.rightTrigger().whileTrue(shootRoutine)
         .onFalse(Routines.stopShooter(shooter));
         // xboxController.y().onTrue(Routines.alignToHubPID(swerve));
         Command stowRoutine = Routines.stowHood(shooter);
         xboxController.leftTrigger().onTrue(stowRoutine);
+
 
         // Superstructure
         Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);

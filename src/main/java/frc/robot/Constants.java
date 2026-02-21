@@ -16,12 +16,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecond;
@@ -34,7 +30,6 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.json.simple.parser.ParseException;
 
@@ -42,7 +37,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.revrobotics.spark.config.SoftLimitConfig;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -72,7 +66,7 @@ public class Constants {
 
         //& Shooter rpm limit
         public static final AngularVelocity minRpm = RPM.of(0);
-        public static final AngularVelocity staticRpm = RPM.of(0); //! Final
+        public static final AngularVelocity staticRpm = RPM.of(0); //! Tune
         public static final AngularVelocity maxRpm = RPM.of(0); //! Find
 
         //& Gear Ratios
@@ -141,7 +135,7 @@ public class Constants {
         //& Absolute Encoder
         public static final int channel = 0; //! Ask Electrical
         public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
-        public static final Angle expectedZero = Degrees.of(180); //! VERIFY THIS!!!!!
+        public static final Angle expectedZero = Degrees.of(180); 
         public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
         
         //& Gear Ratios
@@ -294,7 +288,7 @@ public class Constants {
     public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         // public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(0)));
         //                                                                      
         // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
         // Acceptable height of pose estimation to consider it a valid pose

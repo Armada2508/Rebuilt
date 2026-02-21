@@ -16,35 +16,39 @@ public class Routines {
     public static Command intake(Intake intake) {
         return intake.extend()
         .andThen(new RepeatCommand(intake.spinRoller()))
-        .withName("Intake Command");
+        .withName("Intake");
     }
 
     public static Command stopIntake(Intake intake) {
-        return intake.retract().andThen(intake.spinRoller());
+        return intake.retract().andThen(intake.stopRoller()).withName("Stop Intake");
     }
 
-    public static Command shoot(Shooter shooter) {
-        return new RepeatCommand(shooter.shootFuel());
+    public static Command shoot(Indexer indexer, Shooter shooter) {
+        return new RepeatCommand(indexer.indexCommand())
+        .alongWith(new RepeatCommand(shooter.shootFuel()))
+        .withName("Shoot");
     }
 
     public static Command stopShooter(Shooter shooter) {
-        return shooter.stop();
+        return shooter.stop().withName("Stop Shooter");
     }
 
     public static Command stowHood(Shooter shooter) {
-        return shooter.stow();
+        return shooter.stow().withName("Stow Hood");
     }
 
     // Superstructure
 
     public static Command scoreFuelHub(Superstructure superstructure, Indexer indexer) {
         return new RepeatCommand(indexer.indexCommand())
-        .alongWith(new RepeatCommand(superstructure.score()));
+        .alongWith(new RepeatCommand(superstructure.score()))
+        .withName("Score fuel");
     }
 
     public static Command passFuel(Superstructure superstructure, Indexer indexer) {
         return new RepeatCommand(indexer.indexCommand())
-        .alongWith(new RepeatCommand(superstructure.pass()));
+        .alongWith(new RepeatCommand(superstructure.pass()))
+        .withName("Pass fuel");
     }
 
     public static Command alignToHubPID(Swerve swerve) {

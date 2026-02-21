@@ -14,10 +14,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.TurretK;
 import frc.robot.lib.util.Util;
 
+@Logged
 public class Turret extends SubsystemBase {
 
     private final TalonFX talon = new TalonFX(TurretK.talonId);
@@ -89,6 +89,7 @@ public class Turret extends SubsystemBase {
      * Returns the angle of the turret as read by the absolute encoder
      * @return
      */
+    @Logged(name = "Turret Angle (degrees)")
     public Angle getAngle() { //! Verify this
         double theta = Degrees.of(
                     Rotations.of(absoluteEncoder.get())

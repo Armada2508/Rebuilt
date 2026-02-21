@@ -25,8 +25,13 @@ public class Superstructure extends SubsystemBase {
     public static ShotParameters scoreParameters;
     
     //~ Subsystems
-    private static Shooter shooter = new Shooter();
-    private static Turret turret = new Turret();
+    private Shooter shooter;
+    private Turret turret;
+
+    public Superstructure(Shooter shooter, Turret turret) {
+        this.shooter = shooter;
+        this.turret = turret;
+    }
 
     //~ Methods
     /**
