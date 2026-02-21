@@ -120,8 +120,8 @@ public class Shooter extends SubsystemBase {
     /**
      * Sets the hood to its minimum angle
      */
-    public void zeroHood() {
-        talonHood.setPosition(ShooterK.minHoodAngle);
+    public Command stow() {
+        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle));
     }
 
     /**

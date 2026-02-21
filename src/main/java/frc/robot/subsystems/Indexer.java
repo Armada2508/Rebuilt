@@ -32,7 +32,7 @@ public class Indexer extends SubsystemBase{
         talon.setVoltage(IndexerK.indexingVoltage.in(Volts));
     }
 
-    public Command indexCommand(Angle targetAngle) {
+    public Command indexCommand() {
         return runOnce(() -> index()); //! Check
     }
 }

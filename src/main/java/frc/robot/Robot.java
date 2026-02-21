@@ -23,16 +23,27 @@ import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.commands.Routines;
 import frc.robot.lib.util.DriveUtil;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.shooting.Shooter;
+import frc.robot.subsystems.shooting.Superstructure;
 
 @Logged
 public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
 
     Field2d field = new Field2d();
-
-    @Logged
+    @Logged(name = "Intake")
+    Intake intake = new Intake();
+    @Logged(name = "Shooter")
+    Shooter shooter = new Shooter();
+    @Logged(name = "Superstructure")
+    Superstructure superstructure = new Superstructure();
+    @Logged(name = "Indexer")
+    Indexer indexer = new Indexer();
+    @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
     private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
@@ -58,6 +69,8 @@ public class Robot extends TimedRobot {
         field.getObject("Blue Trench Right").setPose(Field.blueTrenchRight);
         field.getObject("Pass Target Blue High").setPose(Field.passTargetBlueHigh);
         field.getObject("Pass Target Blue Low").setPose(Field.passTargetBlueLow);
+        field.getObject("Blue Zone Corner 1").setPose(Field.blueZoneCorner1);
+        field.getObject("Blue Zone Corner 2").setPose(Field.blueZoneCorner2);
 
         field.getObject("Red Hub").setPose(Field.redHub);
         field.getObject("Red Tower").setPose(Field.redTower);
@@ -67,6 +80,8 @@ public class Robot extends TimedRobot {
         field.getObject("Red Trench Right").setPose(Field.redTrenchRight);
         field.getObject("Pass Target Red High").setPose(Field.passTargetRedHigh);
         field.getObject("Pass Target Red Low").setPose(Field.passTargetRedLow);
+        field.getObject("Red Zone Corner 1").setPose(Field.redZoneCorner1);
+        field.getObject("Red Zone Corner 1").setPose(Field.redZoneCorner2);
     }
   
     @Override
@@ -84,9 +99,25 @@ public class Robot extends TimedRobot {
         xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         xboxController.a().whileTrue(swerve.faceWheelsForward());
         xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
+       
+        // Intake
+        Command stopIntakeRoutine = Routines.stopIntake(intake);
+        Command intakeRoutine = Routines.intake(intake);
+        xboxController.leftTrigger().whileTrue(intakeRoutine)
+         .onFalse(stopIntakeRoutine);
+        
+        // Shooter
+        Command shootRoutine = Routines.shoot(shooter);
+        xboxController.rightTrigger().whileTrue(shootRoutine)
+        .onFalse(Routines.stopShooter(shooter));
+        // xboxController.y().onTrue(Routines.alignToHubPID(swerve));
+        Command stowRoutine = Routines.stowHood(shooter);
+        xboxController.leftTrigger().onTrue(stowRoutine);
 
-        xboxController.y().onTrue(Routines.alignToHubPID(swerve));
-    
+        // Superstructure
+        Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);
+        Command passRoutine = Routines.passFuel(superstructure, indexer);
+
     }
 
     public Command teleopDriveCommand() {
