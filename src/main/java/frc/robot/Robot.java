@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
@@ -13,7 +11,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -100,28 +97,27 @@ public class Robot extends TimedRobot {
     }
 
     public void configureBindings() {
-        xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
+        // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         // xboxController.a().whileTrue(swerve.faceWheelsForward());
-        xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
+        // xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
        
-        // Intake
         Command stopIntakeRoutine = Routines.stopIntake(intake);
         Command intakeRoutine = Routines.intake(intake);
-        xboxController.leftTrigger().whileTrue(intakeRoutine)
+        Command shootRoutine = Routines.shoot(indexer, shooter);
+        Command stowRoutine = Routines.stowHood(shooter);
+
+        xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
          .onFalse(stopIntakeRoutine);
         
-        // Shooter
-        Command shootRoutine = Routines.shoot(indexer, shooter);
-        xboxController.rightTrigger().whileTrue(shootRoutine)
+        xboxController.rightTrigger().whileTrue(shootRoutine) // Shooter
         .onFalse(Routines.stopShooter(shooter));
-        // xboxController.y().onTrue(Routines.alignToHubPID(swerve));
-        Command stowRoutine = Routines.stowHood(shooter);
-        xboxController.leftTrigger().onTrue(stowRoutine);
 
+        xboxController.leftTrigger().onTrue(stowRoutine); // Stow
+    
 
         // Superstructure
-        Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);
-        Command passRoutine = Routines.passFuel(superstructure, indexer);
+        // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);
+        // Command passRoutine = Routines.passFuel(superstructure, indexer);
 
     }
 

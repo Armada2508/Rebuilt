@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
@@ -33,7 +34,7 @@ public class Shooter extends SubsystemBase {
     
     public Shooter() {
         configTalons();
-        configMotionMagic();
+        // configMotionMagic();
         //configMaxMotion(ShooterK.motionMagicVelocity, ShooterK.motionMagicAcceleration); //!figure this out (might've figured it out)
     }
 
@@ -59,12 +60,12 @@ public class Shooter extends SubsystemBase {
     /**
      * Configures MotionMagic and applies it to talonHood
      */
-    public void configMotionMagic() {
-        MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
-        .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration)
-        .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
-        talonHood.getConfigurator().apply(motionMagicConfig);
-    }
+    // public void configMotionMagic() {
+    //     MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
+    //     .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration)
+    //     .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
+    //     talonHood.getConfigurator().apply(motionMagicConfig);
+    // }
     
     //public void configMaxMotion(AngularVelocity velocity, AngularAcceleration acceleration) {
     //    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
@@ -103,7 +104,8 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public Command shootFuel() {
-        return setShooterVelocity(ShooterK.staticRpm);
+        // return setShooterVelocity(ShooterK.staticRpm);
+        return runOnce(() -> talonShooter.setControl(new VoltageOut(ShooterK.shooterVoltage)));
     }
 
     /**
