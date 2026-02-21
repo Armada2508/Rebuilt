@@ -29,6 +29,7 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.shooting.Shooter;
 import frc.robot.subsystems.shooting.Superstructure;
+import frc.robot.subsystems.shooting.Turret;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -43,6 +44,8 @@ public class Robot extends TimedRobot {
     Superstructure superstructure = new Superstructure();
     @Logged(name = "Indexer")
     Indexer indexer = new Indexer();
+    @Logged(name = "Turret")
+    Turret turret = new Turret(); // For logging
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
@@ -81,7 +84,7 @@ public class Robot extends TimedRobot {
         field.getObject("Pass Target Red High").setPose(Field.passTargetRedHigh);
         field.getObject("Pass Target Red Low").setPose(Field.passTargetRedLow);
         field.getObject("Red Zone Corner 1").setPose(Field.redZoneCorner1);
-        field.getObject("Red Zone Corner 1").setPose(Field.redZoneCorner2);
+        field.getObject("Red Zone Corner 2").setPose(Field.redZoneCorner2);
     }
   
     @Override

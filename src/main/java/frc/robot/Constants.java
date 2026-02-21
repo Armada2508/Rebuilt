@@ -194,11 +194,11 @@ public class Constants {
     }
     
     public static class IntakeK {
-        public static final int wheelsID = 0; //! find, may change
+        public static final int rollerID = 0; //! find, may change
         public static final int extenderID = 1;
     
         // Wheel current limit configs
-        public static final int wheelsCurrentLimit = 0; //! find
+        public static final int rollerCurrentLimit = 0; //! find
 
         // Arm current limit configs
         public static final int extenderCurrentLimit = 0; //! find
@@ -208,7 +208,7 @@ public class Constants {
         public static final Distance reverseSoftLimit = Inches.of(0); //! find
 
         // Voltage limits for both the wheels and the arm
-        public static final Voltage spinWheelsVoltage = Volts.of(0); //! find values
+        public static final Voltage spinRollerVoltage = Volts.of(0); //! find values
         public static final Voltage extendVoltage = Volts.of(0);
     }   
 

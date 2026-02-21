@@ -28,8 +28,8 @@ public class Field {
     public static final Pose2d blueTrenchLeft = new Pose2d(new Translation2d(blueTrenchRight.getMeasureX(), fieldWidth.minus(blueTrenchRight.getMeasureY())), Rotation2d.k180deg); 
     public static final Pose2d passTargetBlueHigh = new Pose2d(new Translation2d(blueHub.getMeasureX().times(0.60), blueHub.getMeasureY().times(0.375)), Rotation2d.kZero);
     public static final Pose2d passTargetBlueLow = new Pose2d(new Translation2d(blueHub.getMeasureX().times(0.60), blueHub.getMeasureY().times(1.625)), Rotation2d.kZero);
-    public static final Pose2d blueZoneCorner1 = new Pose2d(0,0, Rotation2d.kZero);
-    public static final Pose2d blueZoneCorner2 = new Pose2d(156.61,317.69, Rotation2d.kZero);
+    public static final Pose2d blueZoneCorner1 = new Pose2d(Inches.of(0),Inches.of(0), Rotation2d.kZero);
+    public static final Pose2d blueZoneCorner2 = new Pose2d(Inches.of(156.61), Inches.of(317.69), Rotation2d.kZero);
     public static final Rectangle2d blueZone = new Rectangle2d(new Translation2d(0,0), new Translation2d(156.61, 317.69));
 
     // Red side
@@ -41,8 +41,8 @@ public class Field {
     public static final Pose2d redTrenchLeft = new Pose2d(new Translation2d(fieldLength.minus(blueTrenchLeft.getMeasureX()), (fieldWidth.minus(blueTrenchLeft.getMeasureY()))), Rotation2d.kZero);
     public static final Pose2d passTargetRedHigh = new Pose2d(new Translation2d(redHub.getMeasureX().times(1.15), redHub.getMeasureY().times(0.375)), Rotation2d.kZero);
     public static final Pose2d passTargetRedLow = new Pose2d(new Translation2d(redHub.getMeasureX().times(1.15), redHub.getMeasureY().times(1.625)), Rotation2d.kZero);
-    public static final Pose2d redZoneCorner1 = new Pose2d(651.22,0, Rotation2d.kZero);
-    public static final Pose2d redZoneCorner2 = new Pose2d(469.11,317.69, Rotation2d.kZero);
+    public static final Pose2d redZoneCorner1 = new Pose2d(Inches.of(651.22),Inches.of(317.69), Rotation2d.kZero);
+    public static final Pose2d redZoneCorner2 = new Pose2d(Inches.of(469.11),Inches.of(0), Rotation2d.kZero);
     public static final Rectangle2d redZone = new Rectangle2d(new Translation2d(651.22,0), new Translation2d(469.11, 317.69));
     
     public static Pose2d getClosestPassPoint(Pose2d robotPose) {

@@ -15,12 +15,12 @@ import frc.robot.subsystems.shooting.Superstructure;
 public class Routines {
     public static Command intake(Intake intake) {
         return intake.extend()
-        .andThen(new RepeatCommand(intake.spinWheels()))
+        .andThen(new RepeatCommand(intake.spinRoller()))
         .withName("Intake Command");
     }
 
     public static Command stopIntake(Intake intake) {
-        return intake.retract().alongWith(intake.stopWheels());
+        return intake.retract().andThen(intake.spinRoller());
     }
 
     public static Command shoot(Shooter shooter) {
@@ -28,7 +28,7 @@ public class Routines {
     }
 
     public static Command stopShooter(Shooter shooter) {
-        return stopShooter(shooter);
+        return shooter.stop();
     }
 
     public static Command stowHood(Shooter shooter) {

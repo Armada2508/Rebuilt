@@ -71,6 +71,17 @@ public class Superstructure extends SubsystemBase {
                 turret.setAngleCommand(passParameters.turretAngle()))
         ).andThen(shooter.shootFuel());
     }
+
+    /**
+     * Returns the currently running command
+     * @return The command being run
+     */
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
+    }
     
     /**
      * Command that sets the shooter to point towards the Hub.

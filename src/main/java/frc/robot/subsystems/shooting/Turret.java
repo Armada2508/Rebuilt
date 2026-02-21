@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -113,5 +114,16 @@ public class Turret extends SubsystemBase {
      */
     public void stop() {
         talon.setControl(new NeutralOut());
+    }
+
+    /**
+     * Returns the currently running command
+     * @return The command being run
+     */
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
     }
 }

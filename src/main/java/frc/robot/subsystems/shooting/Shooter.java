@@ -127,8 +127,19 @@ public class Shooter extends SubsystemBase {
     /**
      * Stops the shooter and the hood motors from moving
      */
-    public void stop() {
-        talonShooter.setControl(new NeutralOut());
-        talonHood.setControl(new NeutralOut());
+    public Command stop() {
+        return runOnce(() -> talonShooter.setControl(new NeutralOut()))
+        .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())));
+    }
+
+    /**
+     * Returns the currently running command
+     * @return The command being run
+     */
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
     }
 }

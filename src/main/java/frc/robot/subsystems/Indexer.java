@@ -35,4 +35,15 @@ public class Indexer extends SubsystemBase{
     public Command indexCommand() {
         return runOnce(() -> index()); //! Check
     }
+
+    /**
+     * Returns the currently running command
+     * @return The command being run
+     */
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
+    }
 }

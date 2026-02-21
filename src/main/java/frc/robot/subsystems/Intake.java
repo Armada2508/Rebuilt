@@ -21,9 +21,8 @@ import frc.robot.Constants.IntakeK;
 @Logged
 public class Intake extends SubsystemBase {
 
-
     private final SparkMax extender = new SparkMax(IntakeK.extenderID, MotorType.kBrushless);
-    private final SparkMax wheels = new SparkMax(IntakeK.wheelsID, MotorType.kBrushless);
+    private final SparkMax roller = new SparkMax(IntakeK.rollerID, MotorType.kBrushless);
     
     public Intake() {
         configSparkMaxs();
@@ -31,12 +30,12 @@ public class Intake extends SubsystemBase {
     
     private void configSparkMaxs() {
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
-        SparkMaxConfig wheelsConfig = new SparkMaxConfig();
+        SparkMaxConfig rollerConfig = new SparkMaxConfig();
         
-        wheelsConfig.idleMode(IdleMode.kCoast);
-        wheelsConfig.smartCurrentLimit(IntakeK.wheelsCurrentLimit);
-        wheelsConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
-        wheels.configure(wheelsConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rollerConfig.idleMode(IdleMode.kCoast);
+        rollerConfig.smartCurrentLimit(IntakeK.rollerCurrentLimit);
+        rollerConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
+        roller.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Limit switch/soft limit for arm
         extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
@@ -57,11 +56,11 @@ public class Intake extends SubsystemBase {
         .withName("Set Extender Voltage");
     }
     
-    private Command setWheelsVoltage(Voltage wheelsVolts) {
+    private Command setRollerVoltage(Voltage rollerVolts) {
         return runOnce(() -> {
-            wheels.setVoltage(wheelsVolts);
+            roller.setVoltage(rollerVolts);
         })
-        .withName("Set Wheels Voltage");
+        .withName("Set roller Voltage");
     }
 
     /**
@@ -87,23 +86,23 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Spins intake wheels/motors via spinWheelsVoltage
+     * Spins intake roller/motors via spinrollerVoltage
      */
-    public Command spinWheels() { 
+    public Command spinRoller() { 
         return runOnce(() -> {
-            setWheelsVoltage(IntakeK.spinWheelsVoltage);
+            setRollerVoltage(IntakeK.spinRollerVoltage);
         })
-        .withName("Spinning Wheels");
+        .withName("Spinning roller");
     }
 
     /**
-     * Sets the intake wheels to stop
+     * Sets the intake roller to stop
      */
-    public Command stopWheels() {
+    public Command stopRoller() {
         return runOnce(() -> {
-            wheels.stopMotor();
+            roller.stopMotor();
         })
-        .withName("Stop Wheels");
+        .withName("Stop roller");
     }
 
     /**
@@ -111,6 +110,35 @@ public class Intake extends SubsystemBase {
      */
     public void stop() { 
         extender.stopMotor();
-        wheels.stopMotor();
+        roller.stopMotor();
+    }
+
+    /**
+     * Returns the currently running command
+     * @return The command being run
+     */
+    @Logged(name = "Current Command")
+    public String getCurrentCommandName() {
+        var cmd = getCurrentCommand();
+        if (cmd == null) return "None";
+        return cmd.getName();
+    }
+
+    /**
+     * Returns the applied voltage to the extender motor
+     * @return The applied voltage
+     */
+    @Logged(name = "Extender Voltage (v)")
+    public double getExtenderVoltage() {
+        return extender.getAppliedOutput();
+    }
+
+    /**
+     * Returns the applied voltage to the roller motor
+     * @return The applied voltage
+     */
+    @Logged(name = "Roller Voltage (v)")
+    public double getRollerVoltage() {
+        return roller.getAppliedOutput();
     }
 }
