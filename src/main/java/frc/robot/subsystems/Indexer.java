@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.epilogue.Logged;
@@ -34,6 +35,10 @@ public class Indexer extends SubsystemBase{
 
     public Command indexCommand() {
         return runOnce(() -> index()); //! Check
+    }
+
+    public Command stopCommand() {
+        return runOnce(() -> talon.setControl(new NeutralOut()));
     }
 
     /**

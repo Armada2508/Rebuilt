@@ -23,10 +23,19 @@ public class Routines {
         return intake.retract().andThen(intake.stopRoller()).withName("Stop Intake");
     }
 
-    public static Command shoot(Indexer indexer, Shooter shooter) {
+    // public static Command shoot(Indexer indexer, Shooter shooter) {
+    //     return new RepeatCommand(indexer.indexCommand())
+    //     .alongWith(new RepeatCommand(shooter.shootFuel()))
+    //     .withName("Shoot");
+    // }
+
+    public static Command shoot(Indexer indexer) {
         return new RepeatCommand(indexer.indexCommand())
-        .alongWith(new RepeatCommand(shooter.shootFuel()))
         .withName("Shoot");
+    }
+
+    public static Command stopIndexer(Indexer indexer) {
+        return indexer.stopCommand();
     }
 
     public static Command stopShooter(Shooter shooter) {

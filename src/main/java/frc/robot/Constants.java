@@ -14,7 +14,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
@@ -53,21 +52,24 @@ import edu.wpi.first.wpilibj.Filesystem;
 public class Constants {
 
     public static class ShooterK { //! find motor ID and proper measurements
-        public static final int talonID = 0;
-        public static final int talonHoodID = 1;
+        public static final int talonID = 12;
+        public static final int talonFollowID = 13;
+        public static final int talonHoodID = 14;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
+        // public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
+        // public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35);
         public static final Angle maxHoodAngle = Degrees.of(62.8);
 
         //& Shooter rpm limit
-        public static final AngularVelocity minRpm = RPM.of(0);
-        public static final AngularVelocity staticRpm = RPM.of(0); //! Tune
-        public static final AngularVelocity maxRpm = RPM.of(0); //! Find
+        // public static final AngularVelocity minRpm = RPM.of(0);
+        // public static final AngularVelocity staticRpm = RPM.of(0); //! Tune
+        // public static final AngularVelocity maxRpm = RPM.of(0); //! Find
+
+        public static final Voltage shooterVoltage = Volts.of(8);
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
@@ -84,10 +86,10 @@ public class Constants {
         public static final double skV = 0; //! tune
 
         //& Current Limits
-        public static final Current hoodMaxStatorCurrent = Amps.of(0); //! Find / Verify
-        public static final Current hoodMaxSupplyCurrent = Amps.of(0); //! Find / Verify
-        public static final Current shooterMaxStatorCurrent = Amps.of(0); //! Find / Verify
-        public static final Current shooterMaxSupplyCurrent = Amps.of(0); //! Find / Verify
+        public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
+        //// public static final Current hoodMaxSupplyCurrent = Amps.of(0); // Amps //! Tune
+        public static final Current shooterMaxStatorCurrent = Amps.of(50); // Amps //! Tune
+        //// public static final Current shooterMaxSupplyCurrent = Amps.of(0); // Amps //! Tune
 
         //& Configs
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
@@ -107,30 +109,31 @@ public class Constants {
         .withReverseSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(maxHoodAngle);
 
-        public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitEnable(true)
-        .withForwardSoftLimitThreshold(minRpm.in(RPM))
-        .withReverseSoftLimitEnable(true)
-        .withReverseSoftLimitThreshold(maxRpm.in(RPM));
+        // public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
+        // .withForwardSoftLimitEnable(true)
+        // .withForwardSoftLimitThreshold(minRpm.in(RPM))
+        // .withReverseSoftLimitEnable(true)
+        // .withReverseSoftLimitThreshold(maxRpm.in(RPM));
         
         public static final CurrentLimitsConfigs hoodCurrentLimitsConfigs = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimitEnable(true)
-        .withStatorCurrentLimit(hoodMaxStatorCurrent)
-        .withSupplyCurrentLimit(hoodMaxSupplyCurrent);
+        .withStatorCurrentLimit(hoodMaxStatorCurrent);
+        // .withSupplyCurrentLimit(hoodMaxSupplyCurrent);
 
         public static final CurrentLimitsConfigs shooterCurrentLimitsConfigs = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimitEnable(true)
-        .withStatorCurrentLimit(shooterMaxStatorCurrent)
-        .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
+        .withStatorCurrentLimit(shooterMaxStatorCurrent);
+        // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
         public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
         .withSensorToMechanismRatio(motorToHoodGearRatio);
     }
     
     public static class TurretK {
-        public static final int talonId = 0; //! Find
+        public static final int talonId = 15; //! Find 
+        //^ This may be bad, idk if can reserves id's
         
         //& Absolute Encoder
         public static final int channel = 0; //! Ask Electrical
@@ -188,22 +191,22 @@ public class Constants {
     }
     
     public static class IntakeK {
-        public static final int rollerID = 0; //! find, may change
+        public static final int rollerID = 0;
         public static final int extenderID = 1;
     
         // Wheel current limit configs
-        public static final int rollerCurrentLimit = 0; //! find
+        public static final int rollerCurrentLimit = 50; // amps //! Tune
 
         // Arm current limit configs
-        public static final int extenderCurrentLimit = 0; //! find
+        public static final int extenderCurrentLimit = 50; // amps //! Tune
 
         // Soft switch limits
-        public static final Distance forwardSoftLimit = Inches.of(0); //! find
+        public static final Distance forwardSoftLimit = Inches.of(9.75); //! find
         public static final Distance reverseSoftLimit = Inches.of(0); //! find
 
         // Voltage limits for both the wheels and the arm
-        public static final Voltage spinRollerVoltage = Volts.of(0); //! find values
-        public static final Voltage extendVoltage = Volts.of(0);
+        public static final Voltage spinRollerVoltage = Volts.of(6); //! Tune
+        public static final Voltage extendVoltage = Volts.of(5); //! Tune
     }   
 
     public static class SwerveK {
@@ -222,8 +225,8 @@ public class Constants {
             .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
 
         public static final CurrentLimitsConfigs steerCurrentLimitsConfig = new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true) //! Find / Tune
-            .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true); //! Find / Tune
+            .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
  
         // Path Constraints
         public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
@@ -280,15 +283,15 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.167;
-        public static final double rotationSpeedModifier = 0.167;
+        public static final double driveSpeedModifier = 0.5;
+        public static final double rotationSpeedModifier = 0.5;
         public static final double exponentialControl = 1.75;
     }
   
     public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         // public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
         //                                                                      
         // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
         // Acceptable height of pose estimation to consider it a valid pose
@@ -328,8 +331,8 @@ public class Constants {
     }
 
     public static class IndexerK {
-        public static final int id = 0; //! Find
-        public static final Voltage indexingVoltage = Volts.of(0); //! Find
+        public static final int id = 16; //! Find
+        public static final Voltage indexingVoltage = Volts.of(6); //! Find
         public static final CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimitEnable(true)
