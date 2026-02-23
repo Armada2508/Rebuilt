@@ -53,7 +53,8 @@ public class Constants {
 
     public static class ShooterK { //! find motor ID and proper measurements
         public static final int talonID = 12;
-        public static final int talonHoodID = 13;
+        public static final int talonFollowID = 13;
+        public static final int talonHoodID = 14;
 
         //& Motion Magic
         // public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
@@ -131,7 +132,7 @@ public class Constants {
     }
     
     public static class TurretK {
-        public static final int talonId = 14; //! Find 
+        public static final int talonId = 15; //! Find 
         //^ This may be bad, idk if can reserves id's
         
         //& Absolute Encoder
@@ -282,15 +283,15 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.167;
-        public static final double rotationSpeedModifier = 0.167;
+        public static final double driveSpeedModifier = 0.5;
+        public static final double rotationSpeedModifier = 0.5;
         public static final double exponentialControl = 1.75;
     }
   
     public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         // public static final String backCameraName = "ArducamBack";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(0)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
         //                                                                      
         // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
         // Acceptable height of pose estimation to consider it a valid pose
@@ -330,8 +331,8 @@ public class Constants {
     }
 
     public static class IndexerK {
-        public static final int id = 15; //! Find
-        public static final Voltage indexingVoltage = Volts.of(0); //! Find
+        public static final int id = 16; //! Find
+        public static final Voltage indexingVoltage = Volts.of(6); //! Find
         public static final CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimitEnable(true)

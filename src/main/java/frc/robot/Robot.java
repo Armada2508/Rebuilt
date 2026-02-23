@@ -103,16 +103,21 @@ public class Robot extends TimedRobot {
        
         Command stopIntakeRoutine = Routines.stopIntake(intake);
         Command intakeRoutine = Routines.intake(intake);
-        Command shootRoutine = Routines.shoot(indexer, shooter);
+        // Command shootRoutine = Routines.shoot(indexer, shooter);
+        Command indexRoutine = Routines.shoot(indexer);
         Command stowRoutine = Routines.stowHood(shooter);
+        Command stopIndexRoutine = Routines.stopIndexer(indexer);
 
         xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
          .onFalse(stopIntakeRoutine);
         
-        xboxController.rightTrigger().whileTrue(shootRoutine) // Shooter
-        .onFalse(Routines.stopShooter(shooter));
+        // xboxController.rightTrigger().whileTrue(shootRoutine) // Shooter
+        // .onFalse(Routines.stopShooter(shooter));
 
         xboxController.leftTrigger().onTrue(stowRoutine); // Stow
+
+        // xboxController.a().whileTrue(indexRoutine)
+        // .onFalse(stopIndexRoutine);
     
 
         // Superstructure
