@@ -98,15 +98,15 @@ public class Robot extends TimedRobot {
 
     public void configureBindings() {
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
-        xboxController.a().whileTrue(swerve.faceWheelsForward());
+        // xboxController.a().whileTrue(swerve.faceWheelsForward());
         // xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
        
         Command stopIntakeRoutine = Routines.stopIntake(intake);
         Command intakeRoutine = Routines.intake(intake);
         // Command shootRoutine = Routines.shoot(indexer, shooter);
-        // Command indexRoutine = Routines.shoot(indexer);
+        Command indexRoutine = Routines.shoot(indexer);
         Command stowRoutine = Routines.stowHood(shooter);
-        // Command stopIndexRoutine = Routines.stopIndexer(indexer);
+        Command stopIndexRoutine = Routines.stopIndexer(indexer);
 
         xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
          .onFalse(stopIntakeRoutine);
