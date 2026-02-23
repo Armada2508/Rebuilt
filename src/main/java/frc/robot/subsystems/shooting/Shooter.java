@@ -11,14 +11,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
-// import com.revrobotics.spark.config.SparkMaxConfig;
-// import com.revrobotics.spark.SparkMax;
-// import com.revrobotics.spark.SparkLowLevel.MotorType;
-// import com.revrobotics.PersistMode;
-// import com.revrobotics.ResetMode;
-// import com.revrobotics.spark.SparkClosedLoopController;
-// import com.revrobotics.spark.SparkBase.ControlType;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -34,12 +26,11 @@ public class Shooter extends SubsystemBase {
     private final TalonFX talonShooterRight = new TalonFX(ShooterK.talonFollowID); // As viewed from the back of the turret structure
     private final TalonFX talonHood = new TalonFX(ShooterK.talonHoodID);
 
-    //private final SparkClosedLoopController sparkMaxController = talonHood.getClosedLoopController();
+    
     
     public Shooter() {
         configTalons();
         configMotionMagic();
-        //configMaxMotion(ShooterK.motionMagicVelocity, ShooterK.motionMagicAcceleration); //!figure this out (might've figured it out)
     }
 
     /**
@@ -76,14 +67,6 @@ public class Shooter extends SubsystemBase {
         .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
         talonHood.getConfigurator().apply(motionMagicConfig);
     }
-    
-    //public void configMaxMotion(AngularVelocity velocity, AngularAcceleration acceleration) {
-    //    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
-    //    
-    //    sparkMaxConfig.closedLoop.maxMotion.motionMagicVelocity(velocity.in(RotationsPerSecond));
-    //    sparkMaxConfig.closedLoop.maxMotion.motionMagicAcceleration(acceleration.in(RotationsPerSecondPerSecond));
-    //    sparkmaxHood.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    //}
 
     //public Command setShooterVoltage(Voltage voltage) {
     //    return runOnce(() -> {

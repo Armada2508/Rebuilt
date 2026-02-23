@@ -195,10 +195,10 @@ public class Constants {
         public static final int extenderID = 1;
     
         // Wheel current limit configs
-        public static final int rollerCurrentLimit = 50; // amps //! Tune
+        public static final int rollerCurrentLimit = 20; // amps //! Tune
 
         // Arm current limit configs
-        public static final int extenderCurrentLimit = 50; // amps //! Tune
+        public static final int extenderCurrentLimit = 20; // amps //! Tune
 
         // Soft switch limits
         public static final Distance forwardSoftLimit = Inches.of(9.75); //! find
