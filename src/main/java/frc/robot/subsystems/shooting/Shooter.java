@@ -2,7 +2,7 @@ package frc.robot.subsystems.shooting;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
     
     public Shooter() {
         configTalons();
-        // configMotionMagic();
+        configMotionMagic();
         //configMaxMotion(ShooterK.motionMagicVelocity, ShooterK.motionMagicAcceleration); //!figure this out (might've figured it out)
     }
 
@@ -52,11 +52,12 @@ public class Shooter extends SubsystemBase {
         Util.coastMode(talonShooterLeft, talonShooterRight);
         Util.brakeMode(talonHood);
 
-        // MotorOutputConfigs invertConfig = new MotorOutputConfigs();
-        // invertConfig.Inverted = InvertedValue.Clockwise_Positive;
+        talonShooterRight.setControl(new StrictFollower(talonShooterLeft.getDeviceID()));
 
-        // talonShooterLeft.getConfigurator().apply(invertConfig);
+        MotorOutputConfigs invertConfig = new MotorOutputConfigs();
+        invertConfig.Inverted = InvertedValue.Clockwise_Positive;
 
+        talonShooterLeft.getConfigurator().apply(invertConfig); //! Verify that this is correct
         talonShooterLeft.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
         talonShooterLeft.getConfigurator().apply(ShooterK.shooterPidConfig);
 
@@ -69,12 +70,12 @@ public class Shooter extends SubsystemBase {
     /**
      * Configures MotionMagic and applies it to talonHood
      */
-    // public void configMotionMagic() {
-    //     MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
-    //     .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration)
-    //     .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
-    //     talonHood.getConfigurator().apply(motionMagicConfig);
-    // }
+    public void configMotionMagic() {
+        MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
+        .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration)
+        .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
+        talonHood.getConfigurator().apply(motionMagicConfig);
+    }
     
     //public void configMaxMotion(AngularVelocity velocity, AngularAcceleration acceleration) {
     //    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();

@@ -23,14 +23,9 @@ public class Routines {
         return intake.retract().andThen(intake.stopRoller()).withName("Stop Intake");
     }
 
-    // public static Command shoot(Indexer indexer, Shooter shooter) {
-    //     return new RepeatCommand(indexer.indexCommand())
-    //     .alongWith(new RepeatCommand(shooter.shootFuel()))
-    //     .withName("Shoot");
-    // }
-
-    public static Command shoot(Indexer indexer) {
+    public static Command shoot(Indexer indexer, Shooter shooter) {
         return new RepeatCommand(indexer.indexCommand())
+        .alongWith(new RepeatCommand(shooter.shootFuel()))
         .withName("Shoot");
     }
 

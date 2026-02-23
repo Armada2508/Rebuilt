@@ -57,8 +57,8 @@ public class Constants {
         public static final int talonHoodID = 14;
 
         //& Motion Magic
-        // public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
-        // public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35);
