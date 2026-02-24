@@ -110,6 +110,8 @@ public class Robot extends TimedRobot {
        
         Command stopIntakeRoutine = Routines.stopIntake(intake);
         Command intakeRoutine = Routines.intake(intake);
+        Command spinRollerRoutine = Routines.spinRollerRoutine(intake);
+        Command stopRollerRoutine = Routines.stopRollerRoutine(intake);
         // Command shootRoutine = Routines.shoot(indexer, shooter);
         // Command indexRoutine = Routines.shoot(indexer);
         Command stowRoutine = Routines.stowHood(shooter);
@@ -121,9 +123,13 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(shootRoutine) // Shooter
         // .onFalse(Routines.stopShooter(shooter));
 
+        
         xboxController.leftTrigger().onTrue(stowRoutine); // Stow
 
-        xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation
+        // xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation
+        xboxController.b().whileTrue(spinRollerRoutine) // Intake
+         .onFalse(stopRollerRoutine);
+        // xboxController.b().onTrue(Commands.print("b pressed"));
 
         // xboxController.a().whileTrue(indexRoutine)
         // .onFalse(stopIndexRoutine);

@@ -3,6 +3,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -67,4 +68,14 @@ public class Routines {
             () -> targetPose
         );
     }
+
+    public static Command spinRollerRoutine(Intake intake) {
+        return new RepeatCommand(intake.spinRoller())
+        .withName("Spin Roller");
+    }
+
+    public static Command stopRollerRoutine(Intake intake) {
+        return intake.stopRoller();
+    }
+
 }

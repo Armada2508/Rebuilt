@@ -15,6 +15,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
 
@@ -26,22 +27,26 @@ public class Intake extends SubsystemBase {
     
     public Intake() {
         configSparkMaxs();
+        System.out.println("Constructor run");
     }
     
     private void configSparkMaxs() {
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
         SparkMaxConfig rollerConfig = new SparkMaxConfig();
+        System.out.println("Configs created");
         
-        rollerConfig.idleMode(IdleMode.kCoast);
+        rollerConfig.idleMode(IdleMode.kBrake);
         rollerConfig.smartCurrentLimit(IntakeK.rollerCurrentLimit);
         rollerConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
         roller.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        System.out.println("Roller configured");
 
         // Limit switch/soft limit for arm
         extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
         extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
         extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches))).reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches)).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
         extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        System.out.println("Extender configured");
     }
     
     /**
@@ -56,14 +61,14 @@ public class Intake extends SubsystemBase {
         .withName("Set Extender Voltage");
     }
     
-    private Command setRollerVoltage(Voltage rollerVolts) {
+    private Command setRollerVoltage(Voltage spinRollerVoltage) {
         return runOnce(() -> {
-            roller.setVoltage(rollerVolts);
-        })
+            roller.setVoltage(IntakeK.spinRollerVoltage);
+        }).andThen(Commands.print("Spin roller running"))
         .withName("Set roller Voltage");
     }
 
-    /**
+    /**][\]
      * Extends the arm mechanism by setting the voltage using .extendVoltage
      * @return
      */
