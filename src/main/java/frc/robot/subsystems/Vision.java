@@ -230,7 +230,7 @@ public class Vision extends SubsystemBase {
             .transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
         );
     }
-  
+
     // This is your poor man's type alias, allows me to shorten the type and reference it by using VisionResults instead of List<Pair<EstimatedRobotPose, Matrix<N3, N1>>>
     public record VisionResults(List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> results){}
 }

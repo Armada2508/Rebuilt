@@ -32,6 +32,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -48,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.SwerveK;
+import frc.robot.Constants.VisionK;
 import frc.robot.Robot;
 import frc.robot.commands.DriveWheelCharacterization;
 import frc.robot.subsystems.Vision.VisionResults;
@@ -370,6 +372,21 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         if (cmd == null) return "None";
         return cmd.getName();
     }
+
+    @Logged(name = "Field to Robot")
+    public Pose3d getFieldToRobot() {
+        return new Pose3d(this.getPose());
+    }
+
+    @Logged(name = "Field to Camera") 
+    public Pose3d getFieldToCamera() {
+        return getFieldToRobot().transformBy(VisionK.robotToFrontCamera);
+    }
+
+    // @Logged(name="Robot to Camera Pose")
+    // public Pose3d getRobotToCameraPose() {
+    //     return new Pose3d().transformBy(VisionK.robotToFrontCamera);
+    // }
 
 //~ ============ SETTERS =============================================================================================
     /**
