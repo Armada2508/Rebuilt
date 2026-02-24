@@ -155,14 +155,14 @@ public class Constants {
         public static final double motorToHoodGearRatio = 800/350;
 
         //& PID
-        public static final double hkP = 0; //! tune
-        public static final double hkD = 0; //! tune
-        public static final double hkS = 0; //! tune
-        public static final double hkV = 0; //! tune
+        public static final double hoodKP = 0; //! tune
+        public static final double hoodKD = 0; //! tune
+        public static final double hoodKS = 0; //! tune
+        public static final double hoodKV = 0; //! tune
 
-        public static final double skP = 0; //! tune
-        public static final double skD = 0; //! tune
-        public static final double skV = 0; //! tune
+        public static final double flywheelKP = 0; //! tune
+        public static final double flywheelKD = 0; //! tune
+        public static final double flywheelKV = 0; //! tune
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
@@ -172,15 +172,15 @@ public class Constants {
 
         //& Configs
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
-        .withKP(hkP)
-        .withKD(hkD)
-        .withKS(hkS)
-        .withKV(hkV);
+        .withKP(hoodKP)
+        .withKD(hoodKD)
+        .withKS(hoodKS)
+        .withKV(hoodKV);
 
-        public static final Slot0Configs shooterPidConfig = new Slot0Configs()
-        .withKP(skP)
-        .withKD(skD)
-        .withKV(skV);
+        public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
+        .withKP(flywheelKP)
+        .withKD(flywheelKD)
+        .withKV(flywheelKV);
 
         public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
         .withForwardSoftLimitEnable(true)
@@ -211,7 +211,7 @@ public class Constants {
     }
     
     public static class TurretK {
-        public static final int talonId = 15; //! Find 
+        public static final int talonId = 15; 
         //^ This may be bad, idk if can reserves id's
         
         //& Absolute Encoder

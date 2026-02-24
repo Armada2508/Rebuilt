@@ -22,8 +22,8 @@ import frc.robot.lib.util.Util;
 @Logged
 public class Shooter extends SubsystemBase {
 
-    private final TalonFX talonShooterLeft = new TalonFX(ShooterK.talonID); // As viewed from the back of the turret structure
-    private final TalonFX talonShooterRight = new TalonFX(ShooterK.talonFollowID); // As viewed from the back of the turret structure
+    private final TalonFX talonFlywheelLeft = new TalonFX(ShooterK.talonID); // As viewed from the back of the turret structure
+    private final TalonFX talonFlywheelRight = new TalonFX(ShooterK.talonFollowID); // As viewed from the back of the turret structure
     private final TalonFX talonHood = new TalonFX(ShooterK.talonHoodID);
 
     
@@ -35,22 +35,22 @@ public class Shooter extends SubsystemBase {
 
     /**
      * Configures the motors
-     * talonShooterLeft NeutralMode needs to be set as coastMode for the longevity of the motor
+     * talonFlywheelLeft NeutralMode needs to be set as coastMode for the longevity of the motor
      * (brakeMode may cause damage in a fast moving motor)
      */
     public void configTalons() {
-        Util.factoryReset(talonShooterLeft, talonShooterRight, talonHood);
-        Util.coastMode(talonShooterLeft, talonShooterRight);
+        Util.factoryReset(talonFlywheelLeft, talonFlywheelRight, talonHood);
+        Util.coastMode(talonFlywheelLeft, talonFlywheelRight);
         Util.brakeMode(talonHood);
 
-        talonShooterRight.setControl(new StrictFollower(talonShooterLeft.getDeviceID()));
+        talonFlywheelRight.setControl(new StrictFollower(talonFlywheelLeft.getDeviceID()));
 
         MotorOutputConfigs invertConfig = new MotorOutputConfigs();
         invertConfig.Inverted = InvertedValue.Clockwise_Positive;
 
-        talonShooterLeft.getConfigurator().apply(invertConfig); //! Verify that this is correct
-        talonShooterLeft.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
-        talonShooterLeft.getConfigurator().apply(ShooterK.shooterPidConfig);
+        talonFlywheelLeft.getConfigurator().apply(invertConfig); //! Verify that this is correct
+        talonFlywheelLeft.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
+        talonFlywheelLeft.getConfigurator().apply(ShooterK.flywheelPidConfig);
 
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
@@ -70,7 +70,7 @@ public class Shooter extends SubsystemBase {
 
     //public Command setShooterVoltage(Voltage voltage) {
     //    return runOnce(() -> {
-    //        talonShooterLeft.setControl(new VoltageOut(voltage.in(Volts)));
+    //        talonFlywheelLeft.setControl(new VoltageOut(voltage.in(Volts)));
     //    }).withName("Set Shooter Voltage");
     //}
     //^ I don't think we're using voltage to control the shooter so I don't believe this is needed
@@ -80,7 +80,7 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public AngularVelocity getMotorVelocity() {
-        return talonShooterLeft.getVelocity().getValue().div(60);
+        return talonFlywheelLeft.getVelocity().getValue().div(60);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public Command setShooterVelocity(AngularVelocity rpm) {
-        return runOnce(() -> talonShooterLeft.setControl(new VelocityVoltage(rpm)));
+        return runOnce(() -> talonFlywheelLeft.setControl(new VelocityVoltage(rpm)));
     }
 
     /**
@@ -98,7 +98,7 @@ public class Shooter extends SubsystemBase {
      */
     public Command shootFuel() {
         // return setShooterVelocity(ShooterK.staticRpm);
-        return runOnce(() -> talonShooterLeft.setControl(new VoltageOut(ShooterK.shooterVoltage)));
+        return runOnce(() -> talonFlywheelLeft.setControl(new VoltageOut(ShooterK.shooterVoltage)));
     }
 
     /**
@@ -123,7 +123,7 @@ public class Shooter extends SubsystemBase {
      * Stops the shooter and the hood motors from moving
      */
     public Command stop() {
-        return runOnce(() -> talonShooterLeft.setControl(new NeutralOut()))
+        return runOnce(() -> talonFlywheelLeft.setControl(new NeutralOut()))
         .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())));
     }
 
