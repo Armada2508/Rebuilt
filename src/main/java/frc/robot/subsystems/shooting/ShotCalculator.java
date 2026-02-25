@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooting;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Seconds;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,6 +16,7 @@ import frc.robot.Constants.ShooterK;
  * https://blog.eeshwark.com/robotblog/shooting-on-the-fly-pt2
  * https://www.chiefdelphi.com/t/shoot-on-the-move-from-the-code-perspective/511815
  */
+@Logged
 public class ShotCalculator {
     // private final Pose2d targetPose;
     // private final Pose2d robotPose;
@@ -106,6 +108,23 @@ public class ShotCalculator {
         Angle hoodAngle,
         Angle turretAngle
     ) {}
+
+    @Logged(name = "Hood Angle Shot Parameter (degrees)")
+    public double getHoodAngleShotParameter() {
+        return shotParametersInstance.hoodAngle().in(Degrees);
+    }
+    @Logged(name = "Turret Shot Parameter (degrees)")
+    public double getTurretAngleShotParameter() {
+        return shotParametersInstance.turretAngle().in(Degrees);
+    }
+    @Logged(name = "Hood Angle Calculation Parameter (degrees)")
+    public double getHoodAngleCalculationParameter() {
+        return shotCalculationParametersInstance.hoodAngle().in(Degrees);
+    }
+    @Logged(name = "Fuel Air Time Calculation Parameter (seconds)")
+    public double getFuelAirTimeCalculationParameter() {
+        return shotCalculationParametersInstance.fuelAirTime().in(Seconds);
+    }
 
     // public ShotParameters getShotParameters() {
     //     //^ Gets the next predicted pose given robot velocity and multiplying.
