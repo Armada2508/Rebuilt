@@ -284,7 +284,7 @@ public class Constants {
         public static final Distance reverseSoftLimit = Inches.of(0); //! find
 
         // Voltage limits for both the wheels and the arm
-        public static final Voltage spinRollerVoltage = Volts.of(2); //! Tune
+        public static final Voltage spinRollerVoltage = Volts.of(-8); //! Tune
         public static final Voltage extendVoltage = Volts.of(5); //! Tune
     }   
 
