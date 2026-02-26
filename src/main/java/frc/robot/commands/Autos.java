@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,16 +17,23 @@ public class Autos {
     
     private static SendableChooser<Command> autoChooser;
 
-    public Autos(){}
+    private Autos(){}
 
-    public static SendableChooser<Command> initPathPlanner(Shooter shooter){
-
+    public static SendableChooser<Command> initPathPlanner(Shooter shooter, Intake intake){
+        FollowPathCommand.warmupCommand().schedule();
+        FollowPathCommand.allowableTranslationErrorMeters = Units.inchesToMeters(0.5);
+        System.out.println(FollowPathCommand.additionalTimeSeconds + " " + FollowPathCommand.allowableTranslationErrorMeters);
+        
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         NamedCommands.registerCommand("Shoot Fuel", shooter.shootFuel());
 
+        new EventTrigger("intake fuel").onTrue(Routines.intake(intake));
+
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+        return autoChooser;
     }
 
 
