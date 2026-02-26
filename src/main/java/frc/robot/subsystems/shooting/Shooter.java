@@ -98,7 +98,8 @@ public class Shooter extends SubsystemBase {
      */
     public Command shootFuel() {
         // return setShooterVelocity(ShooterK.staticRpm);
-        return runOnce(() -> talonFlywheelLeft.setControl(new VoltageOut(ShooterK.shooterVoltage)));
+        return runOnce(() -> talonFlywheelLeft.setControl(new VoltageOut(ShooterK.shooterVoltage)))
+        .withName("Shoot Fuel");
     }
 
     /**
@@ -109,14 +110,16 @@ public class Shooter extends SubsystemBase {
     public Command setHoodAngle(Angle targetAngle) {
         //return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
-        return runOnce(() -> talonHood.setControl(request));
+        return runOnce(() -> talonHood.setControl(request))
+        .withName("Set Hood Angle");
     }
 
     /**
      * Sets the hood to its minimum angle
      */
     public Command stow() {
-        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle));
+        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle))
+        .withName("Stow");
     }
 
     /**
@@ -124,7 +127,8 @@ public class Shooter extends SubsystemBase {
      */
     public Command stop() {
         return runOnce(() -> talonFlywheelLeft.setControl(new NeutralOut()))
-        .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())));
+        .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())))
+        .withName("Stop");
     }
 
     /**

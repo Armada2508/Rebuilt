@@ -11,8 +11,8 @@
         "x": 3.7423145161290323,
         "y": 6.9461774193548385
       },
-      "isLocked": false,
-      "linkedName": null
+      "isLocked": true,
+      "linkedName": "Start Top"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 7.480137096774193
       },
       "prevControl": {
-        "x": 2.528104838709678,
-        "y": 7.714201612903226
+        "x": 2.5281059588800145,
+        "y": 7.714217259756954
       },
       "nextControl": null,
       "isLocked": false,
