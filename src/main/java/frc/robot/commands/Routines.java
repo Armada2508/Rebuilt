@@ -30,6 +30,10 @@ public class Routines {
         .withName("Shoot");
     }
 
+    public static Command index(Indexer indexer) {
+        return new RepeatCommand(indexer.indexCommand());
+    }
+
     public static Command stopIndexer(Indexer indexer) {
         return indexer.stopCommand();
     }

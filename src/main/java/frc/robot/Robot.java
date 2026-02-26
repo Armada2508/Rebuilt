@@ -104,6 +104,7 @@ public class Robot extends TimedRobot {
     }
 
     public void configureBindings() {
+        //! Y is broken, don't bind to it
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         xboxController.a().whileTrue(swerve.faceWheelsForward());
         // xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
@@ -113,9 +114,9 @@ public class Robot extends TimedRobot {
         Command spinRollerRoutine = Routines.spinRollerRoutine(intake);
         Command stopRollerRoutine = Routines.stopRollerRoutine(intake);
         // Command shootRoutine = Routines.shoot(indexer, shooter);
-        // Command indexRoutine = Routines.shoot(indexer);
+        Command indexRoutine = Routines.index(indexer); //!
         Command stowRoutine = Routines.stowHood(shooter);
-        // Command stopIndexRoutine = Routines.stopIndexer(indexer);
+        Command stopIndexRoutine = Routines.stopIndexer(indexer); //!
 
         xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
          .onFalse(stopIntakeRoutine);
@@ -123,7 +124,9 @@ public class Robot extends TimedRobot {
         // xboxController.rightTrigger().whileTrue(shootRoutine) // Shooter
         // .onFalse(Routines.stopShooter(shooter));
 
-        
+        xboxController.x().whileTrue(indexRoutine)
+        .onFalse(stopIndexRoutine);
+
         xboxController.leftTrigger().onTrue(stowRoutine); // Stow
 
         // xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation
