@@ -37,8 +37,9 @@ public class Indexer extends SubsystemBase{
         return runOnce(() -> index()); //! Check
     }
 
-    public Command stopCommand() {
-        return runOnce(() -> talon.setControl(new NeutralOut()));
+    public void stop() {
+        // return runOnce(() -> talon.setControl(new NeutralOut()));
+        talon.setControl(new NeutralOut());
     }
 
     /**

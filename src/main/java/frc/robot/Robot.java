@@ -111,13 +111,12 @@ public class Robot extends TimedRobot {
        
         Command stopIntakeRoutine = Routines.stopIntake(intake);
         Command intakeRoutine = Routines.intake(intake);
-        Command spinRollerRoutine = Routines.spinRollerRoutine(intake);
-        Command stopRollerRoutine = Routines.stopRollerRoutine(intake);
+        // Command spinRollerRoutine = Routines.spinRollerRoutine(intake);
+        // Command stopRollerRoutine = Routines.stopRollerRoutine(intake);
         // Command shootRoutine = Routines.shoot(indexer, shooter);
         Command indexRoutine = Routines.index(indexer); //!
         Command stowRoutine = Routines.stowHood(shooter);
         Command stopIndexRoutine = Routines.stopIndexer(indexer); //!
-        Command alignToHubPID = Routines.alignToHubPID(swerve);
 
         xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
          .onFalse(stopIntakeRoutine);
@@ -138,7 +137,8 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(indexRoutine)
         // .onFalse(stopIndexRoutine);
     
-        xboxController.povUp().onTrue(Routines.alignToHubPID(swerve));
+        xboxController.povUp().onTrue(Routines.alignToHub(swerve));
+        xboxController.povDown().onTrue(Routines.alignToFerryPose(swerve));
 
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);

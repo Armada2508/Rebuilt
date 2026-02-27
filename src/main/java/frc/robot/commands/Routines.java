@@ -1,8 +1,5 @@
 package frc.robot.commands;
 
-
-import static edu.wpi.first.units.Units.Radians;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,7 +10,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Field;
 import frc.robot.subsystems.shooting.Shooter;
-import frc.robot.subsystems.shooting.Maps;
 import frc.robot.subsystems.shooting.Superstructure;
 
 public class Routines {
@@ -38,11 +34,11 @@ public class Routines {
     }
 
     public static Command stopIndexer(Indexer indexer) {
-        return indexer.stopCommand();
+        return Commands.runOnce(() -> indexer.stop(), indexer);
     }
 
     public static Command stopShooter(Shooter shooter) {
-        return shooter.stop().withName("Stop Shooter");
+        return Commands.runOnce(() -> shooter.stop(), shooter);
     }
 
     public static Command stowHood(Shooter shooter) {
@@ -63,20 +59,25 @@ public class Routines {
         .withName("Pass fuel");
     }
 
-    public static Command alignToHubPID(Swerve swerve) {
-        System.out.println("command running");
+    public static Command alignToHub(Swerve swerve) {
             return swerve.alignToPosePID(
-                 () ->
-                    new Pose2d(
-                        swerve.getPose().getX(), 
-                        swerve.getPose().getY(),
-                        // Rotation2d.fromDegrees(Math.atan2(Field.getAllianceHub().getX() - swerve.getPose().getX(), Field.getAllianceHub().getY() - swerve.getPose().getY()))));
-                        Rotation2d.fromRadians(swerve.getPose().getTranslation().minus(Field.getAllianceHub().getTranslation()).getAngle().getRadians()).plus(Rotation2d.k180deg)
-                    )
-                );
-        // Field.getAllianceHub().getRotation().minus(swerve.getPose().getTranslation().get)));
-                        
+                 () -> new Pose2d(
+                    swerve.getPose().getX(), 
+                    swerve.getPose().getY(),
+                    Rotation2d.fromRadians(swerve.getPose().getTranslation().minus(Field.getAllianceHub().getTranslation()).getAngle().getRadians()).plus(Rotation2d.k180deg)
+                )
+            );
+    }
 
+    public static Command alignToFerryPose(Swerve swerve) {
+        // Field.getClosestPassPoint(swerve.getPose()).getTranslation();
+        return swerve.alignToPosePID(
+            () -> new Pose2d(
+                swerve.getPose().getX(),
+                swerve.getPose().getY(),
+                Rotation2d.fromRadians(swerve.getPose().getTranslation().minus(Field.getClosestPassPoint(swerve.getPose()).getTranslation()).getAngle().getRadians()).plus(Rotation2d.k180deg)
+            )
+        );
     }
 
     public static Command spinRollerRoutine(Intake intake) {

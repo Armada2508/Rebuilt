@@ -122,9 +122,11 @@ public class Shooter extends SubsystemBase {
     /**
      * Stops the shooter and the hood motors from moving
      */
-    public Command stop() {
-        return runOnce(() -> talonFlywheelLeft.setControl(new NeutralOut()))
-        .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())));
+    public void stop() {
+        // return runOnce(() -> talonFlywheelLeft.setControl(new NeutralOut()))
+        // .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())));
+        talonFlywheelLeft.setControl(new NeutralOut());
+        talonHood.setControl(new NeutralOut());
     }
 
     /**
