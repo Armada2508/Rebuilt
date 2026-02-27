@@ -16,8 +16,6 @@ import frc.robot.subsystems.shooting.Shooter;
 
 public class Autos {
     
-    private static SendableChooser<Command> autoChooser;
-
     private Autos(){}
 
     public static SendableChooser<Command> initPathPlanner(Shooter shooter, Intake intake, Indexer indexer){
@@ -33,10 +31,5 @@ public class Autos {
         SmartDashboard.putData("Auto Chooser", autoChooser);
         return autoChooser;
     }
-
-
-    public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
 }
 
