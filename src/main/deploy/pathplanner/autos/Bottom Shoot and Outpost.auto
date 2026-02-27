@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom to Shoot Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Fuel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot Position to Outpost"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
