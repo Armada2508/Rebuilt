@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
@@ -17,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.Constants.VisionK;
+import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Indexer;
@@ -50,7 +54,7 @@ public class Robot extends TimedRobot {
     Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
     Indexer indexer = new Indexer();
-
+     private final SendableChooser<Command> autoChooser;
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
@@ -65,6 +69,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         logFieldConstants();
+        autoChooser = Autos.initPathPlanner(shooter, intake, indexer);
     }
 
     public void logFieldConstants() {
@@ -97,7 +102,20 @@ public class Robot extends TimedRobot {
         CanandEventLoop.getInstance();
         //^ This might not be needed, depends on if we need to initialize canandmag encoders in Swerve.java
     }
-
+        @Override
+    public void autonomousInit() {
+        var selected = autoChooser.getSelected();
+        if (selected instanceof PathPlannerAuto auto) {
+            if (!swerve.initializedOdometryFromVision()) {
+                var pose = auto.getStartingPose();
+                if (onRedAlliance()) {
+                    pose = FlippingUtil.flipFieldPose(pose);
+                }
+                swerve.resetOdometry(pose);
+            }
+        }
+        selected.schedule();
+    }
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
