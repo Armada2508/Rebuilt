@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 
+import static edu.wpi.first.units.Units.Radians;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -68,7 +70,10 @@ public class Routines {
                     new Pose2d(
                         swerve.getPose().getX(), 
                         swerve.getPose().getY(),
-                        Rotation2d.fromDegrees(Math.atan2(Field.getAllianceHub().getX() - swerve.getPose().getX(), Field.getAllianceHub().getY() - swerve.getPose().getY()))));
+                        // Rotation2d.fromDegrees(Math.atan2(Field.getAllianceHub().getX() - swerve.getPose().getX(), Field.getAllianceHub().getY() - swerve.getPose().getY()))));
+                        Rotation2d.fromRadians(swerve.getPose().getTranslation().minus(Field.getAllianceHub().getTranslation()).getAngle().getRadians()).plus(Rotation2d.k180deg)
+                    )
+                );
         // Field.getAllianceHub().getRotation().minus(swerve.getPose().getTranslation().get)));
                         
 
