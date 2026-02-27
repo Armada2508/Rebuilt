@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(indexRoutine)
         // .onFalse(stopIndexRoutine);
     
-        xboxController.povUp().onTrue(alignToHubPID);
+        xboxController.povUp().onTrue(Routines.alignToHubPID(swerve));
 
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);

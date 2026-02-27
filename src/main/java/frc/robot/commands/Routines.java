@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -67,8 +68,10 @@ public class Routines {
                     new Pose2d(
                         swerve.getPose().getX(), 
                         swerve.getPose().getY(),
-                        Field.getAllianceHub().getRotation())
-            );   
+                        Rotation2d.fromDegrees(Math.atan2(Field.getAllianceHub().getX() - swerve.getPose().getX(), Field.getAllianceHub().getY() - swerve.getPose().getY()))));
+        // Field.getAllianceHub().getRotation().minus(swerve.getPose().getTranslation().get)));
+                        
+
     }
 
     public static Command spinRollerRoutine(Intake intake) {
