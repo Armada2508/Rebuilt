@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooting;
 
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
@@ -7,6 +8,9 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -22,8 +26,8 @@ import frc.robot.lib.util.Util;
 @Logged
 public class Shooter extends SubsystemBase {
 
-    private final TalonFX talonFlywheelLeft = new TalonFX(ShooterK.talonID); // As viewed from the back of the turret structure
-    private final TalonFX talonFlywheelRight = new TalonFX(ShooterK.talonFollowID); // As viewed from the back of the turret structure
+    private final TalonFX talonFlywheelLeft = new TalonFX(ShooterK.talonShooterLeftID); // As viewed from the back of the turret structure
+    private final TalonFX talonFlywheelRight = new TalonFX(ShooterK.talonShooterRightID); // As viewed from the back of the turret structure
     private final TalonFX talonHood = new TalonFX(ShooterK.talonHoodID);
 
     
@@ -48,7 +52,7 @@ public class Shooter extends SubsystemBase {
         MotorOutputConfigs invertConfig = new MotorOutputConfigs();
         invertConfig.Inverted = InvertedValue.Clockwise_Positive;
 
-        talonFlywheelLeft.getConfigurator().apply(invertConfig); //! Verify that this is correct
+        talonFlywheelRight.getConfigurator().apply(invertConfig);
         talonFlywheelLeft.getConfigurator().apply(ShooterK.shooterCurrentLimitsConfigs);
         talonFlywheelLeft.getConfigurator().apply(ShooterK.flywheelPidConfig);
 
@@ -62,10 +66,11 @@ public class Shooter extends SubsystemBase {
      * Configures MotionMagic and applies it to talonHood
      */
     public void configMotionMagic() {
+        // System.out.println("Motion Magic Configuring");
         MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
-        .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration)
-        .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
-        talonHood.getConfigurator().apply(motionMagicConfig);
+        .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration);
+        // .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
+        talonFlywheelLeft.getConfigurator().apply(motionMagicConfig);
     }
 
     //public Command setShooterVoltage(Voltage voltage) {
@@ -92,13 +97,25 @@ public class Shooter extends SubsystemBase {
         return runOnce(() -> talonFlywheelLeft.setControl(new VelocityVoltage(rpm)));
     }
 
+    public void shoot() {
+        // System.out.println("shoot method called");
+        MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(ShooterK.staticRpm);
+        talonFlywheelLeft.setControl(request);
+        // System.out.println("Control request set");
+
+        // final VelocityVoltage request = new VelocityVoltage(0).withSlot(0);
+        // talonFlywheelLeft.setControl(request.withVelocity(ShooterK.staticRpm));
+
+        // talonFlywheelLeft.setVoltage(ShooterK.shooterVoltage.in(Volts));
+    }
+
     /**
      * Shoots the fuel at a static RPM
      * @return
      */
     public Command shootFuel() {
-        // return setShooterVelocity(ShooterK.staticRpm);
-        return runOnce(() -> talonFlywheelLeft.setControl(new VoltageOut(ShooterK.shooterVoltage)));
+        return runOnce(() -> shoot())
+        .withName("Shoot Fuel");
     }
 
     /**
@@ -109,24 +126,25 @@ public class Shooter extends SubsystemBase {
     public Command setHoodAngle(Angle targetAngle) {
         //return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
-        return runOnce(() -> talonHood.setControl(request));
+        return runOnce(() -> talonHood.setControl(request))
+        .withName("Set Hood Angle");
     }
 
     /**
      * Sets the hood to its minimum angle
      */
     public Command stow() {
-        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle));
+        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle))
+        .withName("Stow");
     }
 
     /**
      * Stops the shooter and the hood motors from moving
      */
-    public void stop() {
-        // return runOnce(() -> talonFlywheelLeft.setControl(new NeutralOut()))
-        // .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())));
-        talonFlywheelLeft.setControl(new NeutralOut());
-        talonHood.setControl(new NeutralOut());
+    public Command stop() {
+        return runOnce(() -> talonFlywheelLeft.setControl(new NeutralOut()))
+        .andThen(runOnce(() -> talonHood.setControl(new NeutralOut())))
+        .withName("Stop");
     }
 
     /**

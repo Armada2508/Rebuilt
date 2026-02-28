@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
@@ -17,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.Constants.VisionK;
+import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Indexer;
@@ -50,7 +54,7 @@ public class Robot extends TimedRobot {
     Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
     Indexer indexer = new Indexer();
-
+    //  private final SendableChooser<Command> autoChooser;
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
@@ -65,6 +69,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         logFieldConstants();
+        // autoChooser = Autos.initPathPlanner(shooter, intake, indexer);
     }
 
     public void logFieldConstants() {
@@ -97,48 +102,71 @@ public class Robot extends TimedRobot {
         CanandEventLoop.getInstance();
         //^ This might not be needed, depends on if we need to initialize canandmag encoders in Swerve.java
     }
-
+    //     @Override
+    // public void autonomousInit() {
+    //     var selected = autoChooser.getSelected();
+    //     if (selected instanceof PathPlannerAuto auto) {
+    //         if (!swerve.initializedOdometryFromVision()) {
+    //             var pose = auto.getStartingPose();
+    //             if (onRedAlliance()) {
+    //                 pose = FlippingUtil.flipFieldPose(pose);
+    //             }
+    //             swerve.resetOdometry(pose);
+    //         }
+    //     }
+    //     selected.schedule();
+    // }
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
     }
 
     public void configureBindings() {
-        //! Y is broken, don't bind to it
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
-        xboxController.a().whileTrue(swerve.faceWheelsForward());
+        // xboxController.a().whileTrue(swerve.faceWheelsForward());
         // xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
        
-        Command stopIntakeRoutine = Routines.stopIntake(intake);
-        Command intakeRoutine = Routines.intake(intake);
-        // Command spinRollerRoutine = Routines.spinRollerRoutine(intake);
-        // Command stopRollerRoutine = Routines.stopRollerRoutine(intake);
-        // Command shootRoutine = Routines.shoot(indexer, shooter);
-        Command indexRoutine = Routines.index(indexer); //!
-        Command stowRoutine = Routines.stowHood(shooter);
-        Command stopIndexRoutine = Routines.stopIndexer(indexer); //!
+        // Command stopIntakeRoutine = Routines.stopIntake(intake);
+        // Command intakeRoutine = Routines.intake(intake);
+        Command spinRollerRoutine = Routines.spinRollerRoutine(intake);
+        Command stopRollerRoutine = Routines.stopRollerRoutine(intake);
+        Command shootRoutine = Routines.shoot(shooter, indexer);
+        Command stopShooterRoutine = Routines.stopShooter(shooter, indexer);
+        Command indexRoutine = Routines.index(indexer);
+        Command stowRoutine = Routines.stowHood(shooter); 
+        // Command indexRoutine = Routines.spinIndexer(indexer);
+        Command stopIndexRoutine = Routines.stopIndexer(indexer);
 
-        xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
-         .onFalse(stopIntakeRoutine);
+        // xboxController.leftTrigger().whileTrue(intakeRoutine) // Intake
+        //  .onFalse(stopIntakeRoutine);
+
+        //  xboxController.rightTrigger().whileTrue(shootRoutine);
+
+        xboxController.a().whileTrue(indexRoutine)
+         .onFalse(stopIndexRoutine);
+
         
+
         // xboxController.rightTrigger().whileTrue(shootRoutine) // Shooter
         // .onFalse(Routines.stopShooter(shooter));
 
-        xboxController.x().whileTrue(indexRoutine)
-        .onFalse(stopIndexRoutine);
+        xboxController.povLeft().onTrue(Routines.alignToHub(swerve));
+        
+        xboxController.povRight().onTrue(Routines.alignToFerryPose(swerve));
 
         xboxController.leftTrigger().onTrue(stowRoutine); // Stow
 
-        xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation
-        // xboxController.b().whileTrue(spinRollerRoutine) // Intake
-        //  .onFalse(stopRollerRoutine);
+        // xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation
+        xboxController.b().whileTrue(spinRollerRoutine) // Intake
+         .onFalse(stopRollerRoutine);
         // xboxController.b().onTrue(Commands.print("b pressed"));
 
-        // xboxController.a().whileTrue(indexRoutine)
-        // .onFalse(stopIndexRoutine);
+        xboxController.a().whileTrue(indexRoutine)
+        .onFalse(stopIndexRoutine);
+
+        xboxController.x().whileTrue(shootRoutine.alongWith(Commands.print("Shoot routine run")))
+        .onFalse(stopShooterRoutine);
     
-        xboxController.povUp().onTrue(Routines.alignToHub(swerve));
-        xboxController.povDown().onTrue(Routines.alignToFerryPose(swerve));
 
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);

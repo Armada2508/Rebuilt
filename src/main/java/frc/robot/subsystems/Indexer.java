@@ -26,7 +26,7 @@ public class Indexer extends SubsystemBase{
     public void configTalons() {
         Util.factoryReset(talon);
         Util.coastMode(talon);
-        talon.getConfigurator().apply(IndexerK.currentLimitConfig);
+        // talon.getConfigurator().apply(IndexerK.currentLimitConfig);
     }
 
     public void index() {
@@ -35,6 +35,9 @@ public class Indexer extends SubsystemBase{
 
     public Command indexCommand() {
         return runOnce(() -> index()); //! Check
+    }
+    public Command stopCommand() {
+        return runOnce(() -> stop());
     }
 
     public void stop() {

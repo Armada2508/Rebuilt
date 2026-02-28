@@ -15,7 +15,10 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -131,13 +134,13 @@ public class Constants {
     }
 
     public static class ShooterK { //! find motor ID and proper measurements
-        public static final int talonID = 12;
-        public static final int talonFollowID = 13;
+        public static final int talonShooterLeftID = 12;
+        public static final int talonShooterRightID = 13;
         public static final int talonHoodID = 14;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
+        public static final AngularVelocity motionMagicVelocity = RotationsPerSecond.of(60);
+        public static final AngularAcceleration motionMagicAcceleration = RotationsPerSecondPerSecond.of(40);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35);
@@ -145,10 +148,10 @@ public class Constants {
 
         //& Shooter rpm limit
         // public static final AngularVelocity minRpm = RPM.of(0);
-        // public static final AngularVelocity staticRpm = RPM.of(0); //! Tune
+        public static final AngularVelocity staticRpm = RotationsPerSecond.of(45); //! Tune
         // public static final AngularVelocity maxRpm = RPM.of(0); //! Find
 
-        public static final Voltage shooterVoltage = Volts.of(8);
+        public static final Voltage shooterVoltage = Volts.of(4);
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
@@ -160,9 +163,10 @@ public class Constants {
         public static final double hoodKS = 0; //! tune
         public static final double hoodKV = 0; //! tune
 
-        public static final double flywheelKP = 0; //! tune
+        public static final double flywheelKP = 0.05; //! tune
         public static final double flywheelKD = 0; //! tune
-        public static final double flywheelKV = 0; //! tune
+        public static final double flywheelKS = 0.15; //! tune
+        public static final double flywheelKV = 0.122; //! tune
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
@@ -180,6 +184,7 @@ public class Constants {
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
         .withKP(flywheelKP)
         .withKD(flywheelKD)
+        // .withKS(flywheelKS)
         .withKV(flywheelKV);
 
         public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
