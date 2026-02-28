@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public AngularVelocity getMotorVelocity() {
-        return talonFlywheelLeft.getVelocity().getValue().div(60);
+        return talonFlywheelLeft.getVelocity().getValue().times(60);
     }
 
     /**
