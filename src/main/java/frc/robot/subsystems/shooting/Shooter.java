@@ -5,15 +5,14 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
@@ -66,26 +65,24 @@ public class Shooter extends SubsystemBase {
      * Configures MotionMagic and applies it to talonHood
      */
     public void configMotionMagic() {
-        // System.out.println("Motion Magic Configuring");
-        MotionMagicConfigs motionMagicConfig = new MotionMagicConfigs()
-        .withMotionMagicAcceleration(ShooterK.motionMagicAcceleration);
-        // .withMotionMagicCruiseVelocity(ShooterK.motionMagicVelocity);
-        talonFlywheelLeft.getConfigurator().apply(motionMagicConfig);
-    }
+        MotionMagicConfigs motionMagicFlywheelConfig = new MotionMagicConfigs()
+        .withMotionMagicAcceleration(ShooterK.motionMagicFlywheelAcceleration);
+        talonFlywheelLeft.getConfigurator().apply(motionMagicFlywheelConfig);
 
-    //public Command setShooterVoltage(Voltage voltage) {
-    //    return runOnce(() -> {
-    //        talonFlywheelLeft.setControl(new VoltageOut(voltage.in(Volts)));
-    //    }).withName("Set Shooter Voltage");
-    //}
-    //^ I don't think we're using voltage to control the shooter so I don't believe this is needed
+        MotionMagicConfigs motionMagicHoodConfig = new MotionMagicConfigs()
+        .withMotionMagicCruiseVelocity(ShooterK.motionMagicHoodVelocity)
+        .withMotionMagicAcceleration(ShooterK.motionMagicHoodAcceleration);
+        talonHood.getConfigurator().apply(motionMagicHoodConfig);
+
+
+    }
 
     /**
      * Returns the velocity in rpm of the shooting motor
      * @return
      */
-    public AngularVelocity getMotorVelocity() {
-        return talonFlywheelLeft.getVelocity().getValue().times(60);
+    public double getMotorVelocity() {
+        return talonFlywheelLeft.getVelocity().getValue().in(RotationsPerSecond) * 60;
     }
 
     /**

@@ -1,27 +1,32 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Field;
+import frc.robot.Constants.ShooterK;
 import frc.robot.subsystems.shooting.Shooter;
 import frc.robot.subsystems.shooting.Superstructure;
 
 public class Routines {
-    // public static Command intake(Intake intake) {
-    //     return intake.extend()
-    //     .andThen(new RepeatCommand(intake.spinRoller()))
-    //     .withName("Intake");
-    // }
+    public static Command intake(Intake intake) {
+        return intake.extend()
+        // .andThen(new RepeatCommand(intake.spinRoller()))
+        .withName("Intake");
+    }
 
-    // public static Command stopIntake(Intake intake) {
-    //     return intake.retract().andThen(intake.stopRoller()).withName("Stop Intake");
-    // }
+    public static Command stopIntake(Intake intake) {
+        return intake.retract()//.andThen(intake.stopRoller())
+        .withName("Stop Intake");
+    }
 
     // public static Command shoot(Indexer indexer, Shooter shooter) {
     //     return new RepeatCommand(indexer.indexCommand())
@@ -40,7 +45,7 @@ public class Routines {
 
     public static Command shoot(Shooter shooter, Indexer indexer) {
         return shooter.shootFuel()
-         .alongWith(index(indexer))
+         .alongWith(Commands.waitSeconds(0.5).andThen(indexer.indexCommand()))
         .withName("Shoot shooter");
     }
 

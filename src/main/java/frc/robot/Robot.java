@@ -117,8 +117,8 @@ public class Robot extends TimedRobot {
         //~ Intake Routines
         Command spinRoller = Routines.spinRollerRoutine(intake);
         Command stopRoller = Routines.stopRollerRoutine(intake);
-        // Command extend; //! Create
-        // Command retract; //! Create
+        Command extend = Routines.intake(intake); //! Create
+        Command retract = Routines.stopIntake(intake); //! Create
 
         //~ Shooter Routines
         Command shoot = Routines.shoot(shooter, indexer);
@@ -145,7 +145,12 @@ public class Robot extends TimedRobot {
         .onFalse(stopShooter);
 
         //~ Intaking
-        xboxController.leftTrigger().whileTrue(spinRoller) 
+        //xboxController.leftTrigger().whileTrue(spinRoller) 
+        //.onFalse(stopRoller);
+        xboxController.leftTrigger().onTrue(extend);
+        xboxController.leftBumper().onTrue(retract);
+        
+        xboxController.x().whileTrue(spinRoller)
         .onFalse(stopRoller);
 
         //~ Alignment

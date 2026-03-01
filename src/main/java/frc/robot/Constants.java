@@ -139,19 +139,17 @@ public class Constants {
         public static final int talonHoodID = 14;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicVelocity = RotationsPerSecond.of(60);
-        public static final AngularAcceleration motionMagicAcceleration = RotationsPerSecondPerSecond.of(40);
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0); //! Tune
+
+        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(70);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35);
         public static final Angle maxHoodAngle = Degrees.of(62.8);
 
         //& Shooter rpm limit
-        // public static final AngularVelocity minRpm = RPM.of(0);
-        public static final AngularVelocity staticRpm = RotationsPerSecond.of(45); //! Tune
-        // public static final AngularVelocity maxRpm = RPM.of(0); //! Find
-
-        public static final Voltage shooterVoltage = Volts.of(4);
+        public static final AngularVelocity staticRpm = RPM.of(2900); 
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
@@ -285,19 +283,20 @@ public class Constants {
         public static final int extenderCurrentLimit = 20; // amps //! Tune
 
         // Soft switch limits
-        public static final Distance forwardSoftLimit = Inches.of(9.75); //! find
-        public static final Distance reverseSoftLimit = Inches.of(0); //! find
+        // public static final Distance forwardSoftLimit = Inches.of(12.25); //! find
+        // public static final Distance reverseSoftLimit = Inches.of(0); //! find
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-8); //! Tune
-        public static final Voltage extendVoltage = Volts.of(5); //! Tune
+        public static final Voltage extendVoltage = Volts.of(1); //! Tune
+        public static final Voltage retractVoltage = Volts.of(-1.5);
     }   
 
     public static class IndexerOldK {
         public static final int talonID = 2; //! find
         
         // indexer current limit configs
-        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
+        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0, 0, 0); //! find
        
         public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
         public static final Time jostleDuration = Seconds.of(0.25);

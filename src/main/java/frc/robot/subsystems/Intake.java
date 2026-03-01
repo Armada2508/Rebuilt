@@ -20,7 +20,7 @@ import frc.robot.Constants.IntakeK;
 @Logged
 public class Intake extends SubsystemBase {
 
-    // private final SparkMax extender = new SparkMax(IntakeK.extenderID, MotorType.kBrushless);
+    private final SparkMax extender = new SparkMax(IntakeK.extenderID, MotorType.kBrushless);
     private final SparkMax roller = new SparkMax(IntakeK.rollerID, MotorType.kBrushless);
     
     public Intake() {
@@ -37,33 +37,33 @@ public class Intake extends SubsystemBase {
         roller.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Limit switch/soft limit for arm
-    //     extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
-    //     extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
-    //     extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches))).reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches)).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
-    //     extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
+        extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+        // extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches))).reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches)).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
+        extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
 
     /**
      * Extends the arm mechanism by setting the voltage using .extendVoltage
      * @return
      */
-    // public Command extend() { 
-    //     return runOnce(() -> {
-    //         extender.setVoltage(IntakeK.extendVoltage);
-    //    })
-    //    .withName("Extend");
-    // }
+    public Command extend() { 
+        return runOnce(() -> {
+            extender.setVoltage(IntakeK.extendVoltage);
+       })
+       .withName("Extend");
+    }
 
     /**
      * Retracts the arm mechanism by setting the voltage to negative
      * @return
      */
-    // public Command retract() {
-    //     return runOnce(() -> {
-    //         extender.setVoltage(IntakeK.extendVoltage.unaryMinus());
-    //     })
-    //     .withName("Retract");
-    // }
+    public Command retract() {
+        return runOnce(() -> {
+            extender.setVoltage(IntakeK.retractVoltage);
+        })
+        .withName("Retract");
+    }
 
     /**
      * Spins intake roller/motors via spinrollerVoltage
@@ -89,7 +89,7 @@ public class Intake extends SubsystemBase {
      * Stops both motors
      */
     public void stop() { 
-        // extender.stopMotor();
+        extender.stopMotor();
         roller.stopMotor();
     }
 
@@ -108,10 +108,10 @@ public class Intake extends SubsystemBase {
      * Returns the applied voltage to the extender motor
      * @return The applied voltage
      */
-    // @Logged(name = "Extender Voltage (v)")
-    // public double getExtenderVoltage() {
-    //     return extender.getAppliedOutput();
-    // }
+    @Logged(name = "Extender Voltage (v)")
+    public double getExtenderVoltage() {
+        return extender.getAppliedOutput();
+    }
 
     /**
      * Returns the applied voltage to the roller motor
@@ -121,4 +121,8 @@ public class Intake extends SubsystemBase {
     public double getRollerVoltage() {
         return roller.getAppliedOutput();
     }
+
+    // public double getExtenderPosition() {
+    //     return extender.getEncoder().getPosition()
+    // }
 }
