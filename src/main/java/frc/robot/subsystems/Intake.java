@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.LimitSwitchConfig;
@@ -13,9 +14,12 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
+import frc.robot.Constants.ShooterK;
+import frc.robot.lib.util.Encoder;
 
 @Logged
 public class Intake extends SubsystemBase {
@@ -65,6 +69,13 @@ public class Intake extends SubsystemBase {
         .withName("Retract");
     }
 
+    public Command stopArm() {
+        return runOnce(() -> {
+            extender.setVoltage(0);
+        })
+        .withName("Stop Arm");
+    }
+
     /**
      * Spins intake roller/motors via spinrollerVoltage
      */
@@ -91,6 +102,15 @@ public class Intake extends SubsystemBase {
     public void stop() { 
         extender.stopMotor();
         roller.stopMotor();
+    }
+
+    @Logged(name = "Arm Position (In)")
+    public Distance getArmPosition() {
+        return Encoder.angularToLinear(
+            Rotations.of(extender.getEncoder().getPosition()),
+            IntakeK.extenderGearRatio,
+            IntakeK.extenderWheelDiameter
+        );
     }
 
     /**

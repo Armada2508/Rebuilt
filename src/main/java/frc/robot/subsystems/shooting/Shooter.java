@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterK;
@@ -29,11 +30,14 @@ public class Shooter extends SubsystemBase {
     private final TalonFX talonFlywheelRight = new TalonFX(ShooterK.talonShooterRightID); // As viewed from the back of the turret structure
     private final TalonFX talonHood = new TalonFX(ShooterK.talonHoodID);
 
+    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(9);
+
     
     
     public Shooter() {
         configTalons();
         configMotionMagic();
+        configAbsoluteEncoder();
     }
 
     /**
@@ -41,10 +45,10 @@ public class Shooter extends SubsystemBase {
      * talonFlywheelLeft NeutralMode needs to be set as coastMode for the longevity of the motor
      * (brakeMode may cause damage in a fast moving motor)
      */
-    public void configTalons() {
+    private void configTalons() {
         Util.factoryReset(talonFlywheelLeft, talonFlywheelRight, talonHood);
-        Util.coastMode(talonFlywheelLeft, talonFlywheelRight);
-        Util.brakeMode(talonHood);
+        Util.coastMode(talonFlywheelLeft, talonFlywheelRight, talonHood);
+        // Util.brakeMode(talonHood);
 
         talonFlywheelRight.setControl(new StrictFollower(talonFlywheelLeft.getDeviceID()));
 
@@ -64,7 +68,7 @@ public class Shooter extends SubsystemBase {
     /**
      * Configures MotionMagic and applies it to talonHood
      */
-    public void configMotionMagic() {
+    private void configMotionMagic() {
         MotionMagicConfigs motionMagicFlywheelConfig = new MotionMagicConfigs()
         .withMotionMagicAcceleration(ShooterK.motionMagicFlywheelAcceleration);
         talonFlywheelLeft.getConfigurator().apply(motionMagicFlywheelConfig);
@@ -73,8 +77,12 @@ public class Shooter extends SubsystemBase {
         .withMotionMagicCruiseVelocity(ShooterK.motionMagicHoodVelocity)
         .withMotionMagicAcceleration(ShooterK.motionMagicHoodAcceleration);
         talonHood.getConfigurator().apply(motionMagicHoodConfig);
+    }
 
-
+    private void configAbsoluteEncoder() {
+        absoluteEncoder.setInverted(false); //! Verify this, because the dead gear and the turret gear spin in different directions, this may be needed
+       absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
+        //! Verify if it is a throughbore v1 or v2 when possible
     }
 
     /**
@@ -83,6 +91,10 @@ public class Shooter extends SubsystemBase {
      */
     public double getMotorVelocity() {
         return talonFlywheelLeft.getVelocity().getValue().in(RotationsPerSecond) * 60;
+    }
+
+    public double getEncoderValue() {
+        return absoluteEncoder.get();
     }
 
     /**

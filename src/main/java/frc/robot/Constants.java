@@ -60,8 +60,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.5;
-        public static final double rotationSpeedModifier = 0.5;
+        public static final double driveSpeedModifier = 0; // 0.5
+        public static final double rotationSpeedModifier = 0; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -142,14 +142,14 @@ public class Constants {
         public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0); //! Tune
         public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0); //! Tune
 
-        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(70);
+        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(23.35);
         public static final Angle maxHoodAngle = Degrees.of(62.8);
 
         //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(2900); 
+        public static final AngularVelocity staticRpm = RPM.of(2900);
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
@@ -277,19 +277,22 @@ public class Constants {
         public static final int extenderID = 2;
     
         // Wheel current limit configs
-        public static final int rollerCurrentLimit = 20; // amps //! Tune
+        public static final int rollerCurrentLimit = 30; // amps //! Tune
 
         // Arm current limit configs
         public static final int extenderCurrentLimit = 20; // amps //! Tune
 
         // Soft switch limits
-        // public static final Distance forwardSoftLimit = Inches.of(12.25); //! find
-        // public static final Distance reverseSoftLimit = Inches.of(0); //! find
+        public static final Distance forwardSoftLimit = Inches.of(9.25); //! Tune
+        public static final Distance reverseSoftLimit = Inches.of(0);
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-8); //! Tune
         public static final Voltage extendVoltage = Volts.of(1); //! Tune
         public static final Voltage retractVoltage = Volts.of(-1.5);
+
+        public static final double extenderGearRatio = 1/3.2;
+        public static final Distance extenderWheelDiameter = Inches.of(1.4375);
     }   
 
     public static class IndexerOldK {
