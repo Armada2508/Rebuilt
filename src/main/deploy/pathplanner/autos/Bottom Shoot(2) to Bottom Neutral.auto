@@ -27,6 +27,36 @@
           "data": {
             "pathName": "Shoot Position to Outpost"
           }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost to Shoot Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Fuel"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot to Bottom Neutral"
+          }
         }
       ]
     }

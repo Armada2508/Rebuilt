@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to Shoot Position"
+            "pathName": "Mid to Shoot Position"
           }
         },
         {
@@ -25,7 +25,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot Position to Outpost"
+            "pathName": "Shoot Position to Top Neutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top Neutral to Mid Neutral"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid Neutral to Top Neutral"
           }
         }
       ]

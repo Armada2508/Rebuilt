@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 7.687584215591915,
-        "y": 4.018118383060635
+        "y": 2.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5227526467757455,
-        "y": 1.3170596727622716
+        "x": 6.474947716826912,
+        "y": 0.7355921796659071
       },
       "isLocked": false,
-      "linkedName": "Mid Neutral"
+      "linkedName": "B Mid Neutral"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.7346438883541861
       },
       "prevControl": {
-        "x": 6.18512030798845,
-        "y": 1.0300721847930696
+        "x": 6.257923236672679,
+        "y": 0.9290267509519541
       },
       "nextControl": null,
       "isLocked": false,

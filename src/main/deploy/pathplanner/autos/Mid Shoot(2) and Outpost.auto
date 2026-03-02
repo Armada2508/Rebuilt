@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to Shoot Position"
+            "pathName": "Mid to Shoot Position"
           }
         },
         {
@@ -17,15 +17,27 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot Position to Outpost"
+          }
+        },
+        {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 3.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot Position to Outpost"
+            "pathName": "Outpost to Shoot Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Fuel"
           }
         }
       ]

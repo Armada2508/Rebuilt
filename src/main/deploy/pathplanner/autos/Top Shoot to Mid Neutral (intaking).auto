@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to Shoot Position"
+            "pathName": "Top to Shoot Position"
           }
         },
         {
@@ -25,7 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot Position to Outpost"
+            "pathName": "Shoot Position to Top Neutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top Neutral to Mid Neutral"
           }
         }
       ]

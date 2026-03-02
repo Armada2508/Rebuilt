@@ -7,25 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to Shoot Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Fuel"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "pathName": "Mid to Bottom Neutral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot Position to Outpost"
+            "pathName": "Bottom Neutral to Mid Neutral"
           }
         }
       ]
