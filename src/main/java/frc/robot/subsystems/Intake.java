@@ -28,25 +28,46 @@ public class Intake extends SubsystemBase {
     
     public Intake() {
         configSparkMaxs();
+        extender.getEncoder().setPosition(0); // Zero the encoder on startup
+        //! Test today, does this command it to go to a position or reset its position?
     }
     @SuppressWarnings("removal")
     private void configSparkMaxs() {
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
         SparkMaxConfig rollerConfig = new SparkMaxConfig();
         
-        rollerConfig.idleMode(IdleMode.kBrake);
+        //~ Roller Config
+        rollerConfig.idleMode(IdleMode.kCoast);
         rollerConfig.smartCurrentLimit(IntakeK.rollerCurrentLimit);
-        rollerConfig.signals.primaryEncoderPositionAlwaysOn(true).primaryEncoderVelocityAlwaysOn(true).warningsAlwaysOn(true).faultsAlwaysOn(true);
+
+        rollerConfig.signals //& Roller Signals
+        // .primaryEncoderPositionAlwaysOn(true) //? I don't believe we care about this
+        .primaryEncoderVelocityAlwaysOn(true)
+        .warningsAlwaysOn(true)
+        .faultsAlwaysOn(true);
+
         roller.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+        //~ Extender Config
+        extenderConfig.idleMode(IdleMode.kBrake);
+        extenderConfig.smartCurrentLimit(IntakeK.extenderCurrentLimit);
+
+        extenderConfig.signals //& Extender Signals
+        .primaryEncoderPositionAlwaysOn(true)
+        .primaryEncoderVelocityAlwaysOn(true)
+        .warningsAlwaysOn(true)
+        .faultsAlwaysOn(true);
+
+        extenderConfig.encoder //& Extender Encoder
+        .positionConversionFactor(IntakeK.extenderGearRatio); // Apply conversion for encoder, rotations -> inches
+
         // Limit switch/soft limit for arm
-        extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
-        extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+        extenderConfig.limitSwitch //& Extender Limit Switch 
+                                  //? Is this even being used right now?
+        .forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor) //! check
+        .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
-        extenderConfig.
-
-        extenderConfig.softLimit
-
+        extenderConfig.softLimit //& Extender Soft Limit
         .forwardSoftLimitEnabled(true)
         .reverseSoftLimitEnabled(true)
         .forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches)))
@@ -77,13 +98,6 @@ public class Intake extends SubsystemBase {
         .withName("Retract");
     }
 
-    public Command stopArm() {
-        return runOnce(() -> {
-            extender.stopMotor();
-        })
-        .withName("Stop Arm");
-    }
-
     /**
      * Spins intake roller/motors via spinrollerVoltage
      */
@@ -92,6 +106,13 @@ public class Intake extends SubsystemBase {
             roller.setVoltage(IntakeK.spinRollerVoltage)
         )
         .withName("Spin roller");
+    }
+
+    public Command stopArm() { //! Check if we need this
+        return runOnce(() -> {
+            extender.stopMotor();
+        })
+        .withName("Stop Arm");
     }
 
     /**
@@ -105,6 +126,14 @@ public class Intake extends SubsystemBase {
     }
 
     /**
+     * Re-zeros the extender
+     * ! Do not call this in the middle of a match unless you aboslutely have to
+     */
+    public void zeroExtender() {
+        extender.getEncoder().setPosition(0);
+    }
+
+    /**
      * Stops both motors
      */
     public void stop() { 
@@ -112,10 +141,10 @@ public class Intake extends SubsystemBase {
         roller.stopMotor();
     }
 
-    @Override
-    public void periodic() {
-        if (getArmPosition().gt(Inches.of(8)) || getArmPosition().lt(Inches.of(8))) stopArm(); //! find
-    }
+    // @Override
+    // public void periodic() {
+    //     if (getArmPosition().gt(Inches.of(8)) || getArmPosition().lt(Inches.of(8))) stopArm(); //! find
+    // }
 
     @Logged(name = "Arm Position (In)")
     public Distance getArmPosition() {
@@ -155,7 +184,13 @@ public class Intake extends SubsystemBase {
         return roller.getAppliedOutput();
     }
 
-    // public double getExtenderPosition() {
-    //     return extender.getEncoder().getPosition()
-    // }
+    /**
+     * Returns the velocity of the roller in Rpm
+     * @return The rpm
+     */
+    @Logged(name = "Roller Velocity (rpm)")
+    public double getRollerRpm() {
+        return roller.getEncoder().getVelocity();
+    }
+
 }
