@@ -344,10 +344,9 @@ public class Constants {
 
         public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
-        // public static final String backCameraName = "ArducamBack";
+        public static final String backCameraName = "ArducamSide";
         public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
-        //                                                                      
-        // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
+        public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);

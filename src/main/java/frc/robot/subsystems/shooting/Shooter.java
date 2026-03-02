@@ -80,20 +80,20 @@ public class Shooter extends SubsystemBase {
     }
 
     private void configAbsoluteEncoder() {
-        absoluteEncoder.setInverted(false); //! Verify this, because the dead gear and the turret gear spin in different directions, this may be needed
-       absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
-        //! Verify if it is a throughbore v1 or v2 when possible
+        absoluteEncoder.setInverted(false); 
+        absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
     }
 
     /**
      * Returns the velocity in rpm of the shooting motor
      * @return
      */
+    @Logged(name = "Motor Velocity (rpm)")
     public double getMotorVelocity() {
         return talonFlywheelLeft.getVelocity().getValue().in(RotationsPerSecond) * 60;
     }
 
-    public double getEncoderValue() {
+    public double getHoodAngle() {
         return absoluteEncoder.get();
     }
 
@@ -107,15 +107,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot() {
-        // System.out.println("shoot method called");
         MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(ShooterK.staticRpm);
         talonFlywheelLeft.setControl(request);
-        // System.out.println("Control request set");
-
-        // final VelocityVoltage request = new VelocityVoltage(0).withSlot(0);
-        // talonFlywheelLeft.setControl(request.withVelocity(ShooterK.staticRpm));
-
-        // talonFlywheelLeft.setVoltage(ShooterK.shooterVoltage.in(Volts));
     }
 
     /**
@@ -133,7 +126,6 @@ public class Shooter extends SubsystemBase {
      * @return runnable containing a command to command the talon
      */
     public Command setHoodAngle(Angle targetAngle) {
-        //return runOnce(() -> sparkMaxController.setSetpoint(targetAngle.in(Degrees), ControlType.kMAXMotionPositionControl));
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
         return runOnce(() -> talonHood.setControl(request))
         .withName("Set Hood Angle");
