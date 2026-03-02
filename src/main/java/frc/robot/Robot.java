@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
         //.onFalse(stopRoller);
-        xboxController.leftTrigger().whileTrue(extend)
+        xboxController.rightBumper().whileTrue(extend)
         .onFalse(stopArm);
         
         xboxController.leftBumper().onTrue(retract)

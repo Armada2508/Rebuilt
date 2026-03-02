@@ -149,7 +149,13 @@ public class Constants {
         public static final Angle maxHoodAngle = Degrees.of(62.8);
 
         //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(2900);
+        public static final AngularVelocity staticRpm = RPM.of(2900); // 2900
+
+        //& Shooter max and min RPM
+        public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
+        public static final AngularVelocity flywheelVelocityLowerThreshold = RPM.of(2860);
+
+
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20; //these numbers should be right now

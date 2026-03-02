@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
-import frc.robot.Constants.ShooterK;
 import frc.robot.lib.util.Encoder;
 
 @Logged
@@ -30,7 +29,7 @@ public class Intake extends SubsystemBase {
     public Intake() {
         configSparkMaxs();
     }
-    
+    @SuppressWarnings("removal")
     private void configSparkMaxs() {
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
         SparkMaxConfig rollerConfig = new SparkMaxConfig();
@@ -43,7 +42,16 @@ public class Intake extends SubsystemBase {
         // Limit switch/soft limit for arm
         extenderConfig.limitSwitch.forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor); //! check
         extenderConfig.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
-        // extenderConfig.softLimit.forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches))).reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches)).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
+
+        extenderConfig.
+
+        extenderConfig.softLimit
+
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimitEnabled(true)
+        .forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches)))
+        .reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches));
+
         extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
 
@@ -71,7 +79,7 @@ public class Intake extends SubsystemBase {
 
     public Command stopArm() {
         return runOnce(() -> {
-            extender.setVoltage(0);
+            extender.stopMotor();
         })
         .withName("Stop Arm");
     }
@@ -102,6 +110,11 @@ public class Intake extends SubsystemBase {
     public void stop() { 
         extender.stopMotor();
         roller.stopMotor();
+    }
+
+    @Override
+    public void periodic() {
+        if (getArmPosition().gt(Inches.of(8)) || getArmPosition().lt(Inches.of(8))) stopArm(); //! find
     }
 
     @Logged(name = "Arm Position (In)")
