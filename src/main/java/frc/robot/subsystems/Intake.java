@@ -4,7 +4,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.revrobotics.spark.SparkMax;
@@ -172,7 +171,7 @@ public class Intake extends SubsystemBase {
      */
     @Logged(name = "Extender Voltage (v)")
     public double getExtenderVoltage() {
-        return extender.getAppliedOutput();
+        return extender.getBusVoltage();
     }
 
     /**
@@ -181,7 +180,7 @@ public class Intake extends SubsystemBase {
      */
     @Logged(name = "Roller Voltage (v)")
     public double getRollerVoltage() {
-        return roller.getAppliedOutput();
+        return roller.getBusVoltage();
     }
 
     /**
