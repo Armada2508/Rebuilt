@@ -5,19 +5,22 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterK;
@@ -30,14 +33,15 @@ public class Shooter extends SubsystemBase {
     private final TalonFX talonFlywheelRight = new TalonFX(ShooterK.talonShooterRightID); // As viewed from the back of the turret structure
     private final TalonFX talonHood = new TalonFX(ShooterK.talonHoodID);
 
-    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(9);
-
-    
+    //* https://v6.docs.ctr-electronics.com/en/stable/docs/hardware-reference/cancoder/index.html
+    private final CANcoder canCoder = new CANcoder(9);
     
     public Shooter() {
         configTalons();
         configMotionMagic();
-        configAbsoluteEncoder();
+        configCanCoder();
+
+        canCoder.setPosition(0); //^ Zero the hood encoder on startup
     }
 
     /**
@@ -79,9 +83,16 @@ public class Shooter extends SubsystemBase {
         talonHood.getConfigurator().apply(motionMagicHoodConfig);
     }
 
-    private void configAbsoluteEncoder() {
-        absoluteEncoder.setInverted(false); 
-        absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
+    private void configCanCoder() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
+
+        config.MagnetSensor = new MagnetSensorConfigs()
+        .withAbsoluteSensorDiscontinuityPoint(0) //! Find
+        .withMagnetOffset(0) //~ Might not be needed?, Find
+        // We might be able to set the offset via TunerX
+        .withSensorDirection(null); //! Find
+
+
     }
 
     /**
@@ -93,9 +104,24 @@ public class Shooter extends SubsystemBase {
         return talonFlywheelLeft.getVelocity().getValue().in(RotationsPerSecond) * 60;
     }
 
-    public double getHoodAngle() {
-        return absoluteEncoder.get();
+    /**
+     * Returns the angle of the hood as read by the CANCoder
+     * @return The angle of the hood in degrees
+     */
+    @Logged(name = "Hood Angle (degrees)")
+    public Angle getHoodAngle() {
+        return Degrees.of(canCoder.getAbsolutePosition().getValue().in(Rotations)); //! Test
     }
+
+    /**
+     * Convert a measure of [0, 1) rotations into [0, 360) degrees
+     * @param rotations
+     * @return
+     */
+    //! This method COULD be helpful in the future
+    // public Angle asDegrees(double rotations) {
+    //     return Degrees.of(rotations * 360);
+    // }
 
     /**
      * Sets the shooter to a set RPM
