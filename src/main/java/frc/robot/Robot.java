@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(retract)
         .onFalse(stopArm);
 
-        xboxController.x().whileTrue(spinRoller)
+        xboxController.leftTrigger().whileTrue(spinRoller)
         .onFalse(stopRoller);
 
         //~ Alignment

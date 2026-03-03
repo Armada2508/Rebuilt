@@ -52,12 +52,12 @@ public class Routines {
     public static Command shoot(Shooter shooter, Indexer indexer) {
         return shooter.shootFuel()
         .alongWith(
-            // Commands.waitSeconds(0.5)
-        Commands.waitUntil(() -> Util.inRange(
-            shooter.getMotorVelocity(), 
-            ShooterK.flywheelVelocityUpperThreshold.in(RPM), 
-            ShooterK.flywheelVelocityLowerThreshold.in(RPM)
-            ))
+            Commands.waitSeconds(0.5)
+        // Commands.waitUntil(() -> Util.inRange(
+        //     shooter.getMotorVelocity(), 
+        //     ShooterK.flywheelVelocityUpperThreshold.in(RPM), 
+        //     ShooterK.flywheelVelocityLowerThreshold.in(RPM)
+        //     ))
         .andThen(indexer.indexCommand()))
         .withName("Shoot shooter");
     }

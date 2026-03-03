@@ -67,11 +67,11 @@ public class Intake extends SubsystemBase {
         .forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor) //! check
         .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
-        extenderConfig.softLimit //& Extender Soft Limit
-        .forwardSoftLimitEnabled(true)
-        .reverseSoftLimitEnabled(true)
-        .forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches)))
-        .reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches));
+        // extenderConfig.softLimit //& Extender Soft Limit
+        // .forwardSoftLimitEnabled(true)
+        // .reverseSoftLimitEnabled(true)
+        // .forwardSoftLimit((IntakeK.forwardSoftLimit.in(Inches)))
+        // .reverseSoftLimit(IntakeK.reverseSoftLimit.in(Inches));
 
         extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
