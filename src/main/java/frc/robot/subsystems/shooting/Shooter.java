@@ -146,6 +146,7 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public Command shootFuel() {
+
         return runOnce(() -> shoot())
         .withName("Shoot Fuel");
     }
@@ -157,7 +158,8 @@ public class Shooter extends SubsystemBase {
      */
     public Command setHoodAngle(Angle targetAngle) {
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
-        return runOnce(() -> talonHood.setControl(request));
+        return runOnce(() -> talonHood.setControl(request))
+        .withName("Set Hood Angle");
     }
 
     /**
