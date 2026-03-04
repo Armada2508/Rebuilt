@@ -15,7 +15,10 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -26,6 +29,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,8 +61,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.5;
-        public static final double rotationSpeedModifier = 0.5;
+        public static final double driveSpeedModifier = 0; // 0.5
+        public static final double rotationSpeedModifier = 0; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -131,38 +135,47 @@ public class Constants {
     }
 
     public static class ShooterK { //! find motor ID and proper measurements
-        public static final int talonID = 12;
-        public static final int talonFollowID = 13;
+        public static final int talonShooterLeftID = 12;
+        public static final int talonShooterRightID = 13;
         public static final int talonHoodID = 14;
+        public static final int CANCoderID = 0;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0);
-        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0);
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(20); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(10); //! Tune
+
+        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
         //& Hood angle limit
-        public static final Angle minHoodAngle = Degrees.of(23.35);
-        public static final Angle maxHoodAngle = Degrees.of(62.8);
+        public static final Angle minHoodAngle = Degrees.of(0);
+        public static final Angle maxHoodAngle = Degrees.of(40);
 
         //& Shooter rpm limit
-        // public static final AngularVelocity minRpm = RPM.of(0);
-        // public static final AngularVelocity staticRpm = RPM.of(0); //! Tune
-        // public static final AngularVelocity maxRpm = RPM.of(0); //! Find
+        public static final AngularVelocity staticRpm = RPM.of(2900); // 2900
 
-        public static final Voltage shooterVoltage = Volts.of(8);
+        //& Shooter max and min RPM
+        public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
+        public static final AngularVelocity flywheelVelocityLowerThreshold = RPM.of(2860);
+
+
 
         //& Gear Ratios
-        public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
-        public static final double motorToHoodGearRatio = 800/350;
+        public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
+        public static final double motorToHoodGearRatio = 800.0 / 350.0;
+        public static final double encoderToHoodGearRatio = 0.114;
+        
 
         //& PID
-        public static final double hoodKP = 0; //! tune
+        public static final double hoodKP = 0.75; //! tune
         public static final double hoodKD = 0; //! tune
-        public static final double hoodKS = 0; //! tune
-        public static final double hoodKV = 0; //! tune
+        public static final double hoodKS = 0.16; //! tune
+        public static final double hoodKV = 0.05; //! tune
+        public static final double hoodKG = 0.0;
 
-        public static final double flywheelKP = 0; //! tune
-        public static final double flywheelKD = 0; //! tune
-        public static final double flywheelKV = 0; //! tune
+        public static final double flywheelKP = 0.05;
+        public static final double flywheelKD = 0; 
+        public static final double flywheelKS = 0.15; 
+        public static final double flywheelKV = 0.122;
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
@@ -175,18 +188,20 @@ public class Constants {
         .withKP(hoodKP)
         .withKD(hoodKD)
         .withKS(hoodKS)
-        .withKV(hoodKV);
+        .withKV(hoodKV)
+        .withKG(hoodKG);
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
         .withKP(flywheelKP)
         .withKD(flywheelKD)
+        // .withKS(flywheelKS)
         .withKV(flywheelKV);
 
         public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
         .withForwardSoftLimitEnable(true)
         .withForwardSoftLimitThreshold(maxHoodAngle)
         .withReverseSoftLimitEnable(true)
-        .withReverseSoftLimitThreshold(maxHoodAngle);
+        .withReverseSoftLimitThreshold(minHoodAngle);
 
         // public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
         // .withForwardSoftLimitEnable(true)
@@ -206,8 +221,10 @@ public class Constants {
         .withStatorCurrentLimit(shooterMaxStatorCurrent);
         // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
-        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
-        .withSensorToMechanismRatio(motorToHoodGearRatio);
+        public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
+        .withFeedbackRemoteSensorID(CANCoderID)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        .withSensorToMechanismRatio(encoderToHoodGearRatio);
     }
     
     public static class TurretK {
@@ -274,25 +291,29 @@ public class Constants {
         public static final int extenderID = 2;
     
         // Wheel current limit configs
-        public static final int rollerCurrentLimit = 20; // amps //! Tune
+        public static final int rollerCurrentLimit = 30; // amps //! Tune
 
         // Arm current limit configs
         public static final int extenderCurrentLimit = 20; // amps //! Tune
 
         // Soft switch limits
-        public static final Distance forwardSoftLimit = Inches.of(9.75); //! find
-        public static final Distance reverseSoftLimit = Inches.of(0); //! find
+        public static final Distance forwardSoftLimit = Inches.of(9.25); //! Tune
+        public static final Distance reverseSoftLimit = Inches.of(0);
 
         // Voltage limits for both the wheels and the arm
-        public static final Voltage spinRollerVoltage = Volts.of(-8); //! Tune
-        public static final Voltage extendVoltage = Volts.of(5); //! Tune
+        public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
+        public static final Voltage extendVoltage = Volts.of(1); //! Tune
+        public static final Voltage retractVoltage = Volts.of(-1.5);
+
+        public static final double extenderGearRatio = 1/3.2;
+        public static final Distance extenderWheelDiameter = Inches.of(1.4375);
     }   
 
     public static class IndexerOldK {
         public static final int talonID = 2; //! find
         
         // indexer current limit configs
-        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0,.0, 0); //! find
+        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0, 0, 0); //! find
        
         public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
         public static final Time jostleDuration = Seconds.of(0.25);
@@ -331,10 +352,9 @@ public class Constants {
 
         public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
-        // public static final String backCameraName = "ArducamBack";
+        public static final String backCameraName = "ArducamSide";
         public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
-        //                                                                      
-        // public static final Transform3d robotToBackCamera = new Transform3d(Inches.of(-3.148), Inches.of(7.729), Inches.of(32.452), new Rotation3d(Degrees.zero(), Degrees.zero(), Degrees.of(-155)));
+        public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);

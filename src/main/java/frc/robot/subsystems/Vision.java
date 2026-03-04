@@ -31,14 +31,14 @@ import frc.robot.Field;
 public class Vision extends SubsystemBase {
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
-    // private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
+    private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
     private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
-    //private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToBackCamera);
+    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToSideCamera);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Vision");
     private final StructPublisher<Pose3d> pubFront = table.getStructTopic(VisionK.frontCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
-    // private final StructPublisher<Pose3d> pubBack = table.getStructTopic(VisionK.backCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
+    private final StructPublisher<Pose3d> pubBack = table.getStructTopic(VisionK.backCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
     private PhotonPipelineResult frontLatestResult;
-    // private PhotonPipelineResult backLatestResult;
+    private PhotonPipelineResult backLatestResult;
 
     @SuppressWarnings("removal")
     @Override
@@ -46,9 +46,9 @@ public class Vision extends SubsystemBase {
         if (isCameraConnectedFront()) {
             frontLatestResult = frontCamera.getLatestResult();
         }
-        // if (isCameraConnectedBack()) {
-            // backLatestResult = backCamera.getLatestResult();
-        // }
+        if (isCameraConnectedBack()) {
+            backLatestResult = backCamera.getLatestResult();
+        }
     }
 
     /**
@@ -60,9 +60,9 @@ public class Vision extends SubsystemBase {
         if (isCameraConnectedFront()) {
             visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator, frontCamera.getName()));
         }
-        //if (isCameraConnectedBack()) {
-        //    visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator, backCamera.getName()));
-        //}
+        if (isCameraConnectedBack()) {
+           visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator, backCamera.getName()));
+        }
         return new VisionResults(visionResults);
     }
 
@@ -125,9 +125,9 @@ public class Vision extends SubsystemBase {
         if (numTags == 1) {
             stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
         }
-        // if (name == VisionK.backCameraName) {
-            // stdDevs = stdDevs.times(4);
-        // }
+        if (name == VisionK.backCameraName) {
+            stdDevs = stdDevs.times(4);
+        }
         return stdDevs;
     }
 
@@ -142,10 +142,10 @@ public class Vision extends SubsystemBase {
     /**
      * Returns whether the back camera is connected
      */
-    // @Logged(name = "Back Camera Connected")
-    // public boolean isCameraConnectedBack() {
-        // return backCamera.isConnected();
-    // } 
+    @Logged(name = "Back Camera Connected")
+    public boolean isCameraConnectedBack() {
+        return backCamera.isConnected();
+    } 
 
     /**
      * Returns whether the front camera can see an april tag
@@ -159,11 +159,11 @@ public class Vision extends SubsystemBase {
     /**
      * Returns whether the back camera can see an april tag
      */
-    // @Logged(name = "Back Camera Sees Tag")
-    // public boolean canSeeTagBack() {
-        // if (!isCameraConnectedBack()) return false;
-        // return backLatestResult.hasTargets();    
-    // }
+    @Logged(name = "Back Camera Sees Tag")
+    public boolean canSeeTagBack() {
+        if (!isCameraConnectedBack()) return false;
+        return backLatestResult.hasTargets();    
+    }
 
     /**
      * Returns the ID of the best april tag seen by the front camera or -1 if no tag is seen
@@ -177,11 +177,11 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the ID of the best april tag seen by the back camera  or -1 if no tag is seen
      */
-    // @Logged(name = "Back Camera Best Tag ID")
-    // public int bestTagIDBack() {
-        // if (!canSeeTagBack()) return -1;
-        // return backLatestResult.getBestTarget().getFiducialId();
-    // }
+    @Logged(name = "Back Camera Best Tag ID")
+    public int bestTagIDBack() {
+        if (!canSeeTagBack()) return -1;
+        return backLatestResult.getBestTarget().getFiducialId();
+    }
 
     /**
      * Returns the number of april tags seen by the front camera
@@ -195,11 +195,11 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the number of april tags seen by the back camera
      */
-    // @Logged(name = "Back Camera Number Tags Seen")
-    // public int numTagsSeenBack() {
-        // if (!canSeeTagBack()) return 0;
-        // return backLatestResult.getTargets().size();
-    // }
+    @Logged(name = "Back Camera Number Tags Seen")
+    public int numTagsSeenBack() {
+        if (!canSeeTagBack()) return 0;
+        return backLatestResult.getTargets().size();
+    }
 
     /**
      * Returns the normal distance to the best tag in inches from the front camera (Camera Frame) or -1 if no tag is seen
@@ -213,11 +213,11 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the normal distance to the best tag in inches from the back camera (Camera Frame) or -1 if no tag is seen
      */
-    // @Logged(name = "Back Camera Normal Distance to Best Tag")
-    // public double distanceToBestTagBack() {
-        // if (!canSeeTagBack()) return -1;
-        // return Units.metersToInches(backLatestResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
-    // }
+    @Logged(name = "Back Camera Normal Distance to Best Tag")
+    public double distanceToBestTagBack() {
+        if (!canSeeTagBack()) return -1;
+        return Units.metersToInches(backLatestResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm());
+    }
 
     /**
      * Returns the normal distance to the best tag in inches from the front camera (Camera Frame) or -1 if no tag is seen
