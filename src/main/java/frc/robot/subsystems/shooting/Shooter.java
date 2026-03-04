@@ -35,10 +35,8 @@ public class Shooter extends SubsystemBase {
     private final TalonFX talonFlywheelRight = new TalonFX(ShooterK.talonShooterRightID); // As viewed from the back of the turret structure
     private final TalonFX talonHood = new TalonFX(ShooterK.talonHoodID);
 
-    private Angle hoodSetpoint;
-
     //* https://v6.docs.ctr-electronics.com/en/stable/docs/hardware-reference/cancoder/index.html
-    private final CANcoder canCoder = new CANcoder(0); // Make this a constant
+    private final CANcoder canCoder = new CANcoder(ShooterK.CANCoderID); 
     
     public Shooter() {
         configTalons();
@@ -72,9 +70,7 @@ public class Shooter extends SubsystemBase {
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
-        talonHood.getConfigurator().apply(ShooterK.gearRatioConfig);
-        talonHood.getConfigurator().apply(new FeedbackConfigs().withSensorToMechanismRatio(1 / ShooterK.motorToEncoderGearRatio));
-
+        talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
     }
 
     /**
@@ -99,14 +95,8 @@ public class Shooter extends SubsystemBase {
     //     .withMagnetOffset(0) //~ Might not be needed?, Find
     //     // We might be able to set the offset via TunerX
     //     .withSensorDirection(null); //! Find
-
-
     // }
 
-    @Override
-    public void periodic() {
-        System.out.println(talonHood.getFault_Hardware().getValue());
-    }
 
     /**
      * Returns the velocity in rpm of the shooting motor
@@ -167,13 +157,7 @@ public class Shooter extends SubsystemBase {
      */
     public Command setHoodAngle(Angle targetAngle) {
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
-        this.hoodSetpoint = targetAngle;
         return runOnce(() -> talonHood.setControl(request));
-    }
-
-    @Logged(name = "Hood Setpoint")
-    public Angle getHoodSetpoint() {
-        return this.hoodSetpoint;
     }
 
     /**

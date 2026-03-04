@@ -29,6 +29,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -137,6 +138,7 @@ public class Constants {
         public static final int talonShooterLeftID = 12;
         public static final int talonShooterRightID = 13;
         public static final int talonHoodID = 14;
+        public static final int CANCoderID = 0;
 
         //& Motion Magic
         public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(20); //! Tune
@@ -158,8 +160,8 @@ public class Constants {
 
 
         //& Gear Ratios
-        public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
-        public static final double motorToHoodGearRatio = 800/350;
+        public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
+        public static final double motorToHoodGearRatio = 800.0 / 350.0;
         public static final double encoderToHoodGearRatio = 0.114;
         
 
@@ -219,8 +221,10 @@ public class Constants {
         .withStatorCurrentLimit(shooterMaxStatorCurrent);
         // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
-        public static final FeedbackConfigs gearRatioConfig = new FeedbackConfigs()
-        .withSensorToMechanismRatio(motorToHoodGearRatio);
+        public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
+        .withFeedbackRemoteSensorID(CANCoderID)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        .withSensorToMechanismRatio(encoderToHoodGearRatio);
     }
     
     public static class TurretK {
