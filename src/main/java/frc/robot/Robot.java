@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
@@ -120,6 +122,7 @@ public class Robot extends TimedRobot {
         Command extend = Routines.intake(intake); //! Create
         Command retract = Routines.stopIntake(intake); //! Create
         Command stopArm = Routines.stopArm(intake);
+        Command zeroEncoder = Routines.zeroEncoder(intake);
 
         //~ Shooter Routines
         Command shoot = Routines.shoot(shooter, indexer);
@@ -139,11 +142,15 @@ public class Robot extends TimedRobot {
         // xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation        
 
         //~ Shooting & Indexing
-        xboxController.a().whileTrue(index)
-         .onFalse(stopIndex);
+        // xboxController.a().whileTrue(index)
+        //  .onFalse(stopIndex);
 
         xboxController.rightTrigger().whileTrue(shoot)
         .onFalse(stopShooter);
+
+        xboxController.povDown().onTrue(Routines.setHoodAngle(shooter, Degrees.of(10)));
+
+        // xboxController.povUp().onTrue(Routines.setHoodAngle(shooter, Degrees.of(20)));
 
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
@@ -157,9 +164,11 @@ public class Robot extends TimedRobot {
         xboxController.leftTrigger().whileTrue(spinRoller)
         .onFalse(stopRoller);
 
+        xboxController.y().onTrue(zeroEncoder);
+
         //~ Alignment
         xboxController.a().onTrue(Routines.alignToHub(swerve));
-        xboxController.b().onTrue(Routines.alignToFerryPose(swerve));
+        xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
 
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);

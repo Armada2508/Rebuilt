@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.RPM;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -32,6 +33,11 @@ public class Routines {
     public static Command stopArm(Intake intake) {
         return intake.stopArm()
         .withName("Stop Arm");
+    }
+
+    public static Command zeroEncoder(Intake intake) {
+        // return runOnce(() -> intake.zeroExtender());
+        return Commands.runOnce((() -> intake.zeroExtender()));
     }
 
     // public static Command shoot(Indexer indexer, Shooter shooter) {
@@ -67,6 +73,12 @@ public class Routines {
         .withName("Stop shooter");
     }
 
+    public static Command setHoodAngle(Shooter shooter, Angle angle) {
+        System.out.println("setHoodAngle Run!");
+        System.out.println("Hood Angle Units: " + angle.unit());
+        return shooter.setHoodAngle(angle);
+    }
+
     // public static Command stopShooter(Shooter shooter) {
     //     return Commands.runOnce(() -> shooter.stop(), shooter);
     // }
@@ -99,7 +111,7 @@ public class Routines {
             );
     }
 
-    public static Command alignToFerryPose(Swerve swerve) {
+    public static Command alignToPassPoint(Swerve swerve) {
         // Field.getClosestPassPoint(swerve.getPose()).getTranslation();
         return swerve.alignToPosePID(
             () -> new Pose2d(

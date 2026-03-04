@@ -60,8 +60,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.5; // 0.5
-        public static final double rotationSpeedModifier = 0.5; //0.5
+        public static final double driveSpeedModifier = 0; // 0.5
+        public static final double rotationSpeedModifier = 0; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -139,14 +139,14 @@ public class Constants {
         public static final int talonHoodID = 14;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0); //! Tune
-        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0); //! Tune
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(20); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(10); //! Tune
 
         public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
         //& Hood angle limit
-        public static final Angle minHoodAngle = Degrees.of(23.35);
-        public static final Angle maxHoodAngle = Degrees.of(62.8);
+        public static final Angle minHoodAngle = Degrees.of(0);
+        public static final Angle maxHoodAngle = Degrees.of(40);
 
         //& Shooter rpm limit
         public static final AngularVelocity staticRpm = RPM.of(2900); // 2900
@@ -160,17 +160,20 @@ public class Constants {
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20; //these numbers should be right now
         public static final double motorToHoodGearRatio = 800/350;
+        public static final double encoderToHoodGearRatio = 0.114;
+        
 
         //& PID
-        public static final double hoodKP = 0; //! tune
+        public static final double hoodKP = 0.75; //! tune
         public static final double hoodKD = 0; //! tune
-        public static final double hoodKS = 0; //! tune
-        public static final double hoodKV = 0; //! tune
+        public static final double hoodKS = 0.16; //! tune
+        public static final double hoodKV = 0.05; //! tune
+        public static final double hoodKG = 0.0;
 
-        public static final double flywheelKP = 0.05; //! tune
-        public static final double flywheelKD = 0; //! tune
-        public static final double flywheelKS = 0.15; //! tune
-        public static final double flywheelKV = 0.122; //! tune
+        public static final double flywheelKP = 0.05;
+        public static final double flywheelKD = 0; 
+        public static final double flywheelKS = 0.15; 
+        public static final double flywheelKV = 0.122;
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
@@ -183,7 +186,8 @@ public class Constants {
         .withKP(hoodKP)
         .withKD(hoodKD)
         .withKS(hoodKS)
-        .withKV(hoodKV);
+        .withKV(hoodKV)
+        .withKG(hoodKG);
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
         .withKP(flywheelKP)
@@ -195,7 +199,7 @@ public class Constants {
         .withForwardSoftLimitEnable(true)
         .withForwardSoftLimitThreshold(maxHoodAngle)
         .withReverseSoftLimitEnable(true)
-        .withReverseSoftLimitThreshold(maxHoodAngle);
+        .withReverseSoftLimitThreshold(minHoodAngle);
 
         // public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
         // .withForwardSoftLimitEnable(true)
