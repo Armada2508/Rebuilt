@@ -10,13 +10,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
@@ -128,16 +124,11 @@ public class Shooter extends SubsystemBase {
     // }
 
     /**
-     * Sets the shooter to a set RPM
-     * @param rpm The RPM to shoot at
-     * @return
+     * Commands the flywheel to shoot at a target rpm using MotionMagicVelocityVoltage
+     * @param rpm The rpm to shoot at
      */
-    public Command setShooterVelocity(AngularVelocity rpm) {
-        return runOnce(() -> talonFlywheelLeft.setControl(new VelocityVoltage(rpm)));
-    }
-
-    public void shoot() {
-        MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(ShooterK.staticRpm);
+    public void shoot(AngularVelocity rpm) {
+        MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(rpm);
         talonFlywheelLeft.setControl(request);
     }
 
@@ -147,7 +138,7 @@ public class Shooter extends SubsystemBase {
      */
     public Command shootFuel() {
 
-        return runOnce(() -> shoot())
+        return runOnce(() -> shoot(ShooterK.staticRpm))
         .withName("Shoot Fuel");
     }
 

@@ -30,6 +30,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -166,11 +167,10 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 0.75; //! tune
+        public static final double hoodKP = 0.75; //! tune 
         public static final double hoodKD = 0; //! tune
         public static final double hoodKS = 0.16; //! tune
         public static final double hoodKV = 0.05; //! tune
-        public static final double hoodKG = 0.0;
 
         public static final double flywheelKP = 0.05;
         public static final double flywheelKD = 0; 
@@ -179,22 +179,18 @@ public class Constants {
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
-        //// public static final Current hoodMaxSupplyCurrent = Amps.of(0); // Amps //! Tune
         public static final Current shooterMaxStatorCurrent = Amps.of(50); // Amps //! Tune
-        //// public static final Current shooterMaxSupplyCurrent = Amps.of(0); // Amps //! Tune
 
         //& Configs
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
         .withKP(hoodKP)
         .withKD(hoodKD)
         .withKS(hoodKS)
-        .withKV(hoodKV)
-        .withKG(hoodKG);
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);;
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
         .withKP(flywheelKP)
         .withKD(flywheelKD)
-        // .withKS(flywheelKS)
         .withKV(flywheelKV);
 
         public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
@@ -202,12 +198,6 @@ public class Constants {
         .withForwardSoftLimitThreshold(maxHoodAngle)
         .withReverseSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(minHoodAngle);
-
-        // public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
-        // .withForwardSoftLimitEnable(true)
-        // .withForwardSoftLimitThreshold(minRpm.in(RPM))
-        // .withReverseSoftLimitEnable(true)
-        // .withReverseSoftLimitThreshold(maxRpm.in(RPM));
         
         public static final CurrentLimitsConfigs hoodCurrentLimitsConfigs = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
