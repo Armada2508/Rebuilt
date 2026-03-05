@@ -1,7 +1,10 @@
 package frc.robot.commands;
 
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
+
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,21 +15,30 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
-import frc.robot.lib.util.Util;
-import frc.robot.Constants.ShooterK;
 import frc.robot.Field;
 import frc.robot.subsystems.shooting.Shooter;
 import frc.robot.subsystems.shooting.Superstructure;
 
 public class Routines {
+    public static Command spinRoller(Intake intake) {
+        return new RepeatCommand(intake.spinRoller())
+        .withName("Spin Roller");
+    }
+
+    public static Command stopRoller(Intake intake) {
+        return intake.stopRoller()
+        .withName("Stop Roller");
+    }
+
     public static Command intake(Intake intake) {
         return intake.extend()
-        // .andThen(new RepeatCommand(intake.spinRoller()))
+        .andThen(new RepeatCommand(intake.spinRoller()))
         .withName("Intake");
     }
 
     public static Command stopIntake(Intake intake) {
-        return intake.retract()//.andThen(intake.stopRoller())
+        return intake.stopRoller()
+        .andThen(intake.retract())
         .withName("Stop Intake");
     }
 
@@ -40,6 +52,9 @@ public class Routines {
         return Commands.runOnce((() -> intake.zeroExtender()));
     }
 
+    public static Command zeroGyro(Swerve swerve) {
+        return swerve.commandZeroGyro();
+    }
     // public static Command shoot(Indexer indexer, Shooter shooter) {
     //     return new RepeatCommand(indexer.indexCommand())
     //     .alongWith(new RepeatCommand(shooter.shootFuel()))
@@ -59,11 +74,6 @@ public class Routines {
         return shooter.shootFuel()
         .alongWith(
             Commands.waitSeconds(0.5)
-        // Commands.waitUntil(() -> Util.inRange(
-        //     shooter.getMotorVelocity(), 
-        //     ShooterK.flywheelVelocityUpperThreshold.in(RPM), 
-        //     ShooterK.flywheelVelocityLowerThreshold.in(RPM)
-        //     ))
         .andThen(indexer.indexCommand()))
         .withName("Shoot shooter");
     }
@@ -73,10 +83,9 @@ public class Routines {
         .withName("Stop shooter");
     }
 
-    public static Command setHoodAngle(Shooter shooter, Angle angle) {
-        System.out.println("setHoodAngle Run!");
-        System.out.println("Hood Angle Units: " + angle.unit());
-        return shooter.setHoodAngle(angle);
+    public static Command setHoodAngle(Shooter shooter) {
+        // System.out.println("Hood Angle Units: " + targetAngle.get().unit());
+        return shooter.setHoodAngle(Degrees.of(20));
     }
 
     // public static Command stopShooter(Shooter shooter) {
@@ -89,17 +98,17 @@ public class Routines {
 
     // Superstructure
 
-    public static Command scoreFuelHub(Superstructure superstructure, Indexer indexer) {
-        return new RepeatCommand(indexer.indexCommand())
-        .alongWith(new RepeatCommand(superstructure.score()))
-        .withName("Score fuel");
-    }
+    // public static Command scoreFuelHub(Superstructure superstructure, Indexer indexer) {
+    //     return new RepeatCommand(indexer.indexCommand())
+    //     .alongWith(new RepeatCommand(superstructure.score()))
+    //     .withName("Score fuel");
+    // }
 
-    public static Command passFuel(Superstructure superstructure, Indexer indexer) {
-        return new RepeatCommand(indexer.indexCommand())
-        .alongWith(new RepeatCommand(superstructure.pass()))
-        .withName("Pass fuel");
-    }
+    // public static Command passFuel(Superstructure superstructure, Indexer indexer) {
+    //     return new RepeatCommand(indexer.indexCommand())
+    //     .alongWith(new RepeatCommand(superstructure.pass()))
+    //     .withName("Pass fuel");
+    // }
 
     public static Command alignToHub(Swerve swerve) {
             return swerve.alignToPosePID(

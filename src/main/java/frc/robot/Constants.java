@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0; // 0.5
-        public static final double rotationSpeedModifier = 0; //0.5
+        public static final double driveSpeedModifier = 0.25; // 0.5
+        public static final double rotationSpeedModifier = 0.25; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -142,8 +142,8 @@ public class Constants {
         public static final int CANCoderID = 0;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(20); //! Tune
-        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(10); //! Tune
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.1); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.1); //! Tune
 
         public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
@@ -167,10 +167,10 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 0.75; //! tune 
+        public static final double hoodKP = 1; //! tune 
         public static final double hoodKD = 0; //! tune
         public static final double hoodKS = 0.16; //! tune
-        public static final double hoodKV = 0.05; //! tune
+        // public static final double hoodKV = 0.05; //! tune
 
         public static final double flywheelKP = 0.05;
         public static final double flywheelKD = 0; 
@@ -185,8 +185,8 @@ public class Constants {
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
         .withKP(hoodKP)
         .withKD(hoodKD)
-        .withKS(hoodKS)
-        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);;
+        .withKS(hoodKS);
+        // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
         .withKP(flywheelKP)
@@ -214,6 +214,7 @@ public class Constants {
         public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
         .withFeedbackRemoteSensorID(CANCoderID)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        .withRotorToSensorRatio(motorToEncoderGearRatio)
         .withSensorToMechanismRatio(encoderToHoodGearRatio);
     }
     
@@ -292,8 +293,8 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(1); //! Tune
-        public static final Voltage retractVoltage = Volts.of(-1.5);
+        public static final Voltage extendVoltage = Volts.of(1.5); //! Tune
+        public static final Voltage retractVoltage = Volts.of(-2);
 
         public static final double extenderGearRatio = 1/3.2;
         public static final Distance extenderWheelDiameter = Inches.of(1.4375);

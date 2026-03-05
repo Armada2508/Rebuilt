@@ -40,18 +40,19 @@ import frc.robot.subsystems.shooting.Turret;
 @Logged
 public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
+    // private Alliance activeHub;
 
-    Field2d field = new Field2d();
+    private Field2d field = new Field2d();
     @Logged(name = "Intake")
-    Intake intake = new Intake();
+    private Intake intake = new Intake();
     // @Logged(name = "Shooter")
-    Shooter shooter = new Shooter();
+    private Shooter shooter = new Shooter();
     // @Logged(name = "Turret")
-    Turret turret = new Turret(); // For logging
+    private Turret turret = new Turret(); // For logging
     @Logged(name = "Superstructure")
-    Superstructure superstructure = new Superstructure(shooter, turret);
+    private Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
-    Indexer indexer = new Indexer();
+    private Indexer indexer = new Indexer();
 
      private final SendableChooser<Command> autoChooser;
 
@@ -123,14 +124,75 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
     }
 
+    @Override
+    public void teleopPeriodic() {
+        // activeHub = getActiveHub();
+        SmartDashboard.putBoolean("Alliance Hub Active", isHubActive()); //! THIS WILL NOT LOG IF THE ROBOT IS DISCONNECTED IN SIM
+    }
+
+    public static Alliance getActiveHub() {
+            String gameData = DriverStation.getGameSpecificMessage();
+            double matchTime = DriverStation.getMatchTime();
+
+            if (getMatchPhase(matchTime).equals("Transition") || getMatchPhase(matchTime).equals("End Game")) return DriverStation.getAlliance().get();
+
+            if (gameData.length() > 0) {
+                switch (gameData.charAt(0)) {
+                    case 'B':
+                        if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Red;
+                        else return Alliance.Blue;
+                    default:
+                        System.out.println("Corrupt Data");
+                        return DriverStation.getAlliance().get();
+                }
+            }
+            else {
+                System.out.println("No Data Recieved Yet");
+                return DriverStation.getAlliance().get();
+            }
+    }
+
+    public boolean isHubActive() {
+        if (getActiveHub().equals(DriverStation.getAlliance().get())) return true;
+        return false;
+    }
+
+public static String getMatchPhase(double matchTime) {
+    if (matchTime >= 130) {
+        return "Transition";
+    }
+    else if (129 > matchTime && matchTime >= 105) {
+        return "Shift One";
+    }
+        else if (104 > matchTime && matchTime >= 80) {
+        return "Shift Two";
+    }
+        else if (79 > matchTime && matchTime >= 55) {
+        return "Shift Three";
+    }
+        else if (54 > matchTime && matchTime >= 30) {
+        return "Shift Four";
+    }
+    else if (matchTime < 30) {
+        return "End Game";
+    }
+    else return "How did we get here";
+}
     public void configureBindings() {
         //~ Intake Routines
+        Command intakeCommand = Routines.intake(intake);
+        Command stopIntake = Routines.stopIntake(intake);
         Command spinRoller = Routines.spinRollerRoutine(intake);
         Command stopRoller = Routines.stopRollerRoutine(intake);
         Command extend = Routines.intake(intake); //! Create
         Command retract = Routines.stopIntake(intake); //! Create
         Command stopArm = Routines.stopArm(intake);
         Command zeroEncoder = Routines.zeroEncoder(intake);
+
+        Command setHoodAngle = Routines.setHoodAngle(shooter);
+        
+        // Command hoodTenDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(10));
+        // Command hoodTwentyDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(20));
 
         //~ Shooter Routines
         Command shoot = Routines.shoot(shooter, indexer);
@@ -142,7 +204,7 @@ public class Robot extends TimedRobot {
         Command stopIndex = Routines.stopIndexer(indexer);
 
         //! AVOID BINDING TO 'Y'
-
+        Command zeroGyro = Routines.zeroGyro(swerve);
         //~ Debugging / Simulation
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         // xboxController.a().whileTrue(swerve.faceWheelsForward());
@@ -156,9 +218,10 @@ public class Robot extends TimedRobot {
         xboxController.rightTrigger().whileTrue(shoot)
         .onFalse(stopShooter);
 
-        xboxController.povDown().onTrue(Routines.setHoodAngle(shooter, Degrees.of(10)));
+        xboxController.povUp().onTrue(setHoodAngle);
 
-        // xboxController.povUp().onTrue(Routines.setHoodAngle(shooter, Degrees.of(20)));
+        // xboxController.povDown().onTrue(hoodTwentyDegrees);
+
 
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
@@ -169,7 +232,10 @@ public class Robot extends TimedRobot {
         xboxController.leftBumper().onTrue(retract)
         .onFalse(stopArm);
 
-        xboxController.leftTrigger().whileTrue(spinRoller)
+        xboxController.leftTrigger().whileTrue(intakeCommand)
+        .onFalse(stopIntake);
+
+        xboxController.x().onTrue(spinRoller)
         .onFalse(stopRoller);
 
         xboxController.y().onTrue(zeroEncoder);
@@ -177,7 +243,7 @@ public class Robot extends TimedRobot {
         //~ Alignment
         xboxController.a().onTrue(Routines.alignToHub(swerve));
         xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
-
+        // xboxController.povUp().onTrue(zeroGyro);
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);
         // Command passRoutine = Routines.passFuel(superstructure, indexer);

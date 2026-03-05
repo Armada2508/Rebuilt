@@ -433,6 +433,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
         swerveDrive.zeroGyro();
     }
 
+    public Command commandZeroGyro() {
+        return runOnce(() -> {
+            zeroGyro();
+    });
+    }
+
     /**
      * Turns all of the wheels to turn to 0 angle
      * Useful for resetting the drivebase

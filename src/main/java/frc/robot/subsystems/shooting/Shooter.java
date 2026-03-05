@@ -9,16 +9,21 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterK;
@@ -34,10 +39,11 @@ public class Shooter extends SubsystemBase {
     //* https://v6.docs.ctr-electronics.com/en/stable/docs/hardware-reference/cancoder/index.html
     private final CANcoder canCoder = new CANcoder(ShooterK.CANCoderID); 
     
+    
     public Shooter() {
         configTalons();
         configMotionMagic();
-        // configCanCoder();
+        configCanCoder();
 
         canCoder.setPosition(0); //^ Zero the hood encoder on startup
     }
@@ -64,8 +70,8 @@ public class Shooter extends SubsystemBase {
         talonHood.getConfigurator().apply(invertConfig);
         ShooterK.hoodPidConfig.GravityType = GravityTypeValue.Arm_Cosine;
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
-        talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
-        talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
+        // talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
+        // talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
         talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
     }
 
@@ -83,15 +89,14 @@ public class Shooter extends SubsystemBase {
         talonHood.getConfigurator().apply(motionMagicHoodConfig);
     }
 
-    // private void configCanCoder() {
-    //     CANcoderConfiguration config = new CANcoderConfiguration();
+    private void configCanCoder() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
 
-    //     config.MagnetSensor = new MagnetSensorConfigs()
-    //     .withAbsoluteSensorDiscontinuityPoint(0) //! Find
-    //     .withMagnetOffset(0) //~ Might not be needed?, Find
-    //     // We might be able to set the offset via TunerX
-    //     .withSensorDirection(null); //! Find
-    // }
+        config.MagnetSensor = new MagnetSensorConfigs()
+        .withAbsoluteSensorDiscontinuityPoint(1)
+        .withMagnetOffset(-0.1279296875)
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive); 
+    }
 
 
     /**
@@ -111,6 +116,7 @@ public class Shooter extends SubsystemBase {
     public double getHoodAngle() {
         // return canCoder.getAbsolutePosition().getValue();
         return canCoder.getAbsolutePosition().getValue().in(Rotations) * ShooterK.encoderToHoodGearRatio * 360; //! Test
+        // return Degrees.of(angle);
     }
 
     /**
@@ -149,6 +155,8 @@ public class Shooter extends SubsystemBase {
      */
     public Command setHoodAngle(Angle targetAngle) {
         MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
+        SmartDashboard.putNumber("target angle", targetAngle.in(Degrees));
+
         return runOnce(() -> talonHood.setControl(request))
         .withName("Set Hood Angle");
     }
@@ -157,7 +165,7 @@ public class Shooter extends SubsystemBase {
      * Sets the hood to its minimum angle
      */
     public Command stow() {
-        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle))
+        return runOnce(() -> setHoodAngle(ShooterK.minHoodAngle))
         .withName("Stow");
     }
 

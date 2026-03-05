@@ -38,7 +38,7 @@ public class Superstructure extends SubsystemBase {
      * Sets the Turret's angle to 0 and the Shooter's hood to it's lowest possible angle.
      */
     public void zero() {
-        shooter.setHoodAngle(ShooterK.minHoodAngle);
+        // shooter.setHoodAngle(ShooterK.minHoodAngle);
         turret.setAngleCommand(Degrees.of(0));
     }
   
@@ -57,25 +57,25 @@ public class Superstructure extends SubsystemBase {
      * Command to score fuel into the hub.
      * @return
      */
-    public Command score() {
-        return runOnce(() ->
-            shooter.setHoodAngle(scoreParameters.hoodAngle())
-            .alongWith(
-                turret.setAngleCommand(scoreParameters.turretAngle()))
-        ).andThen(shooter.shootFuel());
-    }
+    // public Command score() {
+    //     return runOnce(() ->
+    //         shooter.setHoodAngle(scoreParameters.hoodAngle())
+    //         .alongWith(
+    //             turret.setAngleCommand(scoreParameters.turretAngle()))
+    //     ).andThen(shooter.shootFuel());
+    // }
 
     /**
      * Command used to shoot fuel to the closest of one of two passpoints.
      * @return 
      */
-    public Command pass() {
-        return runOnce(() -> 
-            shooter.setHoodAngle(passParameters.hoodAngle())
-            .alongWith(
-                turret.setAngleCommand(passParameters.turretAngle()))
-        ).andThen(shooter.shootFuel());
-    }
+    // public Command pass() {
+    //     return runOnce(() -> 
+    //         shooter.setHoodAngle(passParameters.hoodAngle())
+    //         .alongWith(
+    //             turret.setAngleCommand(passParameters.turretAngle()))
+    //     ).andThen(shooter.shootFuel());
+    // }
 
     /**
      * Returns the currently running command
