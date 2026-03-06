@@ -15,6 +15,8 @@ import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -29,6 +31,7 @@ import frc.robot.Constants.DriveK;
 import frc.robot.Constants.VisionK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
+import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -66,7 +69,11 @@ public class Robot extends TimedRobot {
         || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
 
     public Robot() {
+        DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
+        LogUtil.logDriverStation(this); // Network Tables
+        LogUtil.logCommandInterrupts(dataLog); // Network Tables & DataLog
+        DriverStation.startDataLog(dataLog); // DataLog
         Epilogue.bind(this);
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
