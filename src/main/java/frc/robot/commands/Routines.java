@@ -4,6 +4,7 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 
+import java.net.SocketTimeoutException;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -71,10 +72,10 @@ public class Routines {
     }
 
     public static Command shoot(Shooter shooter, Indexer indexer) {
-        return shooter.shootFuel()
+        return /* shooter.shootFuel()
         .alongWith(
-            Commands.waitSeconds(0.5)
-        .andThen(indexer.indexCommand()))
+            Commands.waitSeconds(0.5))
+        .andThen(*/ shooter.setHoodAngle() //)
         .withName("Shoot shooter");
     }
 
@@ -84,17 +85,18 @@ public class Routines {
     }
 
     public static Command setHoodAngle(Shooter shooter) {
+        System.out.println("set hood angle run");
         // System.out.println("Hood Angle Units: " + targetAngle.get().unit());
-        return shooter.setHoodAngle(Degrees.of(20));
+        return shooter.setHoodAngle();
     }
 
     // public static Command stopShooter(Shooter shooter) {
     //     return Commands.runOnce(() -> shooter.stop(), shooter);
     // }
 
-    public static Command stowHood(Shooter shooter) {
-        return shooter.stow().withName("Stow Hood");
-    }
+    // public static Command stowHood(Shooter shooter) {
+    //     return shooter.stow().withName("Stow Hood");
+    // }
 
     // Superstructure
 

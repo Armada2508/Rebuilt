@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooting;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -25,6 +26,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterK;
 import frc.robot.lib.util.Util;
@@ -71,7 +73,7 @@ public class Shooter extends SubsystemBase {
         ShooterK.hoodPidConfig.GravityType = GravityTypeValue.Arm_Cosine;
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         // talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
-        // talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
+        talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
         talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
     }
 
@@ -153,21 +155,21 @@ public class Shooter extends SubsystemBase {
      * @param targetAngle Angle to set the hood to
      * @return runnable containing a command to command the talon
      */
-    public Command setHoodAngle(Angle targetAngle) {
-        MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
-        SmartDashboard.putNumber("target angle", targetAngle.in(Degrees));
+    public Command setHoodAngle() {
+        PositionVoltage request = new PositionVoltage(Rotations.of(5)).withVelocity(RotationsPerSecond.of(1));
+        SmartDashboard.putNumber("target angle", request.Position);
 
-        return runOnce(() -> talonHood.setControl(request))
+        return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
         .withName("Set Hood Angle");
     }
 
     /**
      * Sets the hood to its minimum angle
      */
-    public Command stow() {
-        return runOnce(() -> setHoodAngle(ShooterK.minHoodAngle))
-        .withName("Stow");
-    }
+    // public Command stow() {
+    //     // return runOnce(() -> setHoodAngle(ShooterK.minHoodAngle))
+    //     .withName("Stow");
+    // }
 
     /**
      * Stops the shooter and the hood motors from moving

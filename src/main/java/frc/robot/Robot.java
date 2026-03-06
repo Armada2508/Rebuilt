@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
@@ -189,9 +190,9 @@ public static String getMatchPhase(double matchTime) {
         Command stopArm = Routines.stopArm(intake);
         Command zeroEncoder = Routines.zeroEncoder(intake);
 
-        Command setHoodAngle = Routines.setHoodAngle(shooter);
+        // Command setHoodAngle = Routines.setHoodAngle(shooter);
         
-        // Command hoodTenDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(10));
+        // Command hoodTenDegrees = Routines.setHoodAngle(shooter, Degrees.of(20));
         // Command hoodTwentyDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(20));
 
         //~ Shooter Routines
@@ -218,7 +219,8 @@ public static String getMatchPhase(double matchTime) {
         xboxController.rightTrigger().whileTrue(shoot)
         .onFalse(stopShooter);
 
-        xboxController.povUp().onTrue(setHoodAngle);
+        // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
+        // xboxController.povUp().onTrue(Commands.print("Button pressed"));
 
         // xboxController.povDown().onTrue(hoodTwentyDegrees);
 
@@ -238,11 +240,11 @@ public static String getMatchPhase(double matchTime) {
         xboxController.x().onTrue(spinRoller)
         .onFalse(stopRoller);
 
-        xboxController.y().onTrue(zeroEncoder);
+        // xboxController.y().onTrue(zeroEncoder);
 
         //~ Alignment
-        xboxController.a().onTrue(Routines.alignToHub(swerve));
-        xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
+        // xboxController.a().onTrue(Routines.alignToHub(swerve));
+        // xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
         // xboxController.povUp().onTrue(zeroGyro);
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);

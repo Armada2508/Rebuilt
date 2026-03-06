@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid to Shoot Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Fuel"
+            "pathName": "New Path"
           }
         }
       ]
