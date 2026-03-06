@@ -164,6 +164,7 @@ public class Constants {
         public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
         public static final double motorToHoodGearRatio = 40.0 / 350.0;
         public static final double encoderToHoodGearRatio = 0.114;
+        public static final double motorToHoodDegreeGearRatio = 2.05; // 1 Rotation of the motor shaft = 2.05 Degrees of the hood.
         
 
         //& PID

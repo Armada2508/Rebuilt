@@ -20,7 +20,6 @@ public class Autos {
 
     public static SendableChooser<Command> initPathPlanner(Shooter shooter, Intake intake, Indexer indexer){
         FollowPathCommand.warmupCommand().schedule();
-        
 
         NamedCommands.registerCommand("Shoot Fuel", shooter.shootFuel().alongWith(indexer.indexCommand()));
 
