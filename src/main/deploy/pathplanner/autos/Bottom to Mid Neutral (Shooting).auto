@@ -15,18 +15,6 @@
           "data": {
             "pathName": "Bottom Neutral to Mid Neutral"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Mid Neutral to Bottom Neutral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bottom Neutral to Shoot Position"
-          }
         }
       ]
     }

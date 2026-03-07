@@ -152,7 +152,7 @@ public class Constants {
         public static final Angle maxHoodAngle = Degrees.of(40);
 
         //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(3100); // 2900
+        public static final AngularVelocity staticRpm = RPM.of(3000); // 2900
 
         //& Shooter max and min RPM
         public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
