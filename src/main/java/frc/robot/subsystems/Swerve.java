@@ -75,8 +75,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     private final TalonFX backLeftSteer;
     private final TalonFX backRightSteer;
 
-    private final Runnable setVisionOmega; // NEW
-
     private final SysIdRoutine sysIdRoutine; 
 
     private final PPHolonomicDriveController pathPlannerController = new PPHolonomicDriveController(SwerveK.ppTranslationConstants, SwerveK.ppRotationConstants);
@@ -97,9 +95,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     //~ ============ GENERAL / SETUP =============================================================================================
 
-    public Swerve(Supplier<VisionResults> visionSource, Runnable setVisionOmega, BooleanSupplier overridePathFollowing) {
+    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
         this.visionSource = visionSource; 
-        this.setVisionOmega = setVisionOmega;
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -161,10 +158,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public void periodic() {
         SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
-
-        double omega = Math.abs(getChassisSpeeds().omegaRadiansPerSecond);
-        setVisionOmega.run();
-
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
             if (!initializedOdometryFromVision) {
@@ -172,7 +165,6 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 initializedOdometryFromVision = true;
                 continue;
             }
-            if (omega > 0.5) continue;
             swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
         }
     }
