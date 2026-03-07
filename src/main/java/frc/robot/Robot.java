@@ -63,7 +63,9 @@ public class Robot extends TimedRobot {
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
-    private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
+    private final Swerve swerve = new Swerve(vision::getVisionResults, 
+    () -> vision.setOmega(Math.abs(swerve.getChassisSpeeds().omegaRadiansPerSecond)), // NEW() ->
+    () -> 
         Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);

@@ -66,6 +66,12 @@ public class Vision extends SubsystemBase {
         return new VisionResults(visionResults);
     }
 
+    private double currentOmega = 0.0;
+
+public void setOmega(double omega) {
+    this.currentOmega = omega;
+}
+
     /**
      * Processes a list of photonvison results into a list of estimated poses and their respective standard deviations
      */
@@ -99,7 +105,7 @@ public class Vision extends SubsystemBase {
     /**
      * Returns the standard deviations for a given photonvision result and estimated pose
      */
-    private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose, PhotonPoseEstimator poseEstimator, String name) {
+    private Matrix<N3, N1> getStdDevs(PhotonPipelineResult result, EstimatedRobotPose pose, PhotonPoseEstimator poseEstimator, String name, double omega) {
         int numTags = 0;
         double avgDistMeters = 0; 
         for (var target : result.getTargets()) {
@@ -128,6 +134,9 @@ public class Vision extends SubsystemBase {
         if (name == VisionK.backCameraName) {
             stdDevs = stdDevs.times(4);
         }
+        double rotationScaler = 1.0 + (omega / Math.PI) * 5.0;
+        stdDevs = stdDevs.times(rotationScaler);
+
         return stdDevs;
     }
 
