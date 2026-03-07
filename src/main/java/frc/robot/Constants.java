@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.25; // 0.5
-        public static final double rotationSpeedModifier = 0.25; //0.5
+        public static final double driveSpeedModifier = 0.7; // 0.5
+        public static final double rotationSpeedModifier = 0.7; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -152,7 +152,7 @@ public class Constants {
         public static final Angle maxHoodAngle = Degrees.of(40);
 
         //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(2900); // 2900
+        public static final AngularVelocity staticRpm = RPM.of(3100); // 2900
 
         //& Shooter max and min RPM
         public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
@@ -168,9 +168,9 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 1; //! tune 
+        public static final double hoodKP = 2.5; //! tune 
         public static final double hoodKD = 0; //! tune
-        public static final double hoodKS = 0.16; //! tune
+        public static final double hoodKS = 0.2; //! tune
         // public static final double hoodKV = 0.05; //! tune
 
         public static final double flywheelKP = 0.05;
@@ -294,8 +294,8 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(1.5); //! Tune
-        public static final Voltage retractVoltage = Volts.of(-2);
+        public static final Voltage extendVoltage = Volts.of(2); //! Tune
+        public static final Voltage retractVoltage = Volts.of(-2.5);
 
         public static final double extenderGearRatio = 1/3.2;
         public static final Distance extenderWheelDiameter = Inches.of(1.4375);

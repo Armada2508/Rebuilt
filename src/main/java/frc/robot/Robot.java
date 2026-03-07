@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
         configureBindings();
         logFieldConstants();
         autoChooser = Autos.initPathPlanner(shooter, intake, indexer);
+    
     }
 
     public void logFieldConstants() {
@@ -138,7 +139,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Alliance Hub Active", isHubActive()); //! THIS WILL NOT LOG IF THE ROBOT IS DISCONNECTED IN SIM
     }
 
-    public static Alliance getActiveHub() {
+    public Alliance getActiveHub() {
             String gameData = DriverStation.getGameSpecificMessage();
             double matchTime = DriverStation.getMatchTime();
 
@@ -149,6 +150,9 @@ public class Robot extends TimedRobot {
                     case 'B':
                         if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Red;
                         else return Alliance.Blue;
+                    case 'R':
+                        if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Blue;
+                        else return Alliance.Red;
                     default:
                         System.out.println("Corrupt Data");
                         return DriverStation.getAlliance().get();
@@ -196,6 +200,7 @@ public static String getMatchPhase(double matchTime) {
         Command retract = Routines.stopIntake(intake); //! Create
         Command stopArm = Routines.stopArm(intake);
         Command zeroEncoder = Routines.zeroEncoder(intake);
+        // Command setHoodAngle = Routines.setHoodAngle(shooter);
 
         // Command setHoodAngle = Routines.setHoodAngle(shooter);
         
@@ -246,6 +251,8 @@ public static String getMatchPhase(double matchTime) {
 
         xboxController.x().onTrue(spinRoller)
         .onFalse(stopRoller);
+
+        // xboxController.a().onTrue(setHoodAngle);
 
         // xboxController.y().onTrue(zeroEncoder);
 

@@ -72,11 +72,14 @@ public class Routines {
     }
 
     public static Command shoot(Shooter shooter, Indexer indexer) {
-        return /* shooter.shootFuel()
+        // return shooter.setHoodAngle().andThen( 
+        
+        return shooter.shootFuel()
         .alongWith(
-            Commands.waitSeconds(0.5))
-        .andThen(*/ shooter.setHoodAngle() //)
-        .withName("Shoot shooter");
+            Commands.waitSeconds(1).andThen(            
+                indexer.indexCommand())
+
+                ).withName("Shoot shooter");
     }
 
     public static Command stopShooter(Shooter shooter, Indexer indexer) {

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.737,
+        "x": 1.937,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3870000000000005,
-        "y": 2.8741669750802297
+        "x": 1.6869999999999998,
+        "y": 4.0
       },
       "isLocked": false,
-      "linkedName": "Shoot Position"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.4960153994225216,
-        "y": 0.6502358036573628
+        "x": 1.737,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 0.4960153994225216,
-        "y": 0.9608453433048534
+        "x": 1.987,
+        "y": 4.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Outpost"
+      "linkedName": "Shoot Position"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,

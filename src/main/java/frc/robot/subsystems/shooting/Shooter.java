@@ -70,11 +70,10 @@ public class Shooter extends SubsystemBase {
         talonFlywheelLeft.getConfigurator().apply(ShooterK.flywheelPidConfig);
 
         talonHood.getConfigurator().apply(invertConfig);
-        ShooterK.hoodPidConfig.GravityType = GravityTypeValue.Arm_Cosine;
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         // talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
-        talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
+        // talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
     }
 
     /**
@@ -156,11 +155,20 @@ public class Shooter extends SubsystemBase {
      * @return runnable containing a command to command the talon
      */
     public Command setHoodAngle() {
-        PositionVoltage request = new PositionVoltage(Rotations.of(5)).withVelocity(RotationsPerSecond.of(1));
-        SmartDashboard.putNumber("target angle", request.Position);
+        PositionVoltage request = new PositionVoltage(Degrees.of(20)).withVelocity(RotationsPerSecond.of(1));
+        SmartDashboard.putNumber("target angle", request.Position * 2.05);
 
         return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
         .withName("Set Hood Angle");
+    }
+
+    /**
+     * Returns the given target as rotations of the hood in a 1 motor rotation : 2.05 degrees of the hood
+     * @param target angle in degrees
+     * @return
+     */
+    public Angle asRotations(Angle rot) {
+        return Rotations.of(rot.in(Degrees)/2.05);
     }
 
     /**
