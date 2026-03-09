@@ -64,6 +64,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     private final SwerveDrive swerveDrive;
     private final Supplier<VisionResults> visionSource; 
+    private final Vision vision;
 
     private final TalonFX frontLeftDrive;
     private final TalonFX frontRightDrive;
@@ -95,8 +96,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     //~ ============ GENERAL / SETUP =============================================================================================
 
-    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
+    public Swerve(Supplier<VisionResults> visionSource, Vision vision, BooleanSupplier overridePathFollowing) {
         this.visionSource = visionSource; 
+        this.vision = vision;
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -158,6 +160,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
     public void periodic() {
         SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
+
+        vision.updateHeading(swerveDrive.getPose().getRotation()); //? Hopefully should fix the vision bug???
+
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
             if (!initializedOdometryFromVision) {

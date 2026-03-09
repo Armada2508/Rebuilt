@@ -17,12 +17,14 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
@@ -64,6 +66,12 @@ public class Vision extends SubsystemBase {
            visionResults.addAll(processResults(backCamera.getAllUnreadResults(), backPoseEstimator, backCamera.getName()));
         }
         return new VisionResults(visionResults);
+    }
+
+    public void updateHeading(Rotation2d heading) {
+        double timestamp = Timer.getFPGATimestamp();
+        frontPoseEstimator.addHeadingData(timestamp, heading);
+        backPoseEstimator.addHeadingData(timestamp, heading);
     }
 
     /**
