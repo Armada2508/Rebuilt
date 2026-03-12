@@ -68,11 +68,11 @@ public class Vision extends SubsystemBase {
         return new VisionResults(visionResults);
     }
 
-    public void updateHeading(Rotation2d heading) {
-        double timestamp = Timer.getFPGATimestamp();
-        frontPoseEstimator.addHeadingData(timestamp, heading);
-        backPoseEstimator.addHeadingData(timestamp, heading);
-    }
+    // public void updateHeading(Rotation2d heading) {
+    //     double timestamp = Timer.getFPGATimestamp();
+    //     frontPoseEstimator.addHeadingData(timestamp, heading);
+    //     backPoseEstimator.addHeadingData(timestamp, heading);
+    // }
 
     /**
      * Processes a list of photonvison results into a list of estimated poses and their respective standard deviations

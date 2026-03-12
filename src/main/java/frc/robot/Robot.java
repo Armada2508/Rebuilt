@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
-    private final Swerve swerve = new Swerve(vision::getVisionResults, vision, () -> 
+    private final Swerve swerve = new Swerve(vision::getVisionResults/* , vision */, () -> 
         Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
@@ -131,65 +131,70 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        // SmartDashboard.putData("Time left in current phase", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+        SmartDashboard.putNumber("Time left in current phase", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+        SmartDashboard.putBoolean("Is Hub Active", HubShiftUtil.getShiftedShiftInfo().active());
+        SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
     }
 
     @Override
     public void teleopPeriodic() {
         // activeHub = getActiveHub();
-        SmartDashboard.putBoolean("Alliance Hub Active", isHubActive()); //! THIS WILL NOT LOG IF THE ROBOT IS DISCONNECTED IN SIM
+        // SmartDashboard.putBoolean("Alliance Hub Active", isHubActive()); //! THIS WILL NOT LOG IF THE ROBOT IS DISCONNECTED IN SIM
     }
 
-    public Alliance getActiveHub() {
-            String gameData = DriverStation.getGameSpecificMessage();
-            double matchTime = DriverStation.getMatchTime();
+//     public Alliance getActiveHub() {
+//             String gameData = DriverStation.getGameSpecificMessage();
+//             double matchTime = DriverStation.getMatchTime();
 
-            if (getMatchPhase(matchTime).equals("Transition") || getMatchPhase(matchTime).equals("End Game")) return DriverStation.getAlliance().get();
+//             if (getMatchPhase(matchTime).equals("Transition") || getMatchPhase(matchTime).equals("End Game")) return DriverStation.getAlliance().get();
 
-            if (gameData.length() > 0) {
-                switch (gameData.charAt(0)) {
-                    case 'B':
-                        if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Red;
-                        else return Alliance.Blue;
-                    case 'R':
-                        if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Blue;
-                        else return Alliance.Red;
-                    default:
-                        System.out.println("Corrupt Data");
-                        return DriverStation.getAlliance().get();
-                }
-            }
-            else {
-                System.out.println("No Data Recieved Yet");
-                return DriverStation.getAlliance().get();
-            }
-    }
+//             if (gameData.length() > 0) {
+//                 switch (gameData.charAt(0)) {
+//                     case 'B':
+//                         if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Red;
+//                         else return Alliance.Blue;
+//                     case 'R':
+//                         if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Blue;
+//                         else return Alliance.Red;
+//                     default:
+//                         System.out.println("Corrupt Data");
+//                         return DriverStation.getAlliance().get();
+//                 }
+//             }
+//             else {
+//                 System.out.println("No Data Recieved Yet");
+//                 return DriverStation.getAlliance().get();
+//             }
+//     }
 
-    public boolean isHubActive() {
-        if (getActiveHub().equals(DriverStation.getAlliance().get())) return true;
-        return false;
-    }
+//     public boolean isHubActive() {
+//         if (getActiveHub().equals(DriverStation.getAlliance().get())) return true;
+//         return false;
+//     }
 
-public static String getMatchPhase(double matchTime) {
-    if (matchTime >= 130) {
-        return "Transition";
-    }
-    else if (129 > matchTime && matchTime >= 105) {
-        return "Shift One";
-    }
-        else if (104 > matchTime && matchTime >= 80) {
-        return "Shift Two";
-    }
-        else if (79 > matchTime && matchTime >= 55) {
-        return "Shift Three";
-    }
-        else if (54 > matchTime && matchTime >= 30) {
-        return "Shift Four";
-    }
-    else if (matchTime < 30) {
-        return "End Game";
-    }
-    else return "How did we get here";
-}
+// public static String getMatchPhase(double matchTime) {
+//     if (matchTime >= 130) {
+//         return "Transition";
+//     }
+//     else if (129 > matchTime && matchTime >= 105) {
+//         return "Shift One";
+//     }
+//         else if (104 > matchTime && matchTime >= 80) {
+//         return "Shift Two";
+//     }
+//         else if (79 > matchTime && matchTime >= 55) {
+//         return "Shift Three";
+//     }
+//         else if (54 > matchTime && matchTime >= 30) {
+//         return "Shift Four";
+//     }
+//     else if (matchTime < 30) {
+//         return "End Game";
+//     }
+//     else return "How did we get here";
+// }
+
     public void configureBindings() {
         //~ Intake Routines
         Command intakeCommand = Routines.intake(intake);
