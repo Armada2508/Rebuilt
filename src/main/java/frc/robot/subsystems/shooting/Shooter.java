@@ -22,6 +22,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -155,7 +156,7 @@ public class Shooter extends SubsystemBase {
      * @return runnable containing a command to command the talon
      */
     public Command setHoodAngle() {
-        PositionVoltage request = new PositionVoltage(Degrees.of(20)).withVelocity(RotationsPerSecond.of(1));
+        PositionVoltage request = new PositionVoltage(Units.degreesToRotations(20)).withVelocity(RotationsPerSecond.of(1));
         SmartDashboard.putNumber("target angle", request.Position * 2.05);
 
         return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
