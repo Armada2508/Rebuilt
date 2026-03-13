@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionK;
 import frc.robot.Field;
@@ -34,8 +35,8 @@ public class Vision extends SubsystemBase {
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
-    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToFrontCamera);
-    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, VisionK.robotToSideCamera);
+    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionK.robotToFrontCamera);
+    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionK.robotToSideCamera);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Vision");
     private final StructPublisher<Pose3d> pubFront = table.getStructTopic(VisionK.frontCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
     private final StructPublisher<Pose3d> pubBack = table.getStructTopic(VisionK.backCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
@@ -77,19 +78,37 @@ public class Vision extends SubsystemBase {
     /**
      * Processes a list of photonvison results into a list of estimated poses and their respective standard deviations
      */
-    private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator, String name) {
+   private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(
+        List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator, String name) {
         List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
         for (var result : results) {
-            poseEstimator.update(result).ifPresent((pose) -> {
-                if (isValidPose(pose)) {
-                    var stdDevs = getStdDevs(result, pose, poseEstimator, name);
-                    table.getEntry(name + " StdDevs/Standard Deviations").setDoubleArray(stdDevs.getData());
-                    visionResults.add(Pair.of(pose, stdDevs));
-                }
-            });
-        }
-        return visionResults;
+            if (name.equals(VisionK.frontCameraName)) frontLatestResult = result;
+            else backLatestResult = result;
+            
+            poseEstimator.estimateCoprocMultiTagPose(result).ifPresent((pose) -> {
+                var robotPose2d = pose.estimatedPose.toPose2d();
+        var cameraFieldPose = pose.estimatedPose.transformBy(
+            name.equals(VisionK.frontCameraName) 
+                ? VisionK.robotToFrontCamera 
+                : VisionK.robotToSideCamera
+        ).toPose2d();
+
+        SmartDashboard.putNumberArray("Vision/" + name + "/EstRobotXY", 
+            new double[]{ robotPose2d.getX(), robotPose2d.getY() });
+        SmartDashboard.putNumberArray("Vision/" + name + "/CameraFieldXY",
+            new double[]{ cameraFieldPose.getX(), cameraFieldPose.getY() });
+        SmartDashboard.putNumber("Vision/" + name + "/RobotToCamOffset",
+        robotPose2d.getTranslation().getDistance(cameraFieldPose.getTranslation()));
+
+            if (isValidPose(pose)) {
+                var stdDevs = getStdDevs(result, pose, poseEstimator, name);
+                table.getEntry(name + " StdDevs/Standard Deviations").setDoubleArray(stdDevs.getData());
+                visionResults.add(Pair.of(pose, stdDevs));
+            }
+        });
     }
+    return visionResults;
+}
 
     /**
      * Checks whether a pose is within the bounds of the field and the acceptable Z (height) error

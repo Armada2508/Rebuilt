@@ -158,13 +158,19 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
+        SmartDashboard.putNumber("X setpoint eeee", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
 
         vision.updateHeading(swerveDrive.getPose().getRotation()); //? Hopefully should fix the vision bug???
 
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
+                SmartDashboard.putNumberArray("Vision/RawEstimatedPose", new double[]{
+                    pose.estimatedPose.getX(),
+                    pose.estimatedPose.getY(),
+                    pose.estimatedPose.getRotation().toRotation2d().getDegrees()
+            });
+
             if (!initializedOdometryFromVision) {
                 resetOdometry(pose.estimatedPose.toPose2d());
                 initializedOdometryFromVision = true;
