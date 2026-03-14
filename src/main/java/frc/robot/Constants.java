@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.1; // 0.5
-        public static final double rotationSpeedModifier = 0.1; //0.5
+        public static final double driveSpeedModifier = 0.3; 
+        public static final double rotationSpeedModifier = 0.3; 
         public static final double exponentialControl = 1.75;
     }
   
@@ -162,13 +162,14 @@ public class Constants {
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
-        public static final double motorToHoodGearRatio = 40.0 / 350.0;
+        // public static final double motorToHoodGearRatio = 40.0 / 350.0;
+        public static final double motorToHoodGearRatio = 175.0 / 1.0; // Rotations of motor shaft to rotations of hood
         public static final double encoderToHoodGearRatio = 0.114;
         public static final double motorToHoodDegreeGearRatio = 2.05; // 1 Rotation of the motor shaft = 2.05 Degrees of the hood.
         
 
         //& PID
-        public static final double hoodKP = 2.5; //! tune 
+        public static final double hoodKP = 1; //! tune 
         public static final double hoodKD = 0; //! tune
         public static final double hoodKS = 0.2; //! tune
         // public static final double hoodKV = 0.05; //! tune
@@ -213,10 +214,10 @@ public class Constants {
         // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
         public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(CANCoderID)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-        .withRotorToSensorRatio(motorToEncoderGearRatio)
-        .withSensorToMechanismRatio(encoderToHoodGearRatio);
+        // .withFeedbackRemoteSensorID(CANCoderID)
+        // .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        // .withRotorToSensorRatio(motorToEncoderGearRatio)
+        .withSensorToMechanismRatio(motorToHoodGearRatio);
     }
     
     public static class TurretK {
@@ -345,7 +346,9 @@ public class Constants {
         public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         public static final String backCameraName = "ArducamSide";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(-12.642), Inches.of(-1), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
+        // public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(0), Inches.of(0), Inches.of(0), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
+
         public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);

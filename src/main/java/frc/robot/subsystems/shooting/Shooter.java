@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
         // talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
-        // talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
+        talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
     }
 
     /**
@@ -156,8 +156,10 @@ public class Shooter extends SubsystemBase {
      * @return runnable containing a command to command the talon
      */
     public Command setHoodAngle() {
-        PositionVoltage request = new PositionVoltage(Units.degreesToRotations(20)).withVelocity(RotationsPerSecond.of(1));
-        SmartDashboard.putNumber("target angle", request.Position * 2.05);
+        PositionVoltage request = new PositionVoltage(Rotations.of(0.05)).withVelocity(RotationsPerSecond.of(1));
+        SmartDashboard.putNumber("target angle (x2.05)", request.Position * 2.05);
+        SmartDashboard.putNumber("target angle (none)", request.Position);
+
 
         return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
         .withName("Set Hood Angle");

@@ -236,7 +236,7 @@ public class Robot extends TimedRobot {
         xboxController.rightTrigger().whileTrue(shoot)
         .onFalse(stopShooter);
 
-        // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
+        xboxController.a().onTrue(Routines.setHoodAngle(shooter));
         // xboxController.povUp().onTrue(Commands.print("Button pressed"));
 
         // xboxController.povDown().onTrue(hoodTwentyDegrees);
