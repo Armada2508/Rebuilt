@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 1.4960153994225216,
-        "y": 0.6502358036573632
+        "y": 0.6502358036573628
       },
       "isLocked": false,
       "linkedName": "Outpost"
@@ -20,8 +20,8 @@
         "y": 4.0
       },
       "prevControl": {
-        "x": 2.737,
-        "y": 4.0
+        "x": 2.0790201433256685,
+        "y": 3.060307379214092
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,26 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.63,
+        "y": 4.04
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.46913580246913555,
+      "maxWaypointRelativePos": 0.75,
+      "name": "Point Towards Hub"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "shoot fuel",
+      "waypointRelativePos": 0.42,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 2.0,

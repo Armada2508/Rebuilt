@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7998845043310876,
-        "y": -0.25293070259865336
+        "x": 1.3503855665572084,
+        "y": 0.04587930279652519
       },
       "isLocked": false,
       "linkedName": "Bottom Neutral"
@@ -20,18 +20,41 @@
         "y": 4.0
       },
       "prevControl": {
-        "x": 1.9835706500415304,
-        "y": 3.9587336149136245
+        "x": 1.737,
+        "y": 2.5
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Shoot Position"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.25,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.63,
+        "y": 4.04
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.4814814814814812,
+      "maxWaypointRelativePos": 0.5493827160493828,
+      "name": "Point Towards Hub"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "shoot fuel",
+      "waypointRelativePos": 0.25,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
