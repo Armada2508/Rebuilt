@@ -156,14 +156,26 @@ public class Shooter extends SubsystemBase {
      * @return runnable containing a command to command the talon
      */
     public Command setHoodAngle() {
-        PositionVoltage request = new PositionVoltage(Rotations.of(0.05)).withVelocity(RotationsPerSecond.of(1));
-        SmartDashboard.putNumber("target angle (x2.05)", request.Position * 2.05);
-        SmartDashboard.putNumber("target angle (none)", request.Position);
+        // PositionVoltage request = new PositionVoltage(Degrees.of(5)).withFeedForward(ShooterK.hoodKS).withSlot(0).withVelocity(RotationsPerSecond.of(0.1));
+        MotionMagicVoltage request = new MotionMagicVoltage(Degrees.of(35));
+
+        SmartDashboard.putNumber("target angle (degrees)", request.Position * 360);
+        SmartDashboard.putNumber("target angle (rotations)", request.Position);
 
 
         return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
         .withName("Set Hood Angle");
     }
+
+    @Logged(name = "Hood Talon Position (deg)")
+public double getHoodTalonPositionDeg() {
+    return talonHood.getPosition().getValue().in(Degrees);
+}
+
+@Logged(name = "Hood Talon Position (rot)")
+public double getHoodTalonPositionRot() {
+    return talonHood.getPosition().getValue().in(Rotations);
+}
 
     /**
      * Returns the given target as rotations of the hood in a 1 motor rotation : 2.05 degrees of the hood
