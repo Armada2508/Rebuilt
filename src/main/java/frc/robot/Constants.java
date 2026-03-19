@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0; 
-        public static final double rotationSpeedModifier = 0; 
+        public static final double driveSpeedModifier = 0.1; // 0.5
+        public static final double rotationSpeedModifier = 0.1; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -135,15 +135,15 @@ public class Constants {
         public static final File swerveDirectory = new File(Filesystem.getDeployDirectory().getAbsolutePath() + "/swerve");
     }
 
-    public static class ShooterK {
+    public static class ShooterK { //! find motor ID and proper measurements
         public static final int talonShooterLeftID = 12;
         public static final int talonShooterRightID = 13;
         public static final int talonHoodID = 14;
         public static final int CANCoderID = 0;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.5); //! Tune
-        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.5); //! Tune
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.1); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.1); //! Tune
 
         public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
@@ -161,18 +161,17 @@ public class Constants {
 
 
         //& Gear Ratios
-        public static final double motorToEncoderGearRatio = 20.0 / 1.0;
-        public static final double encoderToHoodGearRatio = 40.0 / 350.0;
-        // public static final double motorToHoodGearRatio = 40.0 / 350.0;
-        public static final double motorToHoodGearRatio = 175.0 / 1.0; // Rotations of motor shaft to rotations of hood
+        public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
+        public static final double motorToHoodGearRatio = 40.0 / 350.0;
+        public static final double encoderToHoodGearRatio = 0.114;
         public static final double motorToHoodDegreeGearRatio = 2.05; // 1 Rotation of the motor shaft = 2.05 Degrees of the hood.
         
 
         //& PID
-        public static final double hoodKP = 135; //! tune 
+        public static final double hoodKP = 2.5; //! tune 
         public static final double hoodKD = 0; //! tune
-        public static final double hoodKS = 0.3; //! tune
-        public static final double hoodKV = 0.05; //! tune
+        public static final double hoodKS = 0.2; //! tune
+        // public static final double hoodKV = 0.05; //! tune
 
         public static final double flywheelKP = 0.05;
         public static final double flywheelKD = 0; 
@@ -187,8 +186,7 @@ public class Constants {
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
         .withKP(hoodKP)
         .withKD(hoodKD)
-        .withKS(hoodKS)
-        .withKV(hoodKV);
+        .withKS(hoodKS);
         // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
@@ -215,21 +213,23 @@ public class Constants {
         // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
         public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
-        // .withFeedbackRemoteSensorID(CANCoderID)
-        // .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-        // .withRotorToSensorRatio(motorToEncoderGearRatio)
-        .withSensorToMechanismRatio(175.0);
+        .withFeedbackRemoteSensorID(CANCoderID)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        .withRotorToSensorRatio(motorToEncoderGearRatio)
+        .withSensorToMechanismRatio(encoderToHoodGearRatio);
     }
     
     public static class TurretK {
         public static final int talonId = 15; 
         //^ This may be bad, idk if can reserves id's
+        public static final int CANCoderID = 0; //! FIND
+        
         
         //& Absolute Encoder
         public static final int channel = 0; //! Ask Electrical
         public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
         public static final Angle expectedZero = Degrees.of(180); 
-        public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
+        public static final Angle CANCoderOffset = Degrees.of(0); //! Find
         
         //& Gear Ratios
         public static final double krakenToTurretGearRatio = 50; //these numbers should be right now
@@ -344,12 +344,10 @@ public class Constants {
         public static final Distance hopperTopDetectionRange = Inches.of(0);
     }
 
-        public static class VisionK {
+    public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         public static final String backCameraName = "ArducamSide";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(-12.642), Inches.of(-1), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
-        // public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(0), Inches.of(0), Inches.of(0), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0)));
-
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
         public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);

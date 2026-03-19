@@ -6,7 +6,13 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
@@ -28,11 +34,12 @@ public class Turret extends SubsystemBase {
      * Encoders (Hardware): https://docs.wpilib.org/en/stable/docs/hardware/sensors/encoders-hardware.html
      */
     private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(TurretK.channel, TurretK.fullRange.in(Degrees), TurretK.expectedZero.in(Degrees));
-
+    private final CANcoder canCoder = new CANcoder(0);
     public Turret() {
         configTalons();
         configMotionMagic();
-        configAbsoluteEncoder();
+        // configAbsoluteEncoder();
+        configCanCoder();
         if (!absoluteEncoder.isConnected()) System.out.println("Turret Absolute Encoder not connected!");
     }
     
@@ -60,10 +67,19 @@ public class Turret extends SubsystemBase {
         talon.getConfigurator().apply(motionMagicConfig);
     }
 
-    private void configAbsoluteEncoder() {
-        absoluteEncoder.setInverted(false); //! Verify this, because the dead gear and the turret gear spin in different directions, this may be needed
-       absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
-        //! Verify if it is a throughbore v1 or v2 when possible
+    // private void configAbsoluteEncoder() {
+    //     absoluteEncoder.setInverted(false); //! Verify this, because the dead gear and the turret gear spin in different directions, this may be needed
+    //    absoluteEncoder.setAssumedFrequency(975.6); //^ Hz https://www.revrobotics.com/rev-11-1271/  
+    //     //! Verify if it is a throughbore v1 or v2 when possible
+    // }
+
+    private void configCanCoder() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
+
+        config.MagnetSensor = new MagnetSensorConfigs()
+        .withAbsoluteSensorDiscontinuityPoint(1)
+        .withMagnetOffset(0) //! FIND
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
     }
 
     /**
@@ -92,9 +108,9 @@ public class Turret extends SubsystemBase {
     @Logged(name = "Turret Angle (degrees)")
     public Angle getAngle() { //! Verify this
         double theta = Degrees.of(
-                    Rotations.of(absoluteEncoder.get())
+                    Rotations.of(canCoder.getAbsolutePosition().getValue().in(Rotations)/*  absoluteEncoder.get() */)
                     .plus(
-                        TurretK.absoluteEncoderOffset
+                        TurretK.CANCoderOffset
                     ).in(Rotations)
                 ).times(
                     TurretK.encoderToTurretGearRatio
