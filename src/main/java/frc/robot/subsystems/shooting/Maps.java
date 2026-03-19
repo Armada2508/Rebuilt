@@ -1,6 +1,11 @@
 package frc.robot.subsystems.shooting;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 
 public class Maps {
     /**
@@ -25,9 +30,22 @@ public class Maps {
      * Sets the values for the interpolating tree maps
      */
     static {
-        hoodAngleMap.put(0.0, 0.0); //! find
-        fuelAirTimeMap.put(0.0,0.0);
-        distanceHoodAngleMap.put(0.0, 0.0);
+        // hoodAngleMap.put(0.0, 0.0); //! find
+        // hoodAngleMap.put(0.5, 3.3);
+        // hoodAngleMap.put(1.0, 6.6);
+        // hoodAngleMap.put(1.5, 9.9);
+        // hoodAngleMap.put(2.0, 13.2);
+        // hoodAngleMap.put(2.5, 16.5);
+        // hoodAngleMap.put(3.0, 19.8);
+        // hoodAngleMap.put(3.5, 23.1);
+        // hoodAngleMap.put(4.0, 26.4);
+        // hoodAngleMap.put(4.5, 29.7);
+        // hoodAngleMap.put(5.0, 33.0);
+        // hoodAngleMap.put(5.5, 36.3);
+        // hoodAngleMap.put(6.0, 39.6);
+
+        // fuelAirTimeMap.put(0.0,0.0);
+        // distanceHoodAngleMap.put(0.0, 0.0);
     }
     
     /**
@@ -35,8 +53,8 @@ public class Maps {
      * @param distance
      * @return
      */
-    public static double getHoodAngleFromDistance(double distance) {
-        return hoodAngleMap.get(distance);
+    public static Angle getHoodAngleFromDistance(Distance distance) {
+        return Degrees.of(hoodAngleMap.get(distance.in(Meters)));
     }
 
     /**
@@ -53,9 +71,9 @@ public class Maps {
      * @param distance
      * @return
      */
-    public static double getAirTimeFromDistance(double distance) {
-        return fuelAirTimeMap.get(getHoodAngleFromDistance(distance));
-    }
+    // public static double getAirTimeFromDistance(double distance) {
+    //     return fuelAirTimeMap.get(getHoodAngleFromDistance(distance));
+    // }
     /**
      * Determines the distance from the hood angle
      * @param hoodAngle

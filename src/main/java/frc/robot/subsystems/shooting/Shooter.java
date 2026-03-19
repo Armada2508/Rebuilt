@@ -22,9 +22,11 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -110,15 +112,14 @@ public class Shooter extends SubsystemBase {
         return talonFlywheelLeft.getVelocity().getValue().in(RotationsPerSecond) * 60;
     }
 
-    /**
-     * Returns the angle of the hood as read by the CANCoder
-     * @return The angle of the hood in degrees
-     */
-    @Logged(name = "Hood Angle (degrees)")
+    @Logged(name = "Hood Angle (Degrees)")
     public double getHoodAngle() {
-        // return canCoder.getAbsolutePosition().getValue();
-        return canCoder.getAbsolutePosition().getValue().in(Rotations) * ShooterK.encoderToHoodGearRatio * 360; //! Test
-        // return Degrees.of(angle);
+        double theta = canCoder.getAbsolutePosition().getValue().times(ShooterK.encoderToHoodGearRatio).in(Degrees);
+
+        if (theta > ShooterK.maxHoodAngle.in(Degrees) + 0.5 || theta < ShooterK.minHoodAngle.in(Degrees)) {
+            theta = 0;
+        }
+        return theta;
     }
 
     /**
@@ -155,17 +156,29 @@ public class Shooter extends SubsystemBase {
      * @param targetAngle Angle to set the hood to
      * @return runnable containing a command to command the talon
      */
-    public Command setHoodAngle() {
-        // PositionVoltage request = new PositionVoltage(Degrees.of(5)).withFeedForward(ShooterK.hoodKS).withSlot(0).withVelocity(RotationsPerSecond.of(0.1));
-        MotionMagicVoltage request = new MotionMagicVoltage(Degrees.of(35));
+    public Command setHoodAngle(Angle target) {
+        // double clampedTarget = MathUtil.clamp(target.in(Degrees), ShooterK.minHoodAngle.in(Degrees), ShooterK.maxHoodAngle.in(Degrees));
+        if (target.gt(ShooterK.maxHoodAngle)) {
+            target = ShooterK.maxHoodAngle;
+        }
+        else if (target.lt(ShooterK.minHoodAngle)) {
+            target = ShooterK.minHoodAngle;
+        }
+
+        MotionMagicVoltage request = new MotionMagicVoltage(target);
 
         SmartDashboard.putNumber("target angle (degrees)", request.Position * 360);
-        SmartDashboard.putNumber("target angle (rotations)", request.Position);
-
+        // SmartDashboard.putNumber("target error (degrees)", getHoodAngle() - request.Position * 360);
+        // SmartDashboard.putNumber("target angle (rotations)", request.Position);
 
         return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
         .withName("Set Hood Angle");
     }
+
+    // public Command setHoodInterpolatedAngle(Distance distance) {
+    //     Angle target = Maps.getHoodAngleFromDistance(distance);
+    //     return setHoodAngle(target).withName("Set Interpolated Hood Angle");
+    // }
 
     @Logged(name = "Hood Talon Position (deg)")
 public double getHoodTalonPositionDeg() {
