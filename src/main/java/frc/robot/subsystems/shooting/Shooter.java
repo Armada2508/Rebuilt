@@ -96,8 +96,9 @@ public class Shooter extends SubsystemBase {
 
         config.MagnetSensor = new MagnetSensorConfigs()
         .withAbsoluteSensorDiscontinuityPoint(1)
-        .withMagnetOffset(-0.1279296875)
+        .withMagnetOffset(-0.016)
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive); 
+        canCoder.getConfigurator().apply(config);
     }
 
 
@@ -158,12 +159,12 @@ public class Shooter extends SubsystemBase {
      * @return runnable containing a command to command the talon
      */
     public Command setHoodAngle(Angle target) {
-        // if (target.gt(ShooterK.maxHoodAngle)) {
-        //     target = ShooterK.maxHoodAngle;
-        // }
-        // else if (target.lt(ShooterK.minHoodAngle)) {
-        //     target = ShooterK.minHoodAngle;
-        // }
+        if (target.gt(ShooterK.maxHoodAngle)) {
+            target = ShooterK.maxHoodAngle;
+        }
+        else if (target.lt(ShooterK.minHoodAngle)) {
+            target = ShooterK.minHoodAngle;
+        }
 
         MotionMagicVoltage request = new MotionMagicVoltage(target);
         SmartDashboard.putNumber("target angle (degrees)", request.Position * 360);

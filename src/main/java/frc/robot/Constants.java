@@ -168,7 +168,7 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 80; //! tune 
+        public static final double hoodKP = 30; //! tune 
         public static final double hoodKD = 0; //! tune
         public static final double hoodKS = 0.2; //! tune
         // public static final double hoodKV = 0.05; //! tune
