@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.1; 
-        public static final double rotationSpeedModifier = 0.1; 
+        public static final double driveSpeedModifier = 0.1; // 0.5
+        public static final double rotationSpeedModifier = 0.1; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -142,8 +142,8 @@ public class Constants {
         public static final int CANCoderID = 0;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(2); //! Tune
-        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(1.5); //! Tune
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.1); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.1); //! Tune
 
         public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
@@ -168,11 +168,10 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 175; //! tune
-        // public static final double hoodKI = 0.001; 
+        public static final double hoodKP = 2.5; //! tune 
         public static final double hoodKD = 0; //! tune
-        // public static final double hoodKV = 0.05; //! tune
         public static final double hoodKS = 0.2; //! tune
+        // public static final double hoodKV = 0.05; //! tune
 
         public static final double flywheelKP = 0.05;
         public static final double flywheelKD = 0; 
@@ -186,11 +185,8 @@ public class Constants {
         //& Configs
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
         .withKP(hoodKP)
-        // .withKI(hoodKI)
         .withKD(hoodKD)
-        // .withKG(0.5)
         .withKS(hoodKS);
-        // .withKV(hoodKV);
         // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()

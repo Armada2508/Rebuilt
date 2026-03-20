@@ -53,33 +53,33 @@ public class ShotCalculator {
         Translation2d targetDirection = toGoal.div(distance); // Makes a lengthless vector
 
         //^ 3. Get baseline state
-        //! ShotCalculationParameters baseline = new ShotCalculationParameters(
-            //! Degrees.of(Maps.getHoodAngleFromDistance(distance)), // Baseline hood angle
-            //! Seconds.of(Maps.getAirTimeFromDistance(distance)) // Baseline air time
-        //! );
-        // double baselineFuelVelocity = distance / baseline.fuelAirTime.in(Seconds); // Velocity of the ball
+        ShotCalculationParameters baseline = new ShotCalculationParameters(
+            Degrees.of(Maps.getHoodAngleFromDistance(distance)), // Baseline hood angle
+            Seconds.of(Maps.getAirTimeFromDistance(distance)) // Baseline air time
+        );
+        double baselineFuelVelocity = distance / baseline.fuelAirTime.in(Seconds); // Velocity of the ball
 
         //^ 4a. Build target velocity vector
-        //! Translation2d targetVelocityVector = targetDirection.times(baselineFuelVelocity);
+        Translation2d targetVelocityVector = targetDirection.times(baselineFuelVelocity);
 
         //^ 4b. Subtract robot velocity
-        //! Translation2d shotVelocityVector = targetVelocityVector.minus(robotVelocityVector);
+        Translation2d shotVelocityVector = targetVelocityVector.minus(robotVelocityVector);
 
-        //! double turretAngle = shotVelocityVector.getAngle().getDegrees();
-        //! double horizontalVelocityRequired = shotVelocityVector.getNorm();
+        double turretAngle = shotVelocityVector.getAngle().getDegrees();
+        double horizontalVelocityRequired = shotVelocityVector.getNorm();
 
         //^ 5. Find total exit velocity of the ball
-        //! double totalVelocity = baselineFuelVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
+        double totalVelocity = baselineFuelVelocity / Math.cos(Math.toRadians(baseline.hoodAngle.in(Degrees)));
         //double effectiveDistance = Maps.getHoodAngleFromDistance(horizontalVelocityRequired); //! Double check this is correct
         //double horizontalVelocityFromHood = Maps.getHoodAngleFromDistance(effectiveDistance);
 
         //^ 5a. Find hood target to achieve total exit velocity
-        //! double ratio = MathUtil.clamp(horizontalVelocityRequired / totalVelocity, 0, 1);
-        //! double adjustedHood = Math.toDegrees(Math.acos(ratio));
-        //! adjustedHood = MathUtil.clamp(adjustedHood, ShooterK.minHoodAngle.in(Degrees), ShooterK.maxHoodAngle.in(Degrees));
+        double ratio = MathUtil.clamp(horizontalVelocityRequired / totalVelocity, 0, 1);
+        double adjustedHood = Math.toDegrees(Math.acos(ratio));
+        adjustedHood = MathUtil.clamp(adjustedHood, ShooterK.minHoodAngle.in(Degrees), ShooterK.maxHoodAngle.in(Degrees));
 
         //^ 6. Store final parameters
-        //! this.shotParametersInstance = new ShotParameters(Degrees.of(adjustedHood), Degrees.of(turretAngle));
+        this.shotParametersInstance = new ShotParameters(Degrees.of(adjustedHood), Degrees.of(turretAngle));
     }
 
     //~ Getters & Resetters

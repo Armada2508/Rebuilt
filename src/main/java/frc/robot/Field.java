@@ -1,7 +1,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
@@ -79,11 +78,6 @@ public class Field {
     public static Pose2d getAllianceHub() {
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) return blueHub;
         return redHub; // If on red, return red hub 
-    }
-
-    public static Distance getDistanceToHub(Pose2d pose) {
-        Translation2d hubTranslation = getAllianceHub().getTranslation();
-        return Meters.of(pose.getTranslation().getDistance(hubTranslation));
     }
 }
 

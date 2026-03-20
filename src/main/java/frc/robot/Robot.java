@@ -6,9 +6,6 @@ package frc.robot;
 
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-
-import java.util.Set;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
@@ -17,8 +14,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -220,7 +215,6 @@ public class Robot extends TimedRobot {
         //~ Shooter Routines
         Command shoot = Routines.shoot(shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
-        // Command setHoodInterpolated = Routines.setHoodInterpolatedAngle(shooter, swerve);
         // Command stowRoutine = Routines.stowHood(shooter); 
 
         //~ Indexer Routines
@@ -233,7 +227,7 @@ public class Robot extends TimedRobot {
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         // xboxController.a().whileTrue(swerve.faceWheelsForward());
         // xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
-        xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation        
+        // xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation        
 
         //~ Shooting & Indexing
         // xboxController.a().whileTrue(index)
@@ -251,23 +245,17 @@ public class Robot extends TimedRobot {
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
         //.onFalse(stopRoller);
-        // xboxController.rightBumper().whileTrue(extend)
-        // .onFalse(stopArm);
+        xboxController.rightBumper().whileTrue(extend)
+        .onFalse(stopArm);
         
-        // xboxController.leftBumper().onTrue(retract)
-        // .onFalse(stopArm);
+        xboxController.leftBumper().onTrue(retract)
+        .onFalse(stopArm);
 
         xboxController.leftTrigger().whileTrue(intakeCommand)
         .onFalse(stopIntake);
 
         xboxController.x().onTrue(spinRoller)
         .onFalse(stopRoller);
-
-        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump Up"));
-        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump Down"));
-        xboxController.povUp().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(0)), Set.of(shooter)).withName("Zero"));
-        // xboxController.povDown().onTrue(setHoodInterpolated);
-
 
         // xboxController.a().onTrue(setHoodAngle);
 

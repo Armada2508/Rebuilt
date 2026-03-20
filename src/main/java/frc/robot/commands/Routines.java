@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 
 import java.net.SocketTimeoutException;
@@ -11,14 +10,12 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Vision;
 import frc.robot.Field;
 import frc.robot.subsystems.shooting.Shooter;
 import frc.robot.subsystems.shooting.Superstructure;
@@ -91,14 +88,10 @@ public class Routines {
     }
 
     public static Command setHoodAngle(Shooter shooter) {
-        // System.out.println("set hood angle run");
+        System.out.println("set hood angle run");
         // System.out.println("Hood Angle Units: " + targetAngle.get().unit());
-        return shooter.setHoodAngle(Degrees.of(10));
+        return shooter.setHoodAngle();
     }
-
-    // public static Command setHoodInterpolatedAngle(Shooter shooter, Swerve swerve) {
-    //     return shooter.setHoodInterpolatedAngle(Field.getDistanceToHub(swerve.getPose()));
-    // }
 
     // public static Command stopShooter(Shooter shooter) {
     //     return Commands.runOnce(() -> shooter.stop(), shooter);
