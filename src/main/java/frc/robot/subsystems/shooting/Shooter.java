@@ -167,6 +167,8 @@ public class Shooter extends SubsystemBase {
         }
 
         MotionMagicVoltage request = new MotionMagicVoltage(target);
+        // PositionVoltage request = new PositionVoltage(target).withVelocity(RotationsPerSecond.of(1));
+
         SmartDashboard.putNumber("target angle (degrees)", request.Position * 360);
 
         return runOnce(() -> talonHood.setControl(request))

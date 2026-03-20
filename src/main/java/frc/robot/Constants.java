@@ -168,10 +168,10 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 30; //! tune 
+        public static final double hoodKP = 155; //! tune 
         public static final double hoodKD = 0; //! tune
-        public static final double hoodKS = 0.2; //! tune
-        // public static final double hoodKV = 0.05; //! tune
+        public static final double hoodKS = 0.2; //! tune 0.2
+        public static final double hoodKV = 0.05; //! tune
 
         public static final double flywheelKP = 0.05;
         public static final double flywheelKD = 0; 
@@ -213,10 +213,10 @@ public class Constants {
         // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
         public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(CANCoderID)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-        .withRotorToSensorRatio(motorToEncoderGearRatio)
-        .withSensorToMechanismRatio(encoderToHoodGearRatio);
+        // .withFeedbackRemoteSensorID(CANCoderID)
+        // .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        // .withRotorToSensorRatio(motorToEncoderGearRatio)
+        .withSensorToMechanismRatio(175.0);
     }
     
     public static class TurretK {

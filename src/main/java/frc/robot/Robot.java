@@ -243,8 +243,8 @@ public class Robot extends TimedRobot {
 
         xboxController.povDown().onTrue(shooter.setHoodAngle(Degrees.of(20)));
 
-        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump up"));
-        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump down"));
+        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 7.5)), Set.of(shooter)).withName("Bump up"));
+        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 7.5)), Set.of(shooter)).withName("Bump down"));
 
 
 
