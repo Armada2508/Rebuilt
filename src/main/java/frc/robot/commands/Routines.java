@@ -87,11 +87,11 @@ public class Routines {
         .withName("Stop shooter");
     }
 
-    public static Command setHoodAngle(Shooter shooter) {
-        System.out.println("set hood angle run");
-        // System.out.println("Hood Angle Units: " + targetAngle.get().unit());
-        return shooter.setHoodAngle();
-    }
+    // public static Command setHoodAngle(Shooter shooter) {
+    //     System.out.println("set hood angle run");
+    //     // System.out.println("Hood Angle Units: " + targetAngle.get().unit());
+    //     return shooter.setHoodAngle();
+    // }
 
     // public static Command stopShooter(Shooter shooter) {
     //     return Commands.runOnce(() -> shooter.stop(), shooter);

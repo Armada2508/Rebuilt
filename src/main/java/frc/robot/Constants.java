@@ -142,8 +142,8 @@ public class Constants {
         public static final int CANCoderID = 0;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.1); //! Tune
-        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.1); //! Tune
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.5); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.5); //! Tune
 
         public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
 
@@ -168,7 +168,7 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 2.5; //! tune 
+        public static final double hoodKP = 80; //! tune 
         public static final double hoodKD = 0; //! tune
         public static final double hoodKS = 0.2; //! tune
         // public static final double hoodKV = 0.05; //! tune

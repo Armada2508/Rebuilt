@@ -7,6 +7,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 
+import java.util.Set;
+
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
 import com.reduxrobotics.canand.CanandEventLoop;
@@ -236,20 +238,24 @@ public class Robot extends TimedRobot {
         xboxController.rightTrigger().whileTrue(shoot)
         .onFalse(stopShooter);
 
-        xboxController.a().onTrue(Routines.setHoodAngle(shooter));
+        // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
         // xboxController.povUp().onTrue(Commands.print("Button pressed"));
 
         // xboxController.povDown().onTrue(hoodTwentyDegrees);
+
+        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump up"));
+        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump down"));
+
 
 
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
         //.onFalse(stopRoller);
-        xboxController.rightBumper().whileTrue(extend)
-        .onFalse(stopArm);
+        // xboxController.rightBumper().whileTrue(extend)
+        // .onFalse(stopArm);
         
-        xboxController.leftBumper().onTrue(retract)
-        .onFalse(stopArm);
+        // xboxController.leftBumper().onTrue(retract)
+        // .onFalse(stopArm);
 
         xboxController.leftTrigger().whileTrue(intakeCommand)
         .onFalse(stopIntake);

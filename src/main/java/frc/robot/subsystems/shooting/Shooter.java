@@ -117,7 +117,9 @@ public class Shooter extends SubsystemBase {
     @Logged(name = "Hood Angle (degrees)")
     public double getHoodAngle() {
         // return canCoder.getAbsolutePosition().getValue();
-        return canCoder.getAbsolutePosition().getValue().in(Rotations) * ShooterK.encoderToHoodGearRatio * 360; //! Test
+        double theta = canCoder.getAbsolutePosition().getValue().times(ShooterK.encoderToHoodGearRatio).in(Degrees); //! Test
+        if (theta > ShooterK.maxHoodAngle.in(Degrees) + 0.5 || theta < ShooterK.minHoodAngle.in(Degrees)) theta = 0;
+        return theta;
         // return Degrees.of(angle);
     }
 
@@ -155,27 +157,30 @@ public class Shooter extends SubsystemBase {
      * @param targetAngle Angle to set the hood to
      * @return runnable containing a command to command the talon
      */
-    public Command setHoodAngle() {
-        // PositionVoltage request = new PositionVoltage(Degrees.of(5)).withFeedForward(ShooterK.hoodKS).withSlot(0).withVelocity(RotationsPerSecond.of(0.1));
-        MotionMagicVoltage request = new MotionMagicVoltage(Degrees.of(35));
+    public Command setHoodAngle(Angle target) {
+        // if (target.gt(ShooterK.maxHoodAngle)) {
+        //     target = ShooterK.maxHoodAngle;
+        // }
+        // else if (target.lt(ShooterK.minHoodAngle)) {
+        //     target = ShooterK.minHoodAngle;
+        // }
 
+        MotionMagicVoltage request = new MotionMagicVoltage(target);
         SmartDashboard.putNumber("target angle (degrees)", request.Position * 360);
-        SmartDashboard.putNumber("target angle (rotations)", request.Position);
 
-
-        return runOnce(() -> talonHood.setControl(request)).andThen(Commands.print("hood angle finished"))
+        return runOnce(() -> talonHood.setControl(request))
         .withName("Set Hood Angle");
     }
 
     @Logged(name = "Hood Talon Position (deg)")
-public double getHoodTalonPositionDeg() {
-    return talonHood.getPosition().getValue().in(Degrees);
-}
+    public double getHoodTalonPositionDeg() {
+        return talonHood.getPosition().getValue().in(Degrees);
+    }
 
-@Logged(name = "Hood Talon Position (rot)")
-public double getHoodTalonPositionRot() {
-    return talonHood.getPosition().getValue().in(Rotations);
-}
+    @Logged(name = "Hood Talon Position (rot)")
+    public double getHoodTalonPositionRot() {
+        return talonHood.getPosition().getValue().in(Rotations);
+    }
 
     /**
      * Returns the given target as rotations of the hood in a 1 motor rotation : 2.05 degrees of the hood
