@@ -155,33 +155,28 @@ public class Shooter extends SubsystemBase {
         .withName("Shoot Fuel");
     }
 
-    /**
-     * Sets the hood to a target angle using Motion Magic
-     * @param targetAngle Angle to set the hood to
-     * @return runnable containing a command to command the talon
-     */
+    public Command setHoodAngle(Supplier<Angle> target) {
+        return runOnce(() -> {
+            Angle angle = target.get();
+            if (angle.gt(ShooterK.maxHoodAngle)) angle = ShooterK.maxHoodAngle;
+            else if (angle.lt(ShooterK.minHoodAngle)) angle = ShooterK.minHoodAngle;
+
+            MotionMagicVoltage request = new MotionMagicVoltage(angle);
+            SmartDashboard.putNumber("target angle (degrees)", angle.in(Degrees));
+            talonHood.setControl(request);
+        }).withName("Set Hood Angle");
+    }
+
+    // Convenience overload for static angles — delegates up
     public Command setHoodAngle(Angle target) {
-        if (target.gt(ShooterK.maxHoodAngle)) {
-            target = ShooterK.maxHoodAngle;
-        }
-        else if (target.lt(ShooterK.minHoodAngle)) {
-            target = ShooterK.minHoodAngle;
-        }
-
-        MotionMagicVoltage request = new MotionMagicVoltage(target);
-        // PositionVoltage request = new PositionVoltage(target).withVelocity(RotationsPerSecond.of(1));
-
-        SmartDashboard.putNumber("target angle (degrees)", request.Position * 360);
-
-        return runOnce(() -> talonHood.setControl(request))
-        .withName("Set Hood Angle");
+        return setHoodAngle(() -> target);
     }
 
-    public Command setInterpolatedHoodAngle(Supplier<Distance> targetDistance) {
-        Angle interpolatedTheta = Maps.getHoodAngleFromDistance(targetDistance);
-        SmartDashboard.putNumber("Interpolated Target", interpolatedTheta.in(Degrees));
-        return setHoodAngle(interpolatedTheta);
-    }
+    // Interpolated — delegates up, no duplicated logic
+    public Command setInterpolatedHoodAngle(Supplier<Distance> distance) {
+        return setHoodAngle(() -> Maps.getHoodAngleFromDistance(distance))
+        .withName("Set Hood Interpolated Angle");
+}
 
 
     @Logged(name = "Hood Talon Position (deg)")

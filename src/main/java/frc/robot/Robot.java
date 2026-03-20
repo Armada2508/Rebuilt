@@ -140,8 +140,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Is Hub Active", HubShiftUtil.getShiftedShiftInfo().active());
         SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
         
+        SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
         SmartDashboard.putNumber("Target Hood Angle from Maps", Maps.getHoodAngleFromDistance(() -> Field.getDistanceToHub(swerve.getPose())).in(Degrees));
-    }
+        
+    }   
 
     @Override
     public void teleopPeriodic() {
@@ -221,7 +223,7 @@ public class Robot extends TimedRobot {
         //~ Shooter Routines
         Command shoot = Routines.shoot(shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
-        Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
+        // Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
         // Command stowRoutine = Routines.stowHood(shooter); 
 
         //~ Indexer Routines
@@ -251,8 +253,8 @@ public class Robot extends TimedRobot {
         xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 7.5)), Set.of(shooter)).withName("Bump up"));
         xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 7.5)), Set.of(shooter)).withName("Bump down"));
 
-        xboxController.povUp().onTrue(Commands.defer(() -> setHoodInterpolatedAngle, Set.of(swerve, shooter)).withName("Set Hood Interpolated Angle"));
-
+        xboxController.povUp().whileTrue(Routines.setHoodInterpolatedAngle(swerve, shooter).withName("Set Hood Interpolated Angle"));
+        
 
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 

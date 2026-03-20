@@ -50,8 +50,7 @@ public class Routines {
     }
 
     public static Command setHoodInterpolatedAngle(Swerve swerve, Shooter shooter) {
-        Distance targetDistance = Field.getDistanceToHub(swerve.getPose());
-        return shooter.setInterpolatedHoodAngle(() -> targetDistance)
+        return new RepeatCommand(shooter.setInterpolatedHoodAngle(() -> Field.getDistanceToHub(swerve.getPose())))
         .withName("Set Hood Interpolated Angle");
     }
 
