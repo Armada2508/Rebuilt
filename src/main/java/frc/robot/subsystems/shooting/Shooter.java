@@ -16,6 +16,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -25,6 +27,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -148,7 +151,6 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public Command shootFuel() {
-
         return runOnce(() -> shoot(ShooterK.staticRpm))
         .withName("Shoot Fuel");
     }
@@ -174,6 +176,13 @@ public class Shooter extends SubsystemBase {
         return runOnce(() -> talonHood.setControl(request))
         .withName("Set Hood Angle");
     }
+
+    public Command setInterpolatedHoodAngle(Supplier<Distance> targetDistance) {
+        Angle interpolatedTheta = Maps.getHoodAngleFromDistance(targetDistance);
+        SmartDashboard.putNumber("Interpolated Target", interpolatedTheta.in(Degrees));
+        return setHoodAngle(interpolatedTheta);
+    }
+
 
     @Logged(name = "Hood Talon Position (deg)")
     public double getHoodTalonPositionDeg() {

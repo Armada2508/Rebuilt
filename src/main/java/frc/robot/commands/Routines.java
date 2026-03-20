@@ -1,15 +1,8 @@
 package frc.robot.commands;
 
-
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.RPM;
-
-import java.net.SocketTimeoutException;
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -18,7 +11,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Field;
 import frc.robot.subsystems.shooting.Shooter;
-import frc.robot.subsystems.shooting.Superstructure;
 
 public class Routines {
     public static Command spinRoller(Intake intake) {
@@ -56,6 +48,13 @@ public class Routines {
     public static Command zeroGyro(Swerve swerve) {
         return swerve.commandZeroGyro();
     }
+
+    public static Command setHoodInterpolatedAngle(Swerve swerve, Shooter shooter) {
+        Distance targetDistance = Field.getDistanceToHub(swerve.getPose());
+        return shooter.setInterpolatedHoodAngle(() -> targetDistance)
+        .withName("Set Hood Interpolated Angle");
+    }
+
     // public static Command shoot(Indexer indexer, Shooter shooter) {
     //     return new RepeatCommand(indexer.indexCommand())
     //     .alongWith(new RepeatCommand(shooter.shootFuel()))

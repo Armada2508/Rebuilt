@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Set;
 
@@ -39,8 +40,9 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.shooting.Maps;
 import frc.robot.subsystems.shooting.Shooter;
-import frc.robot.subsystems.shooting.Superstructure;
+// import frc.robot.subsystems.shooting.Superstructure;
 import frc.robot.subsystems.shooting.Turret;
 
 @Logged
@@ -55,8 +57,8 @@ public class Robot extends TimedRobot {
     private Shooter shooter = new Shooter();
     // @Logged(name = "Turret")
     private Turret turret = new Turret(); // For logging
-    @Logged(name = "Superstructure")
-    private Superstructure superstructure = new Superstructure(shooter, turret);
+    // @Logged(name = "Superstructure")
+    // private Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
     private Indexer indexer = new Indexer();
 
@@ -137,6 +139,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Time left in current phase", HubShiftUtil.getOfficialShiftInfo().remainingTime());
         SmartDashboard.putBoolean("Is Hub Active", HubShiftUtil.getShiftedShiftInfo().active());
         SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
+        
+        SmartDashboard.putNumber("Target Hood Angle from Maps", Maps.getHoodAngleFromDistance(() -> Field.getDistanceToHub(swerve.getPose())).in(Degrees));
     }
 
     @Override
@@ -217,6 +221,7 @@ public class Robot extends TimedRobot {
         //~ Shooter Routines
         Command shoot = Routines.shoot(shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
+        Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
         // Command stowRoutine = Routines.stowHood(shooter); 
 
         //~ Indexer Routines
@@ -246,6 +251,7 @@ public class Robot extends TimedRobot {
         xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 7.5)), Set.of(shooter)).withName("Bump up"));
         xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 7.5)), Set.of(shooter)).withName("Bump down"));
 
+        xboxController.povUp().onTrue(Commands.defer(() -> setHoodInterpolatedAngle, Set.of(swerve, shooter)).withName("Set Hood Interpolated Angle"));
 
 
         //~ Intaking

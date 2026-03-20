@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.1; // 0.5
-        public static final double rotationSpeedModifier = 0.1; //0.5
+        public static final double driveSpeedModifier = 0.25; // 0.5
+        public static final double rotationSpeedModifier = 0.25; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -168,10 +168,11 @@ public class Constants {
         
 
         //& PID
-        public static final double hoodKP = 155; //! tune 
+        public static final double hoodKP = 195; //! tune 
         public static final double hoodKD = 0; //! tune
         public static final double hoodKS = 0.2; //! tune 0.2
-        public static final double hoodKV = 0.05; //! tune
+        public static final double hoodKG = 0.05;
+        public static final double hoodKV = 1; //! tune
 
         public static final double flywheelKP = 0.05;
         public static final double flywheelKD = 0; 
@@ -186,6 +187,7 @@ public class Constants {
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
         .withKP(hoodKP)
         .withKD(hoodKD)
+        .withKG(hoodKG)
         .withKS(hoodKS);
         // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
@@ -222,7 +224,7 @@ public class Constants {
     public static class TurretK {
         public static final int talonId = 15; 
         //^ This may be bad, idk if can reserves id's
-        public static final int CANCoderID = 0; //! FIND
+        public static final int CANCoderID = 1; //! FIND
         
         
         //& Absolute Encoder
@@ -347,7 +349,7 @@ public class Constants {
     public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         public static final String backCameraName = "ArducamSide";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
+        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(-12.642), Inches.of(1), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
         public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
