@@ -29,6 +29,16 @@ public class Routines {
         .withName("Intake");
     }
 
+    public static Command extend(Intake intake) {
+        return intake.extend()
+        .withName("Extending");
+    }
+
+    public static Command retract(Intake intake) {
+        return intake.retract()
+        .withName("Retracting");
+    }
+
     public static Command stopIntake(Intake intake) {
         return intake.stopRoller()
         .andThen(intake.retract())

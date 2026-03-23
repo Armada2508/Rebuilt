@@ -106,16 +106,10 @@ public class Turret extends SubsystemBase {
      * @return
      */
     @Logged(name = "Turret Angle (degrees)")
-    public Angle getAngle() { //! Verify this
-        double theta = Degrees.of(
-                    Rotations.of(canCoder.getAbsolutePosition().getValue().in(Rotations)/*  absoluteEncoder.get() */)
-                    .plus(
-                        TurretK.CANCoderOffset
-                    ).in(Rotations)
-                ).times(
-                    TurretK.encoderToTurretGearRatio
-                ).in(Degrees);
-        return Degrees.of(theta); //^ pls work this is annoying to math out
+    public double getAngle() { //! Verify this
+        double theta = canCoder.getAbsolutePosition().getValue().times(TurretK.encoderToTurretGearRatio).in(Degrees); //! Test
+        if (theta > TurretK.maxAngle.in(Degrees) + 0.5 || theta < TurretK.minAngle.in(Degrees)) theta = 0;
+        return theta; //^ pls work this is annoying to math out
     }
 
     /**

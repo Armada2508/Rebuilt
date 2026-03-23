@@ -145,14 +145,14 @@ public class Constants {
         public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.5); //! Tune
         public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.5); //! Tune
 
-        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
+        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(150);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(0);
         public static final Angle maxHoodAngle = Degrees.of(40);
 
         //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(3000); // 2900
+        public static final AngularVelocity staticRpm = RPM.of(2700); // 2900
 
         //& Shooter max and min RPM
         public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
@@ -174,7 +174,7 @@ public class Constants {
         public static final double hoodKG = 0.05;
         public static final double hoodKV = 1; //! tune
 
-        public static final double flywheelKP = 0.05;
+        public static final double flywheelKP = 0.8875;
         public static final double flywheelKD = 0; 
         public static final double flywheelKS = 0.15; 
         public static final double flywheelKV = 0.122;
@@ -227,15 +227,15 @@ public class Constants {
         public static final int CANCoderID = 1; //! FIND
         
         
-        //& Absolute Encoder
+        //& CANcoder
         public static final int channel = 0; //! Ask Electrical
         public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
         public static final Angle expectedZero = Degrees.of(180); 
-        public static final Angle CANCoderOffset = Degrees.of(0); //! Find
+        // public static final Angle CANCoderOffset = Degrees.of(0); //! idk
         
         //& Gear Ratios
-        public static final double krakenToTurretGearRatio = 50; //these numbers should be right now
-        public static final double encoderToTurretGearRatio = 10;
+        public static final double krakenToTurretGearRatio = 44.5; //these numbers should be right now
+        public static final double encoderToTurretGearRatio = 8.9;
 
         //& Motion Magic
         public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0); //! Find
@@ -349,8 +349,8 @@ public class Constants {
     public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         public static final String backCameraName = "ArducamSide";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(-12.642), Inches.of(1), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
-        public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
+        public static final Transform3d robotToLumaCamera = new Transform3d(Inches.of(-9.42), Inches.of(-10.795), Inches.of(6.6), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(-135))); //! TEST YAWS: 45, 135, -45, -135
+        public static final Transform3d robotToArduCamera = new Transform3d(Inches.of(-8.947), Inches.of(6.371), Inches.of(10.494), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(75.07)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);

@@ -35,8 +35,8 @@ public class Vision extends SubsystemBase {
     private final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
     private final PhotonCamera frontCamera = new PhotonCamera(VisionK.frontCameraName);
     private final PhotonCamera backCamera = new PhotonCamera(VisionK.backCameraName);
-    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionK.robotToFrontCamera);
-    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionK.robotToSideCamera);
+    private final PhotonPoseEstimator frontPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionK.robotToLumaCamera);
+    private final PhotonPoseEstimator backPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionK.robotToArduCamera);
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("Robot").getSubTable("Vision");
     private final StructPublisher<Pose3d> pubFront = table.getStructTopic(VisionK.frontCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
     private final StructPublisher<Pose3d> pubBack = table.getStructTopic(VisionK.backCameraName + " StdDevs/estimatedPose", Pose3d.struct).publish();
@@ -89,8 +89,8 @@ public class Vision extends SubsystemBase {
                 var robotPose2d = pose.estimatedPose.toPose2d();
         var cameraFieldPose = pose.estimatedPose.transformBy(
             name.equals(VisionK.frontCameraName) 
-                ? VisionK.robotToFrontCamera 
-                : VisionK.robotToSideCamera
+                ? VisionK.robotToLumaCamera 
+                : VisionK.robotToArduCamera
         ).toPose2d();
 
         SmartDashboard.putNumberArray("Vision/" + name + "/EstRobotXY", 
@@ -254,7 +254,7 @@ public class Vision extends SubsystemBase {
         if (!canSeeTagFront()) return -1;
         return Units.metersToInches(
             Pose3d.kZero.transformBy(frontLatestResult.getBestTarget().getBestCameraToTarget().inverse())
-            .transformBy(VisionK.robotToFrontCamera.inverse()).getTranslation().toTranslation2d().getNorm()
+            .transformBy(VisionK.robotToLumaCamera.inverse()).getTranslation().toTranslation2d().getNorm()
         );
     }
 
