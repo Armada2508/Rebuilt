@@ -42,6 +42,18 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Mid Neutral to Top Neutral"

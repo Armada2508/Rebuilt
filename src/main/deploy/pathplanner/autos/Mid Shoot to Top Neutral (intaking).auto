@@ -37,13 +37,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 3.0
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Mid Neutral to Top Neutral"
+            "name": "Stop Intaking"
           }
         }
       ]

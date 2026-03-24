@@ -21,6 +21,7 @@ public class Autos {
         
 
         NamedCommands.registerCommand("Shoot Fuel", Routines.shoot(shooter, indexer));
+        NamedCommands.registerCommand("Stop Intaking", Routines.stopIntake(intake));
 
         new EventTrigger("intake fuel").onTrue(Routines.intake(intake));
         new EventTrigger("stop intaking").onTrue(Routines.stopIntake(intake));

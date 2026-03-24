@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom to Neutral Zone"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bottom Neutral to Mid Neutral"
+            "pathName": "Top to Mid Neutral (Bump)"
           }
         },
         {
@@ -31,13 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid Neutral to Bottom Neutral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bottom Neutral to Shoot Position"
+            "pathName": "Mid Neutral to Shoot Position (T Bump)"
           }
         },
         {

@@ -15,6 +15,18 @@
           "data": {
             "pathName": "Bottom Neutral to Mid Neutral"
           }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
         }
       ]
     }
