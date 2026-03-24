@@ -303,31 +303,7 @@ public class Constants {
 
         public static final double extenderGearRatio = 1/3.2;
         public static final Distance extenderWheelDiameter = Inches.of(1.4375);
-    }   
-
-    public static class IndexerOldK {
-        public static final int talonID = 2; //! find
-        
-        // indexer current limit configs
-        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0, 0, 0); //! find
-       
-        public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
-        public static final Time jostleDuration = Seconds.of(0.25);
-
-        /* PID configs for indexer
-        public static final double kP = 0; // find all values
-        public static final double kD = 0;
-        public static final double kV = 0;
-        public static final double kS = 0;
-        
-
-        public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
-        .withKP(kP)
-        .withKD(kD)
-        .withKV(kV)
-        .withKS(kS);
-        */
-    }
+    }  
 
     public static class IndexerK {
         public static final int id = 16; //! Find
@@ -337,6 +313,14 @@ public class Constants {
         .withSupplyCurrentLimitEnable(true)
         .withStatorCurrentLimit(Amps.of(0)) //! Find
         .withSupplyCurrentLimit(Amps.of(0)); //! Find
+
+        public static final int sparkLeftID = 3;
+        public static final int sparkRightID = 4;
+
+        public static final int leftCurrentLimit = 0; //! Find all
+        public static final int rightCurrentLimit = 0;
+
+        public static final Voltage spinVoltage = Volts.of(0); //! Find
     }
 
         public static class HopperK {
