@@ -123,6 +123,7 @@ public class Routines {
 
     public static Command stopShooter(Shooter shooter, Indexer indexer) {
         return shooter.stop().andThen(stopIndexer(indexer))
+        .finallyDo(() -> shooter.setHoodAngle(ShooterK.minHoodAngle))
         .withName("Stop shooter");
     }
 
