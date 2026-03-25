@@ -23,8 +23,11 @@ public class Autos {
 
         NamedCommands.registerCommand("Shoot Fuel", Routines.shootInterpolatedRpm(swerve, shooter));
 
+        NamedCommands.registerCommand("Stop Intaking", Routines.stopIntake(intake));
+
         new EventTrigger("intake fuel").onTrue(Routines.intake(intake));
         new EventTrigger("stop intaking").onTrue(Routines.stopIntake(intake));
+        new EventTrigger("shoot fuel").onTrue(Routines.shootInterpolatedRpm(swerve, shooter));
 
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);

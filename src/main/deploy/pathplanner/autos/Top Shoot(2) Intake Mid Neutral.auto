@@ -7,19 +7,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid to Shoot Position"
+            "pathName": "Top to Shoot Position"
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Shoot Fuel"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot Fuel"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
           }
         },
         {
@@ -44,6 +51,18 @@
           "type": "named",
           "data": {
             "name": "Stop Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid Neutral to Top Neutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top Neutral to Shoot Position"
           }
         }
       ]

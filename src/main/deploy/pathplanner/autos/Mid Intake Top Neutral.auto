@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top to Shoot Position"
+            "pathName": "Mid to Top Neutral"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Shoot Fuel"
+            "pathName": "Top Neutral to Mid Neutral"
           }
         },
         {
@@ -23,15 +23,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Shoot Position to Top Neutral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Neutral to Mid Neutral"
+            "name": "Stop Intaking"
           }
         }
       ]
