@@ -19,7 +19,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot Position to Outpost"
+            "pathName": "jostle 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "jostle 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Fuel"
           }
         }
       ]

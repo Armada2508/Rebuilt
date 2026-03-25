@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top to Neutral Zone"
+            "pathName": "Bottom to Neutral Zone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Top Neutral to Mid Neutral"
+            "pathName": "Bottom Neutral to Mid Neutral"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
           }
         }
       ]

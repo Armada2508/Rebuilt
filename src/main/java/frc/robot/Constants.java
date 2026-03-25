@@ -30,6 +30,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0; // 0.5
-        public static final double rotationSpeedModifier = 0; //0.5
+        public static final double driveSpeedModifier = 0.25; // 0.5
+        public static final double rotationSpeedModifier = 0.25; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -141,60 +142,56 @@ public class Constants {
         public static final int CANCoderID = 0;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(20); //! Tune
-        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(10); //! Tune
+        public static final AngularVelocity motionMagicHoodVelocity = RotationsPerSecond.of(0.5); //! Tune
+        public static final AngularAcceleration motionMagicHoodAcceleration = RotationsPerSecondPerSecond.of(0.5); //! Tune
 
-        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(80);
+        public static final AngularAcceleration motionMagicFlywheelAcceleration = RotationsPerSecondPerSecond.of(150);
 
         //& Hood angle limit
         public static final Angle minHoodAngle = Degrees.of(0);
         public static final Angle maxHoodAngle = Degrees.of(40);
 
-        //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(2900); // 2900
+        //& Static Set Points
+        public static final AngularVelocity staticPassingRpm = RPM.of(3000); //! Tune
+        public static final AngularVelocity staticStealingRpm = RPM.of(3000); //! Tune
 
-        //& Shooter max and min RPM
-        public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
-        public static final AngularVelocity flywheelVelocityLowerThreshold = RPM.of(2860);
-
-
+        public static final Angle staticPassingHoodAngle = Degrees.of(30); //! Tune
+        public static final Angle staticStealingHoodAngle = Degrees.of(35); //! Tune
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
-        public static final double motorToHoodGearRatio = 800.0 / 350.0;
+        public static final double motorToHoodGearRatio = 40.0 / 350.0;
         public static final double encoderToHoodGearRatio = 0.114;
+        public static final double motorToHoodDegreeGearRatio = 2.05; // 1 Rotation of the motor shaft = 2.05 Degrees of the hood.
         
 
         //& PID
-        public static final double hoodKP = 0.75; //! tune
+        public static final double hoodKP = 195; //! tune 
         public static final double hoodKD = 0; //! tune
-        public static final double hoodKS = 0.16; //! tune
-        public static final double hoodKV = 0.05; //! tune
-        public static final double hoodKG = 0.0;
+        public static final double hoodKS = 0.2; //! tune 0.2
+        public static final double hoodKG = 0.05;
+        public static final double hoodKV = 1; //! tune
 
-        public static final double flywheelKP = 0.05;
+        public static final double flywheelKP = 0.8875;
         public static final double flywheelKD = 0; 
         public static final double flywheelKS = 0.15; 
         public static final double flywheelKV = 0.122;
 
         //& Current Limits
         public static final Current hoodMaxStatorCurrent = Amps.of(50); // Amps //! Tune
-        //// public static final Current hoodMaxSupplyCurrent = Amps.of(0); // Amps //! Tune
         public static final Current shooterMaxStatorCurrent = Amps.of(50); // Amps //! Tune
-        //// public static final Current shooterMaxSupplyCurrent = Amps.of(0); // Amps //! Tune
 
         //& Configs
         public static final Slot0Configs hoodPidConfig = new Slot0Configs()
         .withKP(hoodKP)
         .withKD(hoodKD)
-        .withKS(hoodKS)
-        .withKV(hoodKV)
-        .withKG(hoodKG);
+        .withKG(hoodKG)
+        .withKS(hoodKS);
+        // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
         public static final Slot0Configs flywheelPidConfig = new Slot0Configs()
         .withKP(flywheelKP)
         .withKD(flywheelKD)
-        // .withKS(flywheelKS)
         .withKV(flywheelKV);
 
         public static final SoftwareLimitSwitchConfigs hoodSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
@@ -202,12 +199,6 @@ public class Constants {
         .withForwardSoftLimitThreshold(maxHoodAngle)
         .withReverseSoftLimitEnable(true)
         .withReverseSoftLimitThreshold(minHoodAngle);
-
-        // public static final SoftwareLimitSwitchConfigs shooterSoftwareLimitSwitchConfig = new SoftwareLimitSwitchConfigs()
-        // .withForwardSoftLimitEnable(true)
-        // .withForwardSoftLimitThreshold(minRpm.in(RPM))
-        // .withReverseSoftLimitEnable(true)
-        // .withReverseSoftLimitThreshold(maxRpm.in(RPM));
         
         public static final CurrentLimitsConfigs hoodCurrentLimitsConfigs = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
@@ -222,45 +213,47 @@ public class Constants {
         // .withSupplyCurrentLimit(shooterMaxSupplyCurrent);
 
         public static final FeedbackConfigs feedBackConfig = new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(CANCoderID)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-        .withSensorToMechanismRatio(encoderToHoodGearRatio);
+        // .withFeedbackRemoteSensorID(CANCoderID)
+        // .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+        // .withRotorToSensorRatio(motorToEncoderGearRatio)
+        .withSensorToMechanismRatio(175.0);
     }
     
     public static class TurretK {
         public static final int talonId = 15; 
         //^ This may be bad, idk if can reserves id's
+        public static final int CANCoderID = 1; //! FIND
         
-        //& Absolute Encoder
-        public static final int channel = 0; //! Ask Electrical
-        public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
-        public static final Angle expectedZero = Degrees.of(180); 
-        public static final Angle absoluteEncoderOffset = Degrees.of(0); //! Find
+        
+        //& CANcoder
+        // public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
+        // public static final Angle expectedZero = Degrees.of(180); 
+        // public static final Angle CANCoderOffset = Degrees.of(0); //! idk
         
         //& Gear Ratios
-        public static final double krakenToTurretGearRatio = 50; //these numbers should be right now
-        public static final double encoderToTurretGearRatio = 10;
+        public static final double krakenToTurretGearRatio = 44.5; //these numbers should be right now
+        public static final double encoderToTurretGearRatio = 8.9;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0); //! Find
-        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(10); //! Find
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(15); //! Find
 
         //& Angles
         public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing. This is 
                                                                   //^ This is likely outdated with us using an absolute encoder now. Up to testing & Debugging
 
         // We dont go the maximum rotation to avoid wrap-around error and risk confusing the Absolute encoder, might not be needed though.
-        public static final Angle maxAngle = Degrees.of(179.5);  //! Verify / Check
-        public static final Angle minAngle = Degrees.of(-179.5); //! Verify / Check
+        public static final Angle maxAngle = Degrees.of(120);
+        public static final Angle minAngle = Degrees.of(-155);
 
         //& Currents
         public static final Current maxStatorCurrent = Amps.of(0); //! Find / Verify
         public static final Current maxSupplyCurrent = Amps.of(0); //! Find / Verify
 
         //& PID
-        public static final double kP = 0; //! Tune
+        public static final double kP = 60; //! Tune
         public static final double kD = 0; //! Tune
-        public static final double kS = 0; //! Tune
+        public static final double kS = 0.19; //^ This is very wack with how the turret works. 0.19
         public static final double kV = 0; //! Tune
 
         //& Configs
@@ -302,36 +295,12 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(1); //! Tune
-        public static final Voltage retractVoltage = Volts.of(-1.5);
+        public static final Voltage extendVoltage = Volts.of(-2.5); //! Tune
+        public static final Voltage retractVoltage = Volts.of(3.5);
 
         public static final double extenderGearRatio = 1/3.2;
         public static final Distance extenderWheelDiameter = Inches.of(1.4375);
-    }   
-
-    public static class IndexerOldK {
-        public static final int talonID = 2; //! find
-        
-        // indexer current limit configs
-        public static final SupplyCurrentLimitConfiguration indexerCurrentLimit = new SupplyCurrentLimitConfiguration(true, 0, 0, 0); //! find
-       
-        public static final Voltage spinindexerVoltage = Volts.of(0); //! find all values
-        public static final Time jostleDuration = Seconds.of(0.25);
-
-        /* PID configs for indexer
-        public static final double kP = 0; // find all values
-        public static final double kD = 0;
-        public static final double kV = 0;
-        public static final double kS = 0;
-        
-
-        public static final Slot0Configs coveyorPidConfig = new Slot0Configs()
-        .withKP(kP)
-        .withKD(kD)
-        .withKV(kV)
-        .withKS(kS);
-        */
-    }
+    }  
 
     public static class IndexerK {
         public static final int id = 16; //! Find
@@ -341,6 +310,16 @@ public class Constants {
         .withSupplyCurrentLimitEnable(true)
         .withStatorCurrentLimit(Amps.of(0)) //! Find
         .withSupplyCurrentLimit(Amps.of(0)); //! Find
+
+        public static final int sparkLeftID = 3;
+        public static final int sparkRightID = 4;
+
+        public static final int leftCurrentLimit = 0; //! Find all
+        public static final int rightCurrentLimit = 0;
+
+        public static final Voltage rightAgitatorSpinVoltage = Volts.of(-3); //! Tune
+        public static final Voltage leftAgitatorSpinVoltage = Volts.of(3); //! Tune
+
     }
 
         public static class HopperK {
@@ -350,11 +329,11 @@ public class Constants {
         public static final Distance hopperTopDetectionRange = Inches.of(0);
     }
 
-        public static class VisionK {
+    public static class VisionK {
         public static final String frontCameraName = "LumacamFront"; // 7.5, 34.77, 5.22
         public static final String backCameraName = "ArducamSide";
-        public static final Transform3d robotToFrontCamera = new Transform3d(Inches.of(1), Inches.of(-12.642), Inches.of(5.843), new Rotation3d(Degrees.of(0), Degrees.of(-16), Degrees.of(180)));
-        public static final Transform3d robotToSideCamera = new Transform3d(Inches.of(0.051), Inches.of(10.983), Inches.of(11.435), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(67.33)));
+        public static final Transform3d robotToLumaCamera = new Transform3d(Inches.of(-9.42), Inches.of(-10.795), Inches.of(6.6), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(-135))); //! TEST YAWS: 45, 135, -45, -135
+        public static final Transform3d robotToArduCamera = new Transform3d(Inches.of(-8.947), Inches.of(6.371), Inches.of(10.494), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(75.07)));
         // Acceptable height of pose estimation to consider it a valid pose
         public static final Distance maxPoseZ = Inches.of(12);
         public static final Distance minPoseZ = Inches.of(-6);

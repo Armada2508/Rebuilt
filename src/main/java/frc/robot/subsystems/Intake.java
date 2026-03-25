@@ -61,10 +61,10 @@ public class Intake extends SubsystemBase {
         .positionConversionFactor(IntakeK.extenderGearRatio); // Apply conversion for encoder, rotations -> inches
 
         // Limit switch/soft limit for arm
-        extenderConfig.limitSwitch //& Extender Limit Switch 
-                                  //? Is this even being used right now?
-        .forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor) //! check
-        .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+        // extenderConfig.limitSwitch //& Extender Limit Switch 
+        //                           //? Is this even being used right now?
+        // .forwardLimitSwitchTriggerBehavior(Behavior.kStopMovingMotor) //! check
+        // .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
         // extenderConfig.softLimit //& Extender Soft Limit
         // .forwardSoftLimitEnabled(true)

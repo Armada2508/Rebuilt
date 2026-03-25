@@ -6,6 +6,9 @@ package frc.robot;
 
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+
+import java.util.Set;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
@@ -15,6 +18,8 @@ import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -22,54 +27,63 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.ControllerK;
 import frc.robot.Constants.DriveK;
 import frc.robot.Constants.VisionK;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Routines;
+import frc.robot.lib.logging.LogUtil;
 import frc.robot.lib.util.DriveUtil;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.shooting.Maps;
 import frc.robot.subsystems.shooting.Shooter;
-import frc.robot.subsystems.shooting.Superstructure;
+// import frc.robot.subsystems.shooting.Superstructure;
 import frc.robot.subsystems.shooting.Turret;
 
 @Logged
 public class Robot extends TimedRobot {
     private final CommandXboxController xboxController = new CommandXboxController(ControllerK.xboxPort);
+    // private Alliance activeHub;
 
-    Field2d field = new Field2d();
+    private Field2d field = new Field2d();
     @Logged(name = "Intake")
-    Intake intake = new Intake();
+    private Intake intake = new Intake();
     // @Logged(name = "Shooter")
-    Shooter shooter = new Shooter();
+    private Shooter shooter = new Shooter();
     // @Logged(name = "Turret")
-    Turret turret = new Turret(); // For logging
-    @Logged(name = "Superstructure")
-    Superstructure superstructure = new Superstructure(shooter, turret);
+    private Turret turret = new Turret(); // For logging
+    // @Logged(name = "Superstructure")
+    // private Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
-    Indexer indexer = new Indexer();
+    private Indexer indexer = new Indexer();
 
      private final SendableChooser<Command> autoChooser;
 
     @Logged(name = "Vision")
     private Vision vision = new Vision();
     @Logged(name = "Swerve")
-    private final Swerve swerve = new Swerve(vision::getVisionResults, () -> 
+    private final Swerve swerve = new Swerve(vision::getVisionResults, vision , () -> 
         Math.abs(xboxController.getLeftX()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getLeftY()) > ControllerK.overrideThreshold
         || Math.abs(xboxController.getRightX()) > ControllerK.overrideThreshold);
 
     public Robot() {
+        DataLog dataLog = DataLogManager.getLog();
         DriverStation.silenceJoystickConnectionWarning(true);
+        LogUtil.logDriverStation(this); // Network Tables
+        LogUtil.logCommandInterrupts(dataLog); // Network Tables & DataLog
+        DriverStation.startDataLog(dataLog); // DataLog
         Epilogue.bind(this);
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         logFieldConstants();
-        autoChooser = Autos.initPathPlanner(shooter, intake, indexer);
+        autoChooser = Autos.initPathPlanner(swerve, shooter, intake, indexer);
+    
     }
 
     public void logFieldConstants() {
@@ -121,20 +135,40 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        // SmartDashboard.putData("Time left in current phase", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+        SmartDashboard.putNumber("Time left in current phase", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+        SmartDashboard.putBoolean("Is Hub Active", HubShiftUtil.getShiftedShiftInfo().active());
+        SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
+        
+        SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
+        
+    }   
+
+    @Override
+    public void teleopPeriodic() { 
     }
 
     public void configureBindings() {
         //~ Intake Routines
+        Command intakeCommand = Routines.intake(intake);
+        Command stopIntake = Routines.stopIntake(intake);
         Command spinRoller = Routines.spinRollerRoutine(intake);
         Command stopRoller = Routines.stopRollerRoutine(intake);
-        Command extend = Routines.intake(intake); //! Create
-        Command retract = Routines.stopIntake(intake); //! Create
+        Command extend = Routines.extend(intake); //! Create
+        Command retract = Routines.retract(intake); //! Create
         Command stopArm = Routines.stopArm(intake);
         Command zeroEncoder = Routines.zeroEncoder(intake);
+        // Command setHoodAngle = Routines.setHoodAngle(shooter);
+
+        // Command setHoodAngle = Routines.setHoodAngle(shooter);
+        
+        // Command hoodTenDegrees = Routines.setHoodAngle(shooter, Degrees.of(20));
+        // Command hoodTwentyDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(20));
 
         //~ Shooter Routines
-        Command shoot = Routines.shoot(shooter, indexer);
+        Command score = Routines.score(swerve, shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
+        // Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
         // Command stowRoutine = Routines.stowHood(shooter); 
 
         //~ Indexer Routines
@@ -142,7 +176,7 @@ public class Robot extends TimedRobot {
         Command stopIndex = Routines.stopIndexer(indexer);
 
         //! AVOID BINDING TO 'Y'
-
+        Command zeroGyro = Routines.zeroGyro(swerve);
         //~ Debugging / Simulation
         // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
         // xboxController.a().whileTrue(swerve.faceWheelsForward());
@@ -153,31 +187,49 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(index)
         //  .onFalse(stopIndex);
 
-        xboxController.rightTrigger().whileTrue(shoot)
+        xboxController.rightTrigger().whileTrue(score)
         .onFalse(stopShooter);
 
-        xboxController.povDown().onTrue(Routines.setHoodAngle(shooter, Degrees.of(10)));
+        // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
+        // xboxController.povUp().onTrue(Commands.print("Button pressed"));
 
-        // xboxController.povUp().onTrue(Routines.setHoodAngle(shooter, Degrees.of(20)));
+        xboxController.povDown().onTrue(shooter.setHoodAngle(Degrees.of(20)));
+
+        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump up"));
+        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump down"));
+
+        // xboxController.povUp().whileTrue(Routines.setHoodInterpolatedAngle(swerve, shooter).withName("Set Hood Interpolated Angle"));
+        
 
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
         //.onFalse(stopRoller);
-        xboxController.rightBumper().whileTrue(extend)
-        .onFalse(stopArm);
+        // xboxController.rightBumper().whileTrue(extend)
+        // .onFalse(stopArm);
         
-        xboxController.leftBumper().onTrue(retract)
-        .onFalse(stopArm);
+        // xboxController.leftBumper().onTrue(retract)
+        // .onFalse(stopArm);
 
-        xboxController.leftTrigger().whileTrue(spinRoller)
-        .onFalse(stopRoller);
+        // xboxController.a().whileTrue(extend)
+        // .onFalse(stopArm);
 
-        xboxController.y().onTrue(zeroEncoder);
+        xboxController.a().onTrue(Routines.setTurretAngle(turret));
+
+        
+        // xboxController.b().whileTrue(retract)
+        // .onFalse(stopArm);
+
+        // xboxController.x().onTrue(spinRoller)
+        // .onFalse(stopRoller);
+
+        // xboxController.a().onTrue(setHoodAngle);
+
+        // xboxController.y().onTrue(zeroEncoder);
 
         //~ Alignment
-        xboxController.a().onTrue(Routines.alignToHub(swerve));
-        xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
-
+        // xboxController.a().onTrue(Routines.alignToHub(swerve));
+        // xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
+        // xboxController.povUp().onTrue(zeroGyro);
         // Superstructure
         // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);
         // Command passRoutine = Routines.passFuel(superstructure, indexer);
@@ -214,7 +266,7 @@ public class Robot extends TimedRobot {
 
     @Logged(name = "Robot to Front Camera")
     public Transform3d getRobotToCameraTransform() {
-        return VisionK.robotToFrontCamera;
+        return VisionK.robotToLumaCamera;
     }
 
 }

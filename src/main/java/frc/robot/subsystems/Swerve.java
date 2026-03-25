@@ -64,6 +64,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     private final SwerveDrive swerveDrive;
     private final Supplier<VisionResults> visionSource; 
+    private final Vision vision;
 
     private final TalonFX frontLeftDrive;
     private final TalonFX frontRightDrive;
@@ -95,8 +96,9 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     //~ ============ GENERAL / SETUP =============================================================================================
 
-    public Swerve(Supplier<VisionResults> visionSource, BooleanSupplier overridePathFollowing) {
+    public Swerve(Supplier<VisionResults> visionSource, Vision vision  , BooleanSupplier overridePathFollowing) {
         this.visionSource = visionSource; 
+        this.vision = vision;
         this.overridePathFollowing = overridePathFollowing;
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         SwerveParser parser = null;
@@ -156,10 +158,19 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("X setpoint", xController.getSetpoint().position);
+        SmartDashboard.putNumber("X setpoint eeee", xController.getSetpoint().position);
         SmartDashboard.putNumber("Y setpoint", yController.getSetpoint().position);
+
+        vision.updateHeading(swerveDrive.getPose().getRotation()); //? Hopefully should fix the vision bug???
+
         for (var result : visionSource.get().results()) {
             EstimatedRobotPose pose = result.getFirst();
+                SmartDashboard.putNumberArray("Vision/RawEstimatedPose", new double[]{
+                    pose.estimatedPose.getX(),
+                    pose.estimatedPose.getY(),
+                    pose.estimatedPose.getRotation().toRotation2d().getDegrees()
+            });
+
             if (!initializedOdometryFromVision) {
                 resetOdometry(pose.estimatedPose.toPose2d());
                 initializedOdometryFromVision = true;
@@ -380,7 +391,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
 
     @Logged(name = "Field to Camera") 
     public Pose3d getFieldToCamera() {
-        return getFieldToRobot().transformBy(VisionK.robotToFrontCamera);
+        return getFieldToRobot().transformBy(VisionK.robotToLumaCamera);
     }
 
     // @Logged(name="Robot to Camera Pose")
@@ -431,6 +442,12 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
      */
     public void zeroGyro() {
         swerveDrive.zeroGyro();
+    }
+
+    public Command commandZeroGyro() {
+        return runOnce(() -> {
+            zeroGyro();
+    });
     }
 
     /**

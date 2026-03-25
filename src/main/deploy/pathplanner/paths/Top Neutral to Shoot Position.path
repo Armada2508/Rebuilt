@@ -3,38 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.100712223291627,
-        "y": 0.7346438883541861
+        "x": 5.830606352263479,
+        "y": 7.39444177092826
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.7131061706347745,
-        "y": 1.2659116375964454
+        "x": 0.842786100964358,
+        "y": 7.743224139648888
       },
       "isLocked": false,
-      "linkedName": "Bottom Neutral"
+      "linkedName": "Top Neutral"
     },
     {
       "anchor": {
-        "x": 7.687584215591915,
-        "y": 2.0
+        "x": 1.737,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 6.489881105018994,
-        "y": 0.5485561860527706
+        "x": 1.7370000000000003,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "B Mid Neutral"
+      "linkedName": "Shoot Position"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.24534161490683237,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
-  "pointTowardsZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.63,
+        "y": 4.04
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.5473251028806588,
+      "maxWaypointRelativePos": 0.75,
+      "name": "Point Towards Hub"
+    }
+  ],
   "eventMarkers": [
     {
-      "name": "intake fuel",
-      "waypointRelativePos": 0,
+      "name": "shoot fuel",
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -49,12 +65,12 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 2.25,
+    "velocity": 0,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

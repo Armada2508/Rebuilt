@@ -3,27 +3,35 @@ package frc.robot.subsystems.shooting;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterK;
 import frc.robot.lib.util.Util;
@@ -38,10 +46,11 @@ public class Shooter extends SubsystemBase {
     //* https://v6.docs.ctr-electronics.com/en/stable/docs/hardware-reference/cancoder/index.html
     private final CANcoder canCoder = new CANcoder(ShooterK.CANCoderID); 
     
+    
     public Shooter() {
         configTalons();
         configMotionMagic();
-        // configCanCoder();
+        configCanCoder();
 
         canCoder.setPosition(0); //^ Zero the hood encoder on startup
     }
@@ -66,9 +75,8 @@ public class Shooter extends SubsystemBase {
         talonFlywheelLeft.getConfigurator().apply(ShooterK.flywheelPidConfig);
 
         talonHood.getConfigurator().apply(invertConfig);
-        ShooterK.hoodPidConfig.GravityType = GravityTypeValue.Arm_Cosine;
         talonHood.getConfigurator().apply(ShooterK.hoodPidConfig);
-        talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
+        // talonHood.getConfigurator().apply(ShooterK.hoodSoftwareLimitSwitchConfig);
         talonHood.getConfigurator().apply(ShooterK.hoodCurrentLimitsConfigs);
         talonHood.getConfigurator().apply(ShooterK.feedBackConfig);
     }
@@ -87,15 +95,15 @@ public class Shooter extends SubsystemBase {
         talonHood.getConfigurator().apply(motionMagicHoodConfig);
     }
 
-    // private void configCanCoder() {
-    //     CANcoderConfiguration config = new CANcoderConfiguration();
+    private void configCanCoder() {
+        CANcoderConfiguration config = new CANcoderConfiguration();
 
-    //     config.MagnetSensor = new MagnetSensorConfigs()
-    //     .withAbsoluteSensorDiscontinuityPoint(0) //! Find
-    //     .withMagnetOffset(0) //~ Might not be needed?, Find
-    //     // We might be able to set the offset via TunerX
-    //     .withSensorDirection(null); //! Find
-    // }
+        config.MagnetSensor = new MagnetSensorConfigs()
+        .withAbsoluteSensorDiscontinuityPoint(1)
+        .withMagnetOffset(-0.016)
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive); 
+        canCoder.getConfigurator().apply(config);
+    }
 
 
     /**
@@ -114,61 +122,92 @@ public class Shooter extends SubsystemBase {
     @Logged(name = "Hood Angle (degrees)")
     public double getHoodAngle() {
         // return canCoder.getAbsolutePosition().getValue();
-        return canCoder.getAbsolutePosition().getValue().in(Rotations) * ShooterK.encoderToHoodGearRatio * 360; //! Test
+        double theta = canCoder.getAbsolutePosition().getValue().times(ShooterK.encoderToHoodGearRatio).in(Degrees);
+        if (theta > ShooterK.maxHoodAngle.in(Degrees) + 0.5 || theta < ShooterK.minHoodAngle.in(Degrees)) theta = 0;
+        return theta;
+        // return Degrees.of(angle);
+    }
+
+
+    public Command shoot(Supplier<AngularVelocity> target) {
+        return runOnce(() -> {
+            AngularVelocity rpm = target.get();
+
+            MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(rpm);
+            SmartDashboard.putNumber("target rpm", rpm.in(RPM));
+
+            talonFlywheelLeft.setControl(request);
+        }).withName("Shoot Fuel");
     }
 
     /**
-     * Convert a measure of [0, 1) rotations into [0, 360) degrees
-     * @param rotations
-     * @return
+     * Commands the flywheel to shoot at a target rpm using MotionMagicVelocityVoltage
+     * @param rpm The rpm to shoot at
      */
-    //! This method COULD be helpful in the future
-    // public Angle asDegrees(double rotations) {
-    //     return Degrees.of(rotations * 360);
+    public Command shoot(AngularVelocity rpm) {
+        return shoot(() -> rpm);
+    }
+
+    /**
+     * Commands the flywheel to interpolate the RPM to shoot at depending on distance to the hub
+     * @param distance distance to the hub in meters
+     * @return Command to shoot the flywheel at the target rpm
+     */
+    public Command shootInterpolatedRpm(Supplier<Distance> distance) {
+        return shoot(() -> Maps.getRpmFromDistance(distance))
+        .withName("Shoot at Interpolated Rpm");
+    }
+
+    public Command setHoodAngle(Supplier<Angle> target) { //? I dont think this needs to be a supplier anymore
+        return runOnce(() -> {
+            Angle angle = target.get();
+            if (angle.gt(ShooterK.maxHoodAngle)) angle = ShooterK.maxHoodAngle;
+            else if (angle.lt(ShooterK.minHoodAngle)) angle = ShooterK.minHoodAngle;
+
+            MotionMagicVoltage request = new MotionMagicVoltage(angle);
+            SmartDashboard.putNumber("target angle (degrees)", angle.in(Degrees));
+            talonHood.setControl(request);
+        }).withName("Set Hood Angle");
+    }
+
+    // Convenience overload for static angles — delegates up
+    public Command setHoodAngle(Angle target) {
+        return setHoodAngle(() -> target);
+    }
+
+    // // Interpolated — delegates up, no duplicated logic
+    // public Command setInterpolatedHoodAngle(Supplier<Distance> distance) {
+    //     return setHoodAngle(() -> Maps.getHoodAngleFromDistance(distance))
+    //     .withName("Set Hood Interpolated Angle");
     // }
 
+
+    @Logged(name = "Hood Talon Position (deg)")
+    public double getHoodTalonPositionDeg() {
+        return talonHood.getPosition().getValue().in(Degrees);
+    }
+
+    @Logged(name = "Hood Talon Position (rot)")
+    public double getHoodTalonPositionRot() {
+        return talonHood.getPosition().getValue().in(Rotations);
+    }
+
     /**
-     * Sets the shooter to a set RPM
-     * @param rpm The RPM to shoot at
+     * Returns the given target as rotations of the hood in a 1 motor rotation : 2.05 degrees of the hood
+     * @param target angle in degrees
      * @return
      */
-    public Command setShooterVelocity(AngularVelocity rpm) {
-        return runOnce(() -> talonFlywheelLeft.setControl(new VelocityVoltage(rpm)));
-    }
-
-    public void shoot() {
-        MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(ShooterK.staticRpm);
-        talonFlywheelLeft.setControl(request);
-    }
-
-    /**
-     * Shoots the fuel at a static RPM
-     * @return
-     */
-    public Command shootFuel() {
-
-        return runOnce(() -> shoot())
-        .withName("Shoot Fuel");
-    }
-
-    /**
-     * Sets the hood to a target angle using Motion Magic
-     * @param targetAngle Angle to set the hood to
-     * @return runnable containing a command to command the talon
-     */
-    public Command setHoodAngle(Angle targetAngle) {
-        MotionMagicVoltage request = new MotionMagicVoltage(targetAngle);
-        return runOnce(() -> talonHood.setControl(request))
-        .withName("Set Hood Angle");
+    public Angle asRotations(Angle rot) {
+        return Rotations.of(rot.in(Degrees)/2.05);
     }
 
     /**
      * Sets the hood to its minimum angle
      */
-    public Command stow() {
-        return runOnce(() -> talonHood.setPosition(ShooterK.minHoodAngle))
-        .withName("Stow");
-    }
+    // public Command stow() {
+    //     // return runOnce(() -> setHoodAngle(ShooterK.minHoodAngle))
+    //     .withName("Stow");
+    // }
 
     /**
      * Stops the shooter and the hood motors from moving

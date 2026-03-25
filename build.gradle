@@ -44,12 +44,12 @@ deploy {
 sourceSets {
     main {
         java {
-            srcDirs 'library/src/main/java/'
+            srcDirs 'library/src/main/java/', 'src/main/java'
         }
     }
     test {
         java {
-            srcDirs 'library/src/test/java'
+            srcDirs 'library/src/test/java', 'src/test/java'
         }
     }
 }
