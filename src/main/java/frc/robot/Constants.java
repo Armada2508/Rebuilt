@@ -152,7 +152,7 @@ public class Constants {
         public static final Angle maxHoodAngle = Degrees.of(40);
 
         //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(2700); // 2900
+        public static final AngularVelocity staticRpm = RPM.of(5000); // 2900
 
         //& Shooter max and min RPM
         public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
@@ -298,8 +298,8 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(2); //! Tune
-        public static final Voltage retractVoltage = Volts.of(-2.5);
+        public static final Voltage extendVoltage = Volts.of(-2.5); //! Tune
+        public static final Voltage retractVoltage = Volts.of(3.5);
 
         public static final double extenderGearRatio = 1/3.2;
         public static final Distance extenderWheelDiameter = Inches.of(1.4375);
