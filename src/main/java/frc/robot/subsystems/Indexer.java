@@ -4,6 +4,12 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
@@ -14,10 +20,11 @@ import frc.robot.lib.util.Util;
 
 @Logged
 public class Indexer extends SubsystemBase{
-    //! This is a TEMPORARY class for week 0 because of current architecture.
-    //! This should eventually be put inside IndexerOld.java before Winona
 
     private TalonFX talon = new TalonFX(IndexerK.id);
+
+    private SparkMax sparkLeft = new SparkMax(IndexerK.sparkLeftID, MotorType.kBrushless);
+    private SparkMax sparkRight = new SparkMax(IndexerK.sparkRightID, MotorType.kBrushless);
 
     public Indexer() {
         configTalons();
@@ -29,8 +36,37 @@ public class Indexer extends SubsystemBase{
         // talon.getConfigurator().apply(IndexerK.currentLimitConfig);
     }
 
+    @SuppressWarnings("removal")
+    public void configSparkMaxs() {
+        SparkMaxConfig leftConfig = new SparkMaxConfig();
+        SparkMaxConfig rightConfig = new SparkMaxConfig();
+    
+        leftConfig.idleMode(IdleMode.kCoast);
+        rightConfig.idleMode(IdleMode.kCoast);
+
+        leftConfig.smartCurrentLimit(IndexerK.leftCurrentLimit);
+        rightConfig.smartCurrentLimit(IndexerK.rightCurrentLimit);
+
+        leftConfig.signals
+        .primaryEncoderPositionAlwaysOn(true)
+        .primaryEncoderVelocityAlwaysOn(true)
+        .warningsAlwaysOn(true)
+        .faultsAlwaysOn(true);
+
+        rightConfig.signals
+        .primaryEncoderPositionAlwaysOn(true)
+        .primaryEncoderVelocityAlwaysOn(true)
+        .warningsAlwaysOn(true)
+        .faultsAlwaysOn(true);
+
+        sparkLeft.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparkRight.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
     public void index() {
         talon.setVoltage(IndexerK.indexingVoltage.in(Volts));
+        sparkLeft.setVoltage(IndexerK.leftAgitatorSpinVoltage.in(Volts));
+        sparkRight.setVoltage(-IndexerK.rightAgitatorSpinVoltage.in(Volts)); //! flip?
     }
 
     public Command indexCommand() {
@@ -43,6 +79,8 @@ public class Indexer extends SubsystemBase{
     public void stop() {
         // return runOnce(() -> talon.setControl(new NeutralOut()));
         talon.setControl(new NeutralOut());
+        sparkLeft.stopMotor();
+        sparkRight.stopMotor();
     }
 
     /**

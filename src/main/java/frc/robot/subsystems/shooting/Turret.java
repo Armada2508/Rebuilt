@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -33,14 +34,12 @@ public class Turret extends SubsystemBase {
      * Encoders (Software): https://docs.wpilib.org/en/stable/docs/software/hardware-apis/sensors/encoders-software.html
      * Encoders (Hardware): https://docs.wpilib.org/en/stable/docs/hardware/sensors/encoders-hardware.html
      */
-    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(TurretK.channel, TurretK.fullRange.in(Degrees), TurretK.expectedZero.in(Degrees));
-    private final CANcoder canCoder = new CANcoder(0);
+    private final CANcoder canCoder = new CANcoder(TurretK.CANCoderID);
     public Turret() {
         configTalons();
         configMotionMagic();
         // configAbsoluteEncoder();
         configCanCoder();
-        if (!absoluteEncoder.isConnected()) System.out.println("Turret Absolute Encoder not connected!");
     }
     
     /**
@@ -50,10 +49,13 @@ public class Turret extends SubsystemBase {
         Util.factoryReset(talon);
         Util.brakeMode(talon);
         talon.getConfigurator().apply(TurretK.pidConfig);
-        talon.getConfigurator().apply(TurretK.softwareLimitSwitchConfig);
-        talon.getConfigurator().apply(TurretK.currentLimitConfig);
+        // talon.getConfigurator().apply(TurretK.softwareLimitSwitchConfig);
+        // talon.getConfigurator().apply(TurretK.currentLimitConfig);
         talon.getConfigurator().apply(TurretK.gearRatioConfig);
-        // no hard limit switch likely
+        MotorOutputConfigs invert = new MotorOutputConfigs();
+        invert.Inverted = InvertedValue.Clockwise_Positive;
+        talon.getConfigurator().apply(invert);
+
         talon.setPosition(TurretK.defaultPosition); // zero the turret
     }
 
@@ -77,9 +79,13 @@ public class Turret extends SubsystemBase {
         CANcoderConfiguration config = new CANcoderConfiguration();
 
         config.MagnetSensor = new MagnetSensorConfigs()
-        .withAbsoluteSensorDiscontinuityPoint(1)
-        .withMagnetOffset(0) //! FIND
+        // .withAbsoluteSensorDiscontinuityPoint(1)
+        .withMagnetOffset(-1) //! FIND
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+
+        canCoder.getConfigurator().apply(config);
+
+        canCoder.setPosition(0); //^ Set startup position to be zero
     }
 
     /**
@@ -106,16 +112,9 @@ public class Turret extends SubsystemBase {
      * @return
      */
     @Logged(name = "Turret Angle (degrees)")
-    public Angle getAngle() { //! Verify this
-        double theta = Degrees.of(
-                    Rotations.of(canCoder.getAbsolutePosition().getValue().in(Rotations)/*  absoluteEncoder.get() */)
-                    .plus(
-                        TurretK.CANCoderOffset
-                    ).in(Rotations)
-                ).times(
-                    TurretK.encoderToTurretGearRatio
-                ).in(Degrees);
-        return Degrees.of(theta); //^ pls work this is annoying to math out
+    public double getAngle() { //! Verify this
+        double theta = canCoder.getPosition().getValue().div(TurretK.encoderToTurretGearRatio).in(Degrees);
+        return theta; 
     }
 
     /**
@@ -123,7 +122,7 @@ public class Turret extends SubsystemBase {
      * @return Angular velocity in rotations per second
      */
     public AngularVelocity getVelocity() {
-        return talon.getVelocity().getValue().times(TurretK.krakenToTurretGearRatio);
+        return talon.getVelocity().getValue().div(TurretK.krakenToTurretGearRatio);
     }
 
     /**

@@ -22,6 +22,7 @@ public class Autos {
         
 
         NamedCommands.registerCommand("Shoot Fuel", Routines.shootInterpolatedRpm(swerve, shooter));
+
         NamedCommands.registerCommand("Stop Intaking", Routines.stopIntake(intake));
 
         new EventTrigger("intake fuel").onTrue(Routines.intake(intake));

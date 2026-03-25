@@ -6,6 +6,9 @@ package frc.robot;
 
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+
+import java.util.Set;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
@@ -37,8 +40,9 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.shooting.Maps;
 import frc.robot.subsystems.shooting.Shooter;
-import frc.robot.subsystems.shooting.Superstructure;
+// import frc.robot.subsystems.shooting.Superstructure;
 import frc.robot.subsystems.shooting.Turret;
 
 @Logged
@@ -53,8 +57,8 @@ public class Robot extends TimedRobot {
     private Shooter shooter = new Shooter();
     // @Logged(name = "Turret")
     private Turret turret = new Turret(); // For logging
-    @Logged(name = "Superstructure")
-    private Superstructure superstructure = new Superstructure(shooter, turret);
+    // @Logged(name = "Superstructure")
+    // private Superstructure superstructure = new Superstructure(shooter, turret);
     @Logged(name = "Indexer")
     private Indexer indexer = new Indexer();
 
@@ -78,7 +82,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         logFieldConstants();
-        autoChooser = Autos.initPathPlanner(shooter, intake, indexer);
+        autoChooser = Autos.initPathPlanner(swerve, shooter, intake, indexer);
     
     }
 
@@ -135,65 +139,14 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Time left in current phase", HubShiftUtil.getOfficialShiftInfo().remainingTime());
         SmartDashboard.putBoolean("Is Hub Active", HubShiftUtil.getShiftedShiftInfo().active());
         SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
-    }
+        
+        SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
+        
+    }   
 
     @Override
-    public void teleopPeriodic() {
-        // activeHub = getActiveHub();
-        // SmartDashboard.putBoolean("Alliance Hub Active", isHubActive()); //! THIS WILL NOT LOG IF THE ROBOT IS DISCONNECTED IN SIM
+    public void teleopPeriodic() { 
     }
-
-//     public Alliance getActiveHub() {
-//             String gameData = DriverStation.getGameSpecificMessage();
-//             double matchTime = DriverStation.getMatchTime();
-
-//             if (getMatchPhase(matchTime).equals("Transition") || getMatchPhase(matchTime).equals("End Game")) return DriverStation.getAlliance().get();
-
-//             if (gameData.length() > 0) {
-//                 switch (gameData.charAt(0)) {
-//                     case 'B':
-//                         if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Red;
-//                         else return Alliance.Blue;
-//                     case 'R':
-//                         if (getMatchPhase(matchTime).equals("Shift One") || getMatchPhase(matchTime).equals("Shift Three")) return Alliance.Blue;
-//                         else return Alliance.Red;
-//                     default:
-//                         System.out.println("Corrupt Data");
-//                         return DriverStation.getAlliance().get();
-//                 }
-//             }
-//             else {
-//                 System.out.println("No Data Recieved Yet");
-//                 return DriverStation.getAlliance().get();
-//             }
-//     }
-
-//     public boolean isHubActive() {
-//         if (getActiveHub().equals(DriverStation.getAlliance().get())) return true;
-//         return false;
-//     }
-
-// public static String getMatchPhase(double matchTime) {
-//     if (matchTime >= 130) {
-//         return "Transition";
-//     }
-//     else if (129 > matchTime && matchTime >= 105) {
-//         return "Shift One";
-//     }
-//         else if (104 > matchTime && matchTime >= 80) {
-//         return "Shift Two";
-//     }
-//         else if (79 > matchTime && matchTime >= 55) {
-//         return "Shift Three";
-//     }
-//         else if (54 > matchTime && matchTime >= 30) {
-//         return "Shift Four";
-//     }
-//     else if (matchTime < 30) {
-//         return "End Game";
-//     }
-//     else return "How did we get here";
-// }
 
     public void configureBindings() {
         //~ Intake Routines
@@ -201,8 +154,8 @@ public class Robot extends TimedRobot {
         Command stopIntake = Routines.stopIntake(intake);
         Command spinRoller = Routines.spinRollerRoutine(intake);
         Command stopRoller = Routines.stopRollerRoutine(intake);
-        Command extend = Routines.intake(intake); //! Create
-        Command retract = Routines.stopIntake(intake); //! Create
+        Command extend = Routines.extend(intake); //! Create
+        Command retract = Routines.retract(intake); //! Create
         Command stopArm = Routines.stopArm(intake);
         Command zeroEncoder = Routines.zeroEncoder(intake);
         // Command setHoodAngle = Routines.setHoodAngle(shooter);
@@ -213,8 +166,9 @@ public class Robot extends TimedRobot {
         // Command hoodTwentyDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(20));
 
         //~ Shooter Routines
-        Command shoot = Routines.shoot(shooter, indexer);
+        Command score = Routines.score(swerve, shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
+        // Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
         // Command stowRoutine = Routines.stowHood(shooter); 
 
         //~ Indexer Routines
@@ -233,29 +187,40 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(index)
         //  .onFalse(stopIndex);
 
-        xboxController.rightTrigger().whileTrue(shoot)
+        xboxController.rightTrigger().whileTrue(score)
         .onFalse(stopShooter);
 
-        xboxController.a().onTrue(Routines.setHoodAngle(shooter));
+        // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
         // xboxController.povUp().onTrue(Commands.print("Button pressed"));
 
-        // xboxController.povDown().onTrue(hoodTwentyDegrees);
+        xboxController.povDown().onTrue(shooter.setHoodAngle(Degrees.of(20)));
 
+        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump up"));
+        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump down"));
+
+        // xboxController.povUp().whileTrue(Routines.setHoodInterpolatedAngle(swerve, shooter).withName("Set Hood Interpolated Angle"));
+        
 
         //~ Intaking
         //xboxController.leftTrigger().whileTrue(spinRoller) 
         //.onFalse(stopRoller);
-        xboxController.rightBumper().whileTrue(extend)
-        .onFalse(stopArm);
+        // xboxController.rightBumper().whileTrue(extend)
+        // .onFalse(stopArm);
         
-        xboxController.leftBumper().onTrue(retract)
-        .onFalse(stopArm);
+        // xboxController.leftBumper().onTrue(retract)
+        // .onFalse(stopArm);
 
-        xboxController.leftTrigger().whileTrue(intakeCommand)
-        .onFalse(stopIntake);
+        // xboxController.a().whileTrue(extend)
+        // .onFalse(stopArm);
 
-        xboxController.x().onTrue(spinRoller)
-        .onFalse(stopRoller);
+        xboxController.a().onTrue(Routines.setTurretAngle(turret));
+
+        
+        // xboxController.b().whileTrue(retract)
+        // .onFalse(stopArm);
+
+        // xboxController.x().onTrue(spinRoller)
+        // .onFalse(stopRoller);
 
         // xboxController.a().onTrue(setHoodAngle);
 
@@ -301,7 +266,7 @@ public class Robot extends TimedRobot {
 
     @Logged(name = "Robot to Front Camera")
     public Transform3d getRobotToCameraTransform() {
-        return VisionK.robotToFrontCamera;
+        return VisionK.robotToLumaCamera;
     }
 
 }
