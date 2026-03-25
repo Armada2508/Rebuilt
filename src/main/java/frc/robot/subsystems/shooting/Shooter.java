@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -121,41 +122,43 @@ public class Shooter extends SubsystemBase {
     @Logged(name = "Hood Angle (degrees)")
     public double getHoodAngle() {
         // return canCoder.getAbsolutePosition().getValue();
-        double theta = canCoder.getAbsolutePosition().getValue().times(ShooterK.encoderToHoodGearRatio).in(Degrees); //! Test
+        double theta = canCoder.getAbsolutePosition().getValue().times(ShooterK.encoderToHoodGearRatio).in(Degrees);
         if (theta > ShooterK.maxHoodAngle.in(Degrees) + 0.5 || theta < ShooterK.minHoodAngle.in(Degrees)) theta = 0;
         return theta;
         // return Degrees.of(angle);
     }
 
-    /**
-     * Convert a measure of [0, 1) rotations into [0, 360) degrees
-     * @param rotations
-     * @return
-     */
-    //! This method COULD be helpful in the future
-    // public Angle asDegrees(double rotations) {
-    //     return Degrees.of(rotations * 360);
-    // }
+
+    public Command shoot(Supplier<AngularVelocity> target) {
+        return runOnce(() -> {
+            AngularVelocity rpm = target.get();
+
+            MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(rpm);
+            SmartDashboard.putNumber("target rpm", rpm.in(RPM));
+
+            talonFlywheelLeft.setControl(request);
+        }).withName("Shoot Fuel");
+    }
 
     /**
      * Commands the flywheel to shoot at a target rpm using MotionMagicVelocityVoltage
      * @param rpm The rpm to shoot at
      */
-    public void shoot(AngularVelocity rpm) {
-        MotionMagicVelocityVoltage request = new MotionMagicVelocityVoltage(rpm);
-        talonFlywheelLeft.setControl(request);
+    public Command shoot(AngularVelocity rpm) {
+        return shoot(() -> rpm);
     }
 
     /**
-     * Shoots the fuel at a static RPM
-     * @return
+     * Commands the flywheel to interpolate the RPM to shoot at depending on distance to the hub
+     * @param distance distance to the hub in meters
+     * @return Command to shoot the flywheel at the target rpm
      */
-    public Command shootFuel() {
-        return runOnce(() -> shoot(ShooterK.staticRpm))
-        .withName("Shoot Fuel");
+    public Command shootInterpolatedRpm(Supplier<Distance> distance) {
+        return shoot(() -> Maps.getRpmFromDistance(distance))
+        .withName("Shoot at Interpolated Rpm");
     }
 
-    public Command setHoodAngle(Supplier<Angle> target) {
+    public Command setHoodAngle(Supplier<Angle> target) { //? I dont think this needs to be a supplier anymore
         return runOnce(() -> {
             Angle angle = target.get();
             if (angle.gt(ShooterK.maxHoodAngle)) angle = ShooterK.maxHoodAngle;
@@ -172,11 +175,11 @@ public class Shooter extends SubsystemBase {
         return setHoodAngle(() -> target);
     }
 
-    // Interpolated — delegates up, no duplicated logic
-    public Command setInterpolatedHoodAngle(Supplier<Distance> distance) {
-        return setHoodAngle(() -> Maps.getHoodAngleFromDistance(distance))
-        .withName("Set Hood Interpolated Angle");
-}
+    // // Interpolated — delegates up, no duplicated logic
+    // public Command setInterpolatedHoodAngle(Supplier<Distance> distance) {
+    //     return setHoodAngle(() -> Maps.getHoodAngleFromDistance(distance))
+    //     .withName("Set Hood Interpolated Angle");
+    // }
 
 
     @Logged(name = "Hood Talon Position (deg)")

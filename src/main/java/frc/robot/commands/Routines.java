@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
@@ -10,7 +12,9 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
 import frc.robot.Field;
+import frc.robot.Constants.ShooterK;
 import frc.robot.subsystems.shooting.Shooter;
+import frc.robot.subsystems.shooting.Turret;
 
 public class Routines {
     public static Command spinRoller(Intake intake) {
@@ -59,9 +63,19 @@ public class Routines {
         return swerve.commandZeroGyro();
     }
 
-    public static Command setHoodInterpolatedAngle(Swerve swerve, Shooter shooter) {
-        return new RepeatCommand(shooter.setInterpolatedHoodAngle(() -> Field.getDistanceToHub(swerve.getPose())))
-        .withName("Set Hood Interpolated Angle");
+    public static Command setTurretAngle(Turret turret) {
+        return turret.setAngleCommand(Degrees.of(25))
+        .withName("Set turret angle");
+    }
+
+    // public static Command setHoodInterpolatedAngle(Swerve swerve, Shooter shooter) {
+    //     return new RepeatCommand(shooter.setInterpolatedHoodAngle(() -> Field.getDistanceToHub(swerve.getPose())))
+    //     .withName("Set Hood Interpolated Angle");
+    // }
+
+    public static Command shootInterpolatedRpm(Swerve swerve, Shooter shooter) {
+        return new RepeatCommand(shooter.shootInterpolatedRpm(() -> Field.getDistanceToHub(swerve.getPose())))
+        .withName("Shoot Interpolated RPM");
     }
 
     // public static Command shoot(Indexer indexer, Shooter shooter) {
@@ -79,15 +93,32 @@ public class Routines {
         return indexer.stopCommand();
     }
 
-    public static Command shoot(Shooter shooter, Indexer indexer) {
-        // return shooter.setHoodAngle().andThen( 
-        
-        return shooter.shootFuel()
+    public static Command score(Swerve swerve, Shooter shooter, Indexer indexer) {
+        return shootInterpolatedRpm(swerve, shooter)
         .alongWith(
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())
+            ).withName("Shoot shooter");
+    }
 
-                ).withName("Shoot shooter");
+    public static Command passFuel(Shooter shooter, Indexer indexer) {
+        return shooter.setHoodAngle(() -> ShooterK.staticPassingHoodAngle)
+        .andThen(shooter.shoot(ShooterK.staticPassingRpm)
+        .alongWith(
+            Commands.waitSeconds(1).andThen(            
+                indexer.indexCommand())
+                )
+        ).withName("Pass Fuel");
+    }
+
+    public static Command stealFuel(Shooter shooter, Indexer indexer) {
+        return shooter.setHoodAngle(() -> ShooterK.staticStealingHoodAngle)
+        .andThen(shooter.shoot(ShooterK.staticStealingRpm)
+        .alongWith(
+            Commands.waitSeconds(1).andThen(            
+                indexer.indexCommand())
+                )
+        ).withName("Pass Fuel");
     }
 
     public static Command stopShooter(Shooter shooter, Indexer indexer) {

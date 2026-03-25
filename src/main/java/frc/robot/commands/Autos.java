@@ -10,17 +10,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.shooting.Shooter;
 
 public class Autos {
     
     private Autos(){}
 
-    public static SendableChooser<Command> initPathPlanner(Shooter shooter, Intake intake, Indexer indexer){
+    public static SendableChooser<Command> initPathPlanner(Swerve swerve, Shooter shooter, Intake intake, Indexer indexer){
         FollowPathCommand.warmupCommand().schedule();
         
 
-        NamedCommands.registerCommand("Shoot Fuel", shooter.shootFuel().alongWith(indexer.indexCommand()));
+        NamedCommands.registerCommand("Shoot Fuel", Routines.shootInterpolatedRpm(swerve, shooter));
 
         new EventTrigger("intake fuel").onTrue(Routines.intake(intake));
         new EventTrigger("stop intaking").onTrue(Routines.stopIntake(intake));

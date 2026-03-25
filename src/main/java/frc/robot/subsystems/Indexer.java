@@ -65,8 +65,8 @@ public class Indexer extends SubsystemBase{
 
     public void index() {
         talon.setVoltage(IndexerK.indexingVoltage.in(Volts));
-        sparkLeft.setVoltage(IndexerK.spinVoltage.in(Volts));
-        sparkRight.setVoltage(-IndexerK.spinVoltage.in(Volts)); //! flip?
+        sparkLeft.setVoltage(IndexerK.leftAgitatorSpinVoltage.in(Volts));
+        sparkRight.setVoltage(-IndexerK.rightAgitatorSpinVoltage.in(Volts)); //! flip?
     }
 
     public Command indexCommand() {
@@ -79,6 +79,8 @@ public class Indexer extends SubsystemBase{
     public void stop() {
         // return runOnce(() -> talon.setControl(new NeutralOut()));
         talon.setControl(new NeutralOut());
+        sparkLeft.stopMotor();
+        sparkRight.stopMotor();
     }
 
     /**

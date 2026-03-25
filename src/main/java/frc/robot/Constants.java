@@ -151,14 +151,12 @@ public class Constants {
         public static final Angle minHoodAngle = Degrees.of(0);
         public static final Angle maxHoodAngle = Degrees.of(40);
 
-        //& Shooter rpm limit
-        public static final AngularVelocity staticRpm = RPM.of(5000); // 2900
+        //& Static Set Points
+        public static final AngularVelocity staticPassingRpm = RPM.of(3000); //! Tune
+        public static final AngularVelocity staticStealingRpm = RPM.of(3000); //! Tune
 
-        //& Shooter max and min RPM
-        public static final AngularVelocity flywheelVelocityUpperThreshold = RPM.of(2980);
-        public static final AngularVelocity flywheelVelocityLowerThreshold = RPM.of(2860);
-
-
+        public static final Angle staticPassingHoodAngle = Degrees.of(30); //! Tune
+        public static final Angle staticStealingHoodAngle = Degrees.of(35); //! Tune
 
         //& Gear Ratios
         public static final double motorToEncoderGearRatio = 20.0 / 1.0; //these numbers should be right now
@@ -228,9 +226,8 @@ public class Constants {
         
         
         //& CANcoder
-        public static final int channel = 0; //! Ask Electrical
-        public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
-        public static final Angle expectedZero = Degrees.of(180); 
+        // public static final Angle fullRange = Degrees.of(360); //! VERIFY THIS!!!!!!!
+        // public static final Angle expectedZero = Degrees.of(180); 
         // public static final Angle CANCoderOffset = Degrees.of(0); //! idk
         
         //& Gear Ratios
@@ -238,25 +235,25 @@ public class Constants {
         public static final double encoderToTurretGearRatio = 8.9;
 
         //& Motion Magic
-        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(0); //! Find
-        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(0); //! Find
+        public static final AngularVelocity motionMagicVelocity = DegreesPerSecond.of(10); //! Find
+        public static final AngularAcceleration motionMagicAcceleration = DegreesPerSecondPerSecond.of(15); //! Find
 
         //& Angles
         public static final Angle defaultPosition = Degrees.of(0); //^ Turret MUST be facing towards the exact front of the robot on startup. This is ESSENTIAL to zeroing. This is 
                                                                   //^ This is likely outdated with us using an absolute encoder now. Up to testing & Debugging
 
         // We dont go the maximum rotation to avoid wrap-around error and risk confusing the Absolute encoder, might not be needed though.
-        public static final Angle maxAngle = Degrees.of(179.5);  //! Verify / Check
-        public static final Angle minAngle = Degrees.of(-179.5); //! Verify / Check
+        public static final Angle maxAngle = Degrees.of(120);
+        public static final Angle minAngle = Degrees.of(-155);
 
         //& Currents
         public static final Current maxStatorCurrent = Amps.of(0); //! Find / Verify
         public static final Current maxSupplyCurrent = Amps.of(0); //! Find / Verify
 
         //& PID
-        public static final double kP = 0; //! Tune
+        public static final double kP = 60; //! Tune
         public static final double kD = 0; //! Tune
-        public static final double kS = 0; //! Tune
+        public static final double kS = 0.19; //^ This is very wack with how the turret works. 0.19
         public static final double kV = 0; //! Tune
 
         //& Configs
@@ -320,7 +317,9 @@ public class Constants {
         public static final int leftCurrentLimit = 0; //! Find all
         public static final int rightCurrentLimit = 0;
 
-        public static final Voltage spinVoltage = Volts.of(0); //! Find
+        public static final Voltage rightAgitatorSpinVoltage = Volts.of(-3); //! Tune
+        public static final Voltage leftAgitatorSpinVoltage = Volts.of(3); //! Tune
+
     }
 
         public static class HopperK {

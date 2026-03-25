@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
         swerve.setDefaultCommand(teleopDriveCommand());
         configureBindings();
         logFieldConstants();
-        autoChooser = Autos.initPathPlanner(shooter, intake, indexer);
+        autoChooser = Autos.initPathPlanner(swerve, shooter, intake, indexer);
     
     }
 
@@ -141,7 +141,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
         
         SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
-        SmartDashboard.putNumber("Target Hood Angle from Maps", Maps.getHoodAngleFromDistance(() -> Field.getDistanceToHub(swerve.getPose())).in(Degrees));
         
     }   
 
@@ -167,7 +166,7 @@ public class Robot extends TimedRobot {
         // Command hoodTwentyDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(20));
 
         //~ Shooter Routines
-        Command shoot = Routines.shoot(shooter, indexer);
+        Command score = Routines.score(swerve, shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
         // Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
         // Command stowRoutine = Routines.stowHood(shooter); 
@@ -188,7 +187,7 @@ public class Robot extends TimedRobot {
         // xboxController.a().whileTrue(index)
         //  .onFalse(stopIndex);
 
-        xboxController.rightTrigger().whileTrue(shoot)
+        xboxController.rightTrigger().whileTrue(score)
         .onFalse(stopShooter);
 
         // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
@@ -199,7 +198,7 @@ public class Robot extends TimedRobot {
         xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump up"));
         xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump down"));
 
-        xboxController.povUp().whileTrue(Routines.setHoodInterpolatedAngle(swerve, shooter).withName("Set Hood Interpolated Angle"));
+        // xboxController.povUp().whileTrue(Routines.setHoodInterpolatedAngle(swerve, shooter).withName("Set Hood Interpolated Angle"));
         
 
         //~ Intaking
@@ -211,14 +210,17 @@ public class Robot extends TimedRobot {
         // xboxController.leftBumper().onTrue(retract)
         // .onFalse(stopArm);
 
-        xboxController.a().whileTrue(extend)
-        .onFalse(stopArm);
-        
-        xboxController.b().whileTrue(retract)
-        .onFalse(stopArm);
+        // xboxController.a().whileTrue(extend)
+        // .onFalse(stopArm);
 
-        xboxController.x().onTrue(spinRoller)
-        .onFalse(stopRoller);
+        xboxController.a().onTrue(Routines.setTurretAngle(turret));
+
+        
+        // xboxController.b().whileTrue(retract)
+        // .onFalse(stopArm);
+
+        // xboxController.x().onTrue(spinRoller)
+        // .onFalse(stopRoller);
 
         // xboxController.a().onTrue(setHoodAngle);
 
