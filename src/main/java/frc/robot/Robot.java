@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Is Hub Active", HubShiftUtil.getShiftedShiftInfo().active());
         SmartDashboard.putString("Current Phase", HubShiftUtil.getOfficialShiftInfo().currentShift().toString());
         
-        SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
+        // SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
         
     }   
 
@@ -149,91 +149,59 @@ public class Robot extends TimedRobot {
     }
 
     public void configureBindings() {
-        //~ Intake Routines
+        //! AVOID BINDING TO 'Y'
         Command intakeCommand = Routines.intake(intake);
         Command stopIntake = Routines.stopIntake(intake);
         Command spinRoller = Routines.spinRollerRoutine(intake);
         Command stopRoller = Routines.stopRollerRoutine(intake);
-        Command extend = Routines.extend(intake); //! Create
-        Command retract = Routines.retract(intake); //! Create
+        Command extend = Routines.extend(intake);
+        Command retract = Routines.retract(intake);
         Command stopArm = Routines.stopArm(intake);
         Command zeroEncoder = Routines.zeroEncoder(intake);
-        // Command setHoodAngle = Routines.setHoodAngle(shooter);
+        Command pass = Routines.passFuel(shooter, indexer);
 
-        // Command setHoodAngle = Routines.setHoodAngle(shooter);
-        
-        // Command hoodTenDegrees = Routines.setHoodAngle(shooter, Degrees.of(20));
-        // Command hoodTwentyDegrees = Routines.setHoodAngle(shooter, () -> Degrees.of(20));
+        Command alignTurretToHub = Routines.alignTurretToHub(swerve, turret);
 
-        //~ Shooter Routines
         Command score = Routines.score(swerve, shooter, indexer);
         Command stopShooter = Routines.stopShooter(shooter, indexer);
-        // Command setHoodInterpolatedAngle = Routines.setHoodInterpolatedAngle(swerve, shooter);
-        // Command stowRoutine = Routines.stowHood(shooter); 
+        // Command stowRoutine = Routines.stowHood(shooter);
 
-        //~ Indexer Routines
         Command index = Routines.index(indexer);
         Command stopIndex = Routines.stopIndexer(indexer);
 
-        //! AVOID BINDING TO 'Y'
         Command zeroGyro = Routines.zeroGyro(swerve);
-        //~ Debugging / Simulation
-        // xboxController.povDown().whileTrue(swerve.characterizeDriveWheelDiameter());
-        // xboxController.a().whileTrue(swerve.faceWheelsForward());
-        // xboxController.b().whileTrue(swerve.setDriveVoltage(Volts.of(1)));
-        // xboxController.b().onTrue(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.kZero)), swerve)); // For simulation        
 
-        //~ Shooting & Indexing
-        // xboxController.a().whileTrue(index)
-        //  .onFalse(stopIndex);
+        Command hoodAngleZero = Routines.hoodAngleZero(shooter);
 
-        xboxController.rightTrigger().whileTrue(score)
-        .onFalse(stopShooter);
+        // xboxController.rightTrigger().whileTrue(score).onFalse(stopShooter); 
 
-        // xboxController.a().onTrue(Routines.setHoodAngle(shooter));
-        // xboxController.povUp().onTrue(Commands.print("Button pressed"));
+        xboxController.rightTrigger().whileTrue(  //!
+		Commands.either(
+			score,
+			pass,
+			() -> Field.isInAllianceZone(swerve.getPose()
+            ))
+		);
 
-        xboxController.povDown().onTrue(shooter.setHoodAngle(Degrees.of(20)));
+        xboxController.povUp().onTrue(alignTurretToHub);
 
-        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 2.5)), Set.of(shooter)).withName("Bump up"));
-        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 2.5)), Set.of(shooter)).withName("Bump down"));
+        xboxController.rightBumper().whileTrue(pass).onFalse(stopShooter);
 
-        // xboxController.povUp().whileTrue(Routines.setHoodInterpolatedAngle(swerve, shooter).withName("Set Hood Interpolated Angle"));
+        xboxController.povDown().onTrue(Routines.setTurretAngle(turret));
+
+        xboxController.a().whileTrue(extend)
+        .onFalse(stopArm);
         
+        xboxController.b().whileTrue(retract)
+        .onFalse(stopArm);
 
-        //~ Intaking
-        //xboxController.leftTrigger().whileTrue(spinRoller) 
-        //.onFalse(stopRoller);
-        // xboxController.rightBumper().whileTrue(extend)
-        // .onFalse(stopArm);
-        
-        // xboxController.leftBumper().onTrue(retract)
-        // .onFalse(stopArm);
+        xboxController.x().onTrue(spinRoller)
+        .onFalse(stopRoller);
 
-        // xboxController.a().whileTrue(extend)
-        // .onFalse(stopArm);
+        xboxController.y().onTrue(hoodAngleZero);
 
-        xboxController.a().onTrue(Routines.setTurretAngle(turret));
-
-        
-        // xboxController.b().whileTrue(retract)
-        // .onFalse(stopArm);
-
-        // xboxController.x().onTrue(spinRoller)
-        // .onFalse(stopRoller);
-
-        // xboxController.a().onTrue(setHoodAngle);
-
-        // xboxController.y().onTrue(zeroEncoder);
-
-        //~ Alignment
-        // xboxController.a().onTrue(Routines.alignToHub(swerve));
-        // xboxController.b().onTrue(Routines.alignToPassPoint(swerve));
-        // xboxController.povUp().onTrue(zeroGyro);
-        // Superstructure
-        // Command scoreRoutine = Routines.scoreFuelHub(superstructure, indexer);
-        // Command passRoutine = Routines.passFuel(superstructure, indexer);
-
+        xboxController.povLeft().onTrue(Routines.alignToHub(swerve)); //!
+        xboxController.povRight().onTrue(Routines.alignToPassPoint(swerve)); //!
     }
 
     public Command teleopDriveCommand() {

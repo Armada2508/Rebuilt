@@ -1,9 +1,12 @@
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -64,7 +67,7 @@ public class Routines {
     }
 
     public static Command setTurretAngle(Turret turret) {
-        return turret.setAngleCommand(Degrees.of(25))
+        return turret.setAngleCommand(Degrees.of(0))
         .withName("Set turret angle");
     }
 
@@ -94,21 +97,32 @@ public class Routines {
     }
 
     public static Command score(Swerve swerve, Shooter shooter, Indexer indexer) {
-        return shootInterpolatedRpm(swerve, shooter)
+        return shooter.setHoodAngle(Degrees.of(0)).andThen(
+        
+        shootInterpolatedRpm(swerve, shooter)
         .alongWith(
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())
-            ).withName("Shoot shooter");
+            )).withName("Shoot shooter");
     }
 
+    // public static Command score(Swerve swerve, Shooter shooter, Indexer indexer) {
+    //     return shooter.shoot(RPM.of(3825))
+    //     .alongWith(
+    //         Commands.waitSeconds(1).andThen(            
+    //             indexer.indexCommand())
+    //         ).withName("Shoot shooter");
+    // }
+
     public static Command passFuel(Shooter shooter, Indexer indexer) {
-        return shooter.setHoodAngle(() -> ShooterK.staticPassingHoodAngle)
+        return shooter.setHoodAngle(Degrees.of(30))
         .andThen(shooter.shoot(ShooterK.staticPassingRpm)
         .alongWith(
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())
                 )
-        ).withName("Pass Fuel");
+        )
+        .withName("Pass Fuel");
     }
 
     public static Command stealFuel(Shooter shooter, Indexer indexer) {
@@ -125,6 +139,22 @@ public class Routines {
         return shooter.stop().andThen(stopIndexer(indexer))
         .finallyDo(() -> shooter.setHoodAngle(ShooterK.minHoodAngle))
         .withName("Stop shooter");
+    }
+
+    public static Command alignTurretToHub(Swerve swerve, Turret turret) {
+        Rotation2d fieldAngleToHub = swerve.getPose().getTranslation()
+        .minus(Field.getAllianceHub().getTranslation())
+        .getAngle()
+        .plus(Rotation2d.k180deg);
+
+        Rotation2d robotAngle = swerve.getPose().getRotation();
+        Angle targetAngle = Radians.of(fieldAngleToHub.minus(robotAngle).getRadians());
+
+        return new RepeatCommand(turret.setAngleCommand(targetAngle));
+    }
+
+    public static Command hoodAngleZero(Shooter shooter) {
+        return shooter.setHoodAngle(Degrees.of(0));
     }
 
     // public static Command setHoodAngle(Shooter shooter) {

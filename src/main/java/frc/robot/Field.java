@@ -85,5 +85,19 @@ public class Field {
         Translation2d hubTranslation = getAllianceHub().getTranslation();
         return Meters.of(pose.getTranslation().getDistance(hubTranslation));
     }
+
+    public static boolean isInAllianceZone(Pose2d pose) {
+        // Alliance alliance = (DriverStation.getAlliance().get().equals(Alliance.Blue) ? Alliance.Blue : Alliance.Red);
+        // if (alliance.equals(Alliance.Blue)) {
+        //     if (blueZone.contains(pose.getTranslation())) return true;
+        //     return false;
+        // }
+        // else {
+        //     if (redZone.contains(pose.getTranslation())) return true;
+        //     return false;
+        // }
+        if (blueZone.contains(pose.getTranslation()) || redZone.contains( pose.getTranslation())) return true;
+        return false;
+    }
 }
 

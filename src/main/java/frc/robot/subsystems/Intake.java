@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.revrobotics.spark.SparkMax;
@@ -11,8 +12,10 @@ import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Behavior;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,8 +60,8 @@ public class Intake extends SubsystemBase {
         .warningsAlwaysOn(true)
         .faultsAlwaysOn(true);
 
-        extenderConfig.encoder //& Extender Encoder
-        .positionConversionFactor(IntakeK.extenderGearRatio); // Apply conversion for encoder, rotations -> inches
+        // extenderConfig.encoder //& Extender Encoder
+        // .positionConversionFactor(IntakeK.extenderGearRatio); // Apply conversion for encoder, rotations -> inches
 
         // Limit switch/soft limit for arm
         // extenderConfig.limitSwitch //& Extender Limit Switch 
@@ -147,11 +150,17 @@ public class Intake extends SubsystemBase {
 
     @Logged(name = "Arm Position (In)")
     public Distance getArmPosition() {
-        return Encoder.angularToLinear(
-            Rotations.of(extender.getEncoder().getPosition()),
-            IntakeK.extenderGearRatio,
-            IntakeK.extenderWheelDiameter
-        );
+        // return Encoder.angularToLinear(
+        //     Rotations.of(extender.getEncoder().getPosition()),
+        //     IntakeK.extenderGearRatio,
+        //     IntakeK.extenderWheelDiameter
+        // );
+        return Inches.of(extender.getEncoder().getPosition() * IntakeK.extenderGearRatio);
+    }
+
+    @Logged(name = "Extender Rotations")
+    public double getExtenderRotations() {
+        return extender.getEncoder().getPosition();
     }
 
     /**

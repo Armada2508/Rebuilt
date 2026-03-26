@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterK;
 import frc.robot.Constants.TurretK;
 import frc.robot.lib.util.Util;
 
@@ -55,7 +56,6 @@ public class Turret extends SubsystemBase {
         MotorOutputConfigs invert = new MotorOutputConfigs();
         invert.Inverted = InvertedValue.Clockwise_Positive;
         talon.getConfigurator().apply(invert);
-
         talon.setPosition(TurretK.defaultPosition); // zero the turret
     }
 
@@ -80,6 +80,7 @@ public class Turret extends SubsystemBase {
 
         config.MagnetSensor = new MagnetSensorConfigs()
         // .withAbsoluteSensorDiscontinuityPoint(1)
+
         .withMagnetOffset(-1) //! FIND
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -104,7 +105,12 @@ public class Turret extends SubsystemBase {
      * @return Command to set the angle
      */
     public Command setAngleCommand(Angle targetAngle) {
-        return runOnce(() -> setAngle(targetAngle)); //! Check
+        return runOnce(() -> {
+            Angle target = targetAngle;
+            if (target.gt(TurretK.maxAngle)) target = TurretK.maxAngle;
+            else if (target.lt(TurretK.minAngle)) target = TurretK.minAngle;
+            setAngle(target);
+        }); //! Check
     }
 
     /**
