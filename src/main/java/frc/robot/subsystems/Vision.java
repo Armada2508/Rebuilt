@@ -137,7 +137,7 @@ public class Vision extends SubsystemBase {
         avgDistMeters /= numTags;
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
         // Logging
-        if (name == VisionK.frontCameraName) {pubFront.accept(pose.estimatedPose);
+        if (name.equals(VisionK.frontCameraName)) {pubFront.accept(pose.estimatedPose);
             System.out.println("Front camera connected");
         }
         else {
@@ -156,7 +156,7 @@ public class Vision extends SubsystemBase {
         if (numTags == 1) {
             stdDevs = VisionK.singleTagStdDevs.times(stdevScalar);
         }
-        if (name == VisionK.backCameraName) {
+        if (name.equals(VisionK.backCameraName)) {
             stdDevs = stdDevs.times(4);
         }
         return stdDevs;

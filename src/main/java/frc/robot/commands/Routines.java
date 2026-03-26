@@ -38,11 +38,13 @@ public class Routines {
 
     public static Command extend(Intake intake) {
         return intake.extend()
+        .until(() -> (intake.getExtenderCurrent() > 24))
         .withName("Extending");
     }
 
     public static Command retract(Intake intake) {
         return intake.retract()
+        .until(() -> (intake.getExtenderCurrent() > 24))
         .withName("Retracting");
     }
 

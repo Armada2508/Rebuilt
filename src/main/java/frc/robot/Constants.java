@@ -287,7 +287,7 @@ public class Constants {
         public static final int rollerCurrentLimit = 30; // amps //! Tune
 
         // Arm current limit configs
-        public static final int extenderCurrentLimit = 23; // amps //! Tune
+        public static final int extenderCurrentLimit = 20; // amps //! Tune
 
         // Soft switch limits
         public static final Distance forwardSoftLimit = Inches.of(9.25); //! Tune
@@ -295,8 +295,8 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(-4.5); //! Tune
-        public static final Voltage retractVoltage = Volts.of(5.5);
+        public static final Voltage extendVoltage = Volts.of(-6); //! Tune
+        public static final Voltage retractVoltage = Volts.of(7.5);
 
         public static final double extenderGearRatio = 11.0 / 75.6;
         public static final Distance extenderWheelDiameter = Inches.of(0.875);

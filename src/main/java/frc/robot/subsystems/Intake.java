@@ -18,6 +18,8 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeK;
 import frc.robot.lib.util.Encoder;
@@ -33,6 +35,15 @@ public class Intake extends SubsystemBase {
         extender.getEncoder().setPosition(0); // Zero the encoder on startup
         //! Test today, does this command it to go to a position or reset its position?
     }
+
+    @Override
+    public void periodic() {
+        if (getExtenderCurrent() > 23.0) {
+            extender.stopMotor();
+            System.out.println("Stopping extender");
+        }
+    }
+
     @SuppressWarnings("removal")
     private void configSparkMaxs() {
         SparkMaxConfig extenderConfig = new SparkMaxConfig();
@@ -83,10 +94,15 @@ public class Intake extends SubsystemBase {
      * @return
      */
     public Command extend() { 
-        return runOnce(() -> {
-            extender.setVoltage(IntakeK.extendVoltage);
-       })
-       .withName("Extend");
+    //     return runOnce(() -> {
+    //         extender.setVoltage(IntakeK.extendVoltage);
+    //    }).alongWith(Commands.waitUntil(() -> getExtenderCurrent() > 24)
+    //    .andThen(Commands.runOnce(() -> extender.stopMotor())))
+    //    .withName("Extend");
+
+        return new RepeatCommand(Commands.runOnce(() -> extender.setVoltage(IntakeK.extendVoltage)))
+        // .until(() -> (getExtenderCurrent() > 24))
+        .withName("Extend");
     }
 
     /**
@@ -94,10 +110,14 @@ public class Intake extends SubsystemBase {
      * @return
      */
     public Command retract() {
-        return runOnce(() -> {
-            extender.setVoltage(IntakeK.retractVoltage);
-        })
-        .withName("Retract");
+    //     return runOnce(() -> {
+    //         extender.setVoltage(IntakeK.retractVoltage);
+    //    }).alongWith(Commands.waitUntil(() -> getExtenderCurrent() > 24)
+    //    .andThen(Commands.runOnce(() -> extender.stopMotor())))
+    //    .withName("Retract");
+
+        return new RepeatCommand(Commands.runOnce(() -> extender.setVoltage(IntakeK.retractVoltage)))
+        .withName("Extend");
     }
 
     /**
@@ -183,6 +203,11 @@ public class Intake extends SubsystemBase {
         return extender.getBusVoltage();
     }
 
+    @Logged(name = "Extender Current (amps)")
+    public double getExtenderCurrent() {
+        return extender.getOutputCurrent();
+    }
+
     /**
      * Returns the applied voltage to the roller motor
      * @return The applied voltage
@@ -200,5 +225,6 @@ public class Intake extends SubsystemBase {
     public double getRollerRpm() {
         return roller.getEncoder().getVelocity();
     }
-
 }
+
+

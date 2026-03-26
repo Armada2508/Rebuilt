@@ -21,13 +21,13 @@ public class Autos {
         FollowPathCommand.warmupCommand().schedule();
         
 
-        NamedCommands.registerCommand("Shoot Fuel", Routines.shootInterpolatedRpm(swerve, shooter));
+        NamedCommands.registerCommand("Shoot Fuel", Routines.score(swerve, shooter, indexer));
 
         NamedCommands.registerCommand("Stop Intaking", Routines.stopIntake(intake));
 
         new EventTrigger("intake fuel").onTrue(Routines.intake(intake));
         new EventTrigger("stop intaking").onTrue(Routines.stopIntake(intake));
-        new EventTrigger("shoot fuel").onTrue(Routines.shootInterpolatedRpm(swerve, shooter));
+        new EventTrigger("shoot fuel").onTrue(Routines.score(swerve, shooter, indexer));
 
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
