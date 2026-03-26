@@ -77,6 +77,7 @@ public class Field {
      * @return The alliances hub
      */
     public static Pose2d getAllianceHub() {
+        if (DriverStation.getAlliance().isEmpty()) return blueHub;
         if (DriverStation.getAlliance().get().equals(Alliance.Blue)) return blueHub;
         return redHub; // If on red, return red hub 
     }

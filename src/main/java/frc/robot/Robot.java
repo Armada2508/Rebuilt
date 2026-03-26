@@ -183,11 +183,11 @@ public class Robot extends TimedRobot {
             ))
 		);
 
-        xboxController.povUp().onTrue(alignTurretToHub);
+        xboxController.povLeft().onTrue(alignTurretToHub);
 
         xboxController.rightBumper().whileTrue(pass).onFalse(stopShooter);
 
-        xboxController.povDown().onTrue(Routines.setTurretAngle(turret));
+        xboxController.povRight().onTrue(Routines.setTurretAngle(turret));
 
         xboxController.a().whileTrue(extend)
         .onFalse(stopArm);
@@ -195,13 +195,13 @@ public class Robot extends TimedRobot {
         xboxController.b().whileTrue(retract)
         .onFalse(stopArm);
 
-        xboxController.x().onTrue(spinRoller)
+        xboxController.leftBumper().onTrue(spinRoller)
         .onFalse(stopRoller);
 
         xboxController.y().onTrue(hoodAngleZero);
 
-        xboxController.povLeft().onTrue(Routines.alignToHub(swerve)); //!
-        xboxController.povRight().onTrue(Routines.alignToPassPoint(swerve)); //!
+        xboxController.povDown().onTrue(Routines.alignToHub(swerve)); //!
+        xboxController.povUp().onTrue(Routines.alignToPassPoint(swerve)); //!
     }
 
     public Command teleopDriveCommand() {

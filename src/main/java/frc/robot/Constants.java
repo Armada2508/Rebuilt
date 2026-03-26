@@ -62,8 +62,8 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.25; // 0.5
-        public static final double rotationSpeedModifier = 0.25; //0.5
+        public static final double driveSpeedModifier = 0.7; // 0.5
+        public static final double rotationSpeedModifier = 0.7; //0.5
         public static final double exponentialControl = 1.75;
     }
   
@@ -243,8 +243,8 @@ public class Constants {
                                                                   //^ This is likely outdated with us using an absolute encoder now. Up to testing & Debugging
 
         // We dont go the maximum rotation to avoid wrap-around error and risk confusing the Absolute encoder, might not be needed though.
-        public static final Angle maxAngle = Degrees.of(120);
-        public static final Angle minAngle = Degrees.of(-155);
+        public static final Angle maxAngle = Degrees.of(90); // 120
+        public static final Angle minAngle = Degrees.of(-90); // -155
 
         //& Currents
         public static final Current maxStatorCurrent = Amps.of(0); //! Find / Verify

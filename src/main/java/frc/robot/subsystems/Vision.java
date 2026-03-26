@@ -8,7 +8,6 @@ import java.util.List;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -138,8 +137,13 @@ public class Vision extends SubsystemBase {
         avgDistMeters /= numTags;
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
         // Logging
-        if (name == VisionK.frontCameraName) pubFront.accept(pose.estimatedPose);
-        // else pubBack.accept(pose.estimatedPose);
+        if (name == VisionK.frontCameraName) {pubFront.accept(pose.estimatedPose);
+            System.out.println("Front camera connected");
+        }
+        else {
+            pubBack.accept(pose.estimatedPose);
+            System.out.println("Back camera connected");
+        };
         table.getEntry(name + " StdDevs/numTags").setInteger(numTags);
         table.getEntry(name + " StdDevs/Average Distance to Tag (in.) RF").setDouble(Units.metersToInches(avgDistMeters)); // Robot Frame
         table.getEntry(name + " StdDevs/stdevScalar").setDouble(stdevScalar);

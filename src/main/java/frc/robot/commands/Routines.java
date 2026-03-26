@@ -150,7 +150,8 @@ public class Routines {
         Rotation2d robotAngle = swerve.getPose().getRotation();
         Angle targetAngle = Radians.of(fieldAngleToHub.minus(robotAngle).getRadians());
 
-        return new RepeatCommand(turret.setAngleCommand(targetAngle));
+        // return new RepeatCommand(turret.setAngleCommand(targetAngle));
+        return new RepeatCommand(Commands.run(() -> turret.setAngle(targetAngle), turret));
     }
 
     public static Command hoodAngleZero(Shooter shooter) {
