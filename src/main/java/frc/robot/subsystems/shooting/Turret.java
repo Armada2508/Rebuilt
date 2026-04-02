@@ -119,7 +119,9 @@ public class Turret extends SubsystemBase {
      */
     @Logged(name = "Turret Angle (degrees)")
     public double getAngle() { //! Verify this
+        
         double theta = canCoder.getPosition().getValue().div(TurretK.encoderToTurretGearRatio).in(Degrees);
+        if (theta < 0) theta = 0;
         return theta; 
     }
 

@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Set;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.FlippingUtil;
 import com.reduxrobotics.canand.CanandEventLoop;
@@ -114,12 +115,16 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         CanandEventLoop.getInstance();
+        Routines.setTurretAngle(turret);
         //^ This might not be needed, depends on if we need to initialize canandmag encoders in Swerve.java
     }
 
         @Override
     public void autonomousInit() {
-        var selected = autoChooser.getSelected();
+        // var selected = autoChooser.getSelected();
+        var selected = AutoBuilder.buildAuto("Mid Shoot and Outpost");
+
+
         if (selected instanceof PathPlannerAuto auto) {
             if (!swerve.initializedOdometryFromVision()) {
                 var pose = auto.getStartingPose();
@@ -143,6 +148,11 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putNumber("Distance to Hub", Field.getDistanceToHub(swerve.getPose()).in(Meters));
         
     }   
+
+    @Override
+    public void teleopInit() {
+        shooter.stop();
+    }
 
     @Override
     public void teleopPeriodic() { 
@@ -173,15 +183,9 @@ public class Robot extends TimedRobot {
 
         Command hoodAngleZero = Routines.hoodAngleZero(shooter);
 
-        // xboxController.rightTrigger().whileTrue(score).onFalse(stopShooter); 
+        Command unJam = Routines.unJamCommand(indexer);
 
-        xboxController.rightTrigger().whileTrue(  //!
-		Commands.either(
-			score,
-			pass,
-			() -> Field.isInAllianceZone(swerve.getPose()
-            ))
-		);
+        xboxController.rightTrigger().whileTrue(score).onFalse(stopShooter); 
 
         xboxController.povLeft().onTrue(alignTurretToHub);
 
@@ -199,6 +203,8 @@ public class Robot extends TimedRobot {
         .onFalse(stopRoller);
 
         xboxController.y().onTrue(hoodAngleZero);
+
+        xboxController.x().onTrue(unJam).onFalse(stopIndex);
 
         xboxController.povDown().onTrue(Routines.alignToHub(swerve)); //!
         xboxController.povUp().onTrue(Routines.alignToPassPoint(swerve)); //!

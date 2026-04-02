@@ -62,9 +62,9 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.7; // 0.5
-        public static final double rotationSpeedModifier = 0.7; //0.5
-        public static final double exponentialControl = 1.75;
+        public static final double driveSpeedModifier = 0.8; // 0.5
+        public static final double rotationSpeedModifier = 0.63; //0.5
+        public static final double exponentialControl = 1.8;
     }
   
     public static class ControllerK {
@@ -287,7 +287,7 @@ public class Constants {
         public static final int rollerCurrentLimit = 30; // amps //! Tune
 
         // Arm current limit configs
-        public static final int extenderCurrentLimit = 20; // amps //! Tune
+        public static final int extenderCurrentLimit = 25; // amps //! Tune
 
         // Soft switch limits
         public static final Distance forwardSoftLimit = Inches.of(9.25); //! Tune
@@ -295,8 +295,8 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(-6); //! Tune
-        public static final Voltage retractVoltage = Volts.of(7.5);
+        public static final Voltage extendVoltage = Volts.of(-7); //! Tune
+        public static final Voltage retractVoltage = Volts.of(8);
 
         public static final double extenderGearRatio = 11.0 / 75.6;
         public static final Distance extenderWheelDiameter = Inches.of(0.875);
@@ -304,7 +304,6 @@ public class Constants {
 
     public static class IndexerK {
         public static final int id = 16; //! Find
-        public static final Voltage indexingVoltage = Volts.of(6); //! Find
         public static final CurrentLimitsConfigs currentLimitConfig = new CurrentLimitsConfigs()
         .withStatorCurrentLimitEnable(true)
         .withSupplyCurrentLimitEnable(true)
@@ -317,8 +316,13 @@ public class Constants {
         public static final int leftCurrentLimit = 0; //! Find all
         public static final int rightCurrentLimit = 0;
 
+        public static final Voltage indexingVoltage = Volts.of(6); //! Find
         public static final Voltage rightAgitatorSpinVoltage = Volts.of(-3); //! Tune
         public static final Voltage leftAgitatorSpinVoltage = Volts.of(3); //! Tune
+
+        public static final Voltage talonUnJamVoltage = Volts.of(-6); //! Find
+        public static final Voltage rightUnJamVoltage = Volts.of(3); //! Tune
+        public static final Voltage leftUnJamVoltage = Volts.of(-3); //! Tune
 
     }
 

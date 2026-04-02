@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 
+import com.reduxrobotics.sensors.canandcolor.DigoutChannel.Index;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
@@ -106,6 +108,10 @@ public class Routines {
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())
             )).withName("Shoot shooter");
+    }
+
+    public static Command unJamCommand(Indexer indexer) {
+        return indexer.unJamCommand();
     }
 
     // public static Command score(Swerve swerve, Shooter shooter, Indexer indexer) {

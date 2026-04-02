@@ -69,6 +69,16 @@ public class Indexer extends SubsystemBase{
         sparkRight.setVoltage(-IndexerK.rightAgitatorSpinVoltage.in(Volts)); //! flip?
     }
 
+    public void unJam() {
+        talon.setVoltage(IndexerK.talonUnJamVoltage.in(Volts));
+        sparkLeft.setVoltage(IndexerK.leftUnJamVoltage.in(Volts));
+        sparkRight.setVoltage(-IndexerK.rightUnJamVoltage.in(Volts)); //! flip?
+    }
+
+    public Command unJamCommand() {
+        return runOnce(() -> unJam()); //! Check
+    }
+
     public Command indexCommand() {
         return runOnce(() -> index()); //! Check
     }

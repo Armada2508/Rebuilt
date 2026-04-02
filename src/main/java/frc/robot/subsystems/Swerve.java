@@ -143,7 +143,7 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 null,
                 this
             )
-        );
+        ); // if vision -> stop odometry thread
         setupPathPlanner();
         frontLeftDrive.getConfigurator().apply(SwerveK.driveCurrentLimitsConfig);
         frontRightDrive.getConfigurator().apply(SwerveK.driveCurrentLimitsConfig);
@@ -173,6 +173,8 @@ public class Swerve extends SubsystemBase { // physicalproperties/conversionFact
                 initializedOdometryFromVision = true;
                 continue;
             }
+            // update pose estimation
+            // update odometry
             swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds, result.getSecond());
         }
     }

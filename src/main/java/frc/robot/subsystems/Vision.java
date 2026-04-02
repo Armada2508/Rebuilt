@@ -137,7 +137,8 @@ public class Vision extends SubsystemBase {
         avgDistMeters /= numTags;
         double stdevScalar = avgDistMeters / VisionK.baseLineAverageTagDistance.in(Meters);
         // Logging
-        if (name.equals(VisionK.frontCameraName)) {pubFront.accept(pose.estimatedPose);
+        if (name.equals(VisionK.frontCameraName)) {
+            pubFront.accept(pose.estimatedPose);
             System.out.println("Front camera connected");
         }
         else {

@@ -38,9 +38,13 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getExtenderCurrent() > 23.0) {
+        if (getExtenderCurrent() > 24) {
             extender.stopMotor();
-            System.out.println("Stopping extender");
+            System.out.println("Stopping extender CURRENT | " + getExtenderCurrent());
+        }
+        if (getArmPosition() > 0.1 || getArmPosition() < -18) {
+            extender.stopMotor();
+            System.out.println("Stopping Extender POSITION | " + getArmPosition());
         }
     }
 
@@ -169,13 +173,13 @@ public class Intake extends SubsystemBase {
     // }
 
     @Logged(name = "Arm Position (In)")
-    public Distance getArmPosition() {
+    public double getArmPosition() {
         // return Encoder.angularToLinear(
         //     Rotations.of(extender.getEncoder().getPosition()),
         //     IntakeK.extenderGearRatio,
         //     IntakeK.extenderWheelDiameter
         // );
-        return Inches.of(extender.getEncoder().getPosition() * IntakeK.extenderGearRatio);
+        return extender.getEncoder().getPosition() * IntakeK.extenderGearRatio;
     }
 
     @Logged(name = "Extender Rotations")
