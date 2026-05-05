@@ -290,11 +290,11 @@ public class Constants {
         public static final int extenderCurrentLimit = 25; // amps //! Tune
 
         // Soft switch limits
-        public static final Distance forwardSoftLimit = Inches.of(9.25); //! Tune
+        public static final Distance forwardSoftLimit = Inches.of(-18.5); //! Tune
         public static final Distance reverseSoftLimit = Inches.of(0);
 
         // Voltage limits for both the wheels and the arm
-        public static final Voltage spinRollerVoltage = Volts.of(-9.25); //! Tune
+        public static final Voltage spinRollerVoltage = Volts.of(-10.25); //! Tune
         public static final Voltage extendVoltage = Volts.of(-7); //! Tune
         public static final Voltage retractVoltage = Volts.of(8);
 
