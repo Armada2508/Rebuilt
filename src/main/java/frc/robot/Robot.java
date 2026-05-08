@@ -187,9 +187,11 @@ public class Robot extends TimedRobot {
 
         xboxController.rightTrigger().whileTrue(score).onFalse(stopShooter); 
 
-        xboxController.povLeft().onTrue(alignTurretToHub);
+        //xboxController.povLeft().onTrue(alignTurretToHub);
 
-        xboxController.rightBumper().whileTrue(pass).onFalse(stopShooter);
+        xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 5)), Set.of(shooter)).withName("Bump Up"));
+        xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 5)), Set.of(shooter)).withName("Bump Down"));
+//         xboxController.povUp().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(0)), Set.of(shooter)).withName("Zero"));
 
         xboxController.povRight().onTrue(Routines.setTurretAngle(turret));
 
@@ -199,15 +201,15 @@ public class Robot extends TimedRobot {
         xboxController.b().whileTrue(retract)
         .onFalse(stopArm);
 
-        xboxController.leftBumper().onTrue(spinRoller)
+        xboxController.leftTrigger().onTrue(spinRoller)
         .onFalse(stopRoller);
 
-        xboxController.y().onTrue(hoodAngleZero);
+        // xboxController.y().onTrue(hoodAngleZero);
 
-        xboxController.x().onTrue(unJam).onFalse(stopIndex);
+        // xboxController.x().onTrue(unJam).onFalse(stopIndex);
 
-        xboxController.povDown().onTrue(Routines.alignToHub(swerve)); //!
-        xboxController.povUp().onTrue(Routines.alignToPassPoint(swerve)); //!
+        // xboxController.povDown().onTrue(Routines.alignToHub(swerve)); //!
+        // xboxController.povUp().onTrue(Routines.alignToPassPoint(swerve)); //!
     }
 
     public Command teleopDriveCommand() {

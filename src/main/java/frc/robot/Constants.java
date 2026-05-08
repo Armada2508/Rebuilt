@@ -62,9 +62,9 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.8; // 0.5
-        public static final double rotationSpeedModifier = 0.63; //0.5
-        public static final double exponentialControl = 1.8;
+        public static final double driveSpeedModifier = 0.25; // 0.5
+        public static final double rotationSpeedModifier = 0.25; //0.5
+        public static final double exponentialControl = 1.5;
     }
   
     public static class ControllerK {
