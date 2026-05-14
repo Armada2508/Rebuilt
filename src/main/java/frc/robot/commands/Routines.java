@@ -101,10 +101,10 @@ public class Routines {
     }
 
     public static Command score(Swerve swerve, Shooter shooter, Indexer indexer) {
-        return shooter.setHoodAngle(Degrees.of(35)).andThen(
+        return shooter.setHoodAngle(Degrees.of(0)).andThen(
         
         // shootInterpolatedRpm(swerve, shooter)
-        shooter.shoot(RPM.of(3000))
+        shooter.shoot(RPM.of(6000))
         .alongWith(
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())

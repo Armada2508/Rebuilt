@@ -191,7 +191,7 @@ public class Robot extends TimedRobot {
 
         xboxController.rightBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() + 5)), Set.of(shooter)).withName("Bump Up"));
         xboxController.leftBumper().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(shooter.getHoodAngle() - 5)), Set.of(shooter)).withName("Bump Down"));
-//         xboxController.povUp().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(0)), Set.of(shooter)).withName("Zero"));
+        //xboxController.povUp().onTrue(Commands.defer(() -> shooter.setHoodAngle(Degrees.of(0)), Set.of(shooter)).withName("Zero"));
 
         xboxController.povRight().onTrue(Routines.setTurretAngle(turret));
 
@@ -203,6 +203,8 @@ public class Robot extends TimedRobot {
 
         xboxController.leftTrigger().onTrue(spinRoller)
         .onFalse(stopRoller);
+
+        xboxController.povDown().whileTrue(turret.setAngleCommand(Degrees.of(0)));
 
         // xboxController.y().onTrue(hoodAngleZero);
 
