@@ -62,7 +62,7 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.25; // 0.5
+        public static final double driveSpeedModifier = 0.70; // 0.5
         public static final double rotationSpeedModifier = 0.25; //0.5
         public static final double exponentialControl = 1.5;
     }
@@ -295,6 +295,7 @@ public class Constants {
 
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-10.25); //! Tune
+        public static final Voltage spinRollerReverseVoltage = Volts.of(10.25); //! Tune
         public static final Voltage extendVoltage = Volts.of(-7); //! Tune
         public static final Voltage retractVoltage = Volts.of(8);
 

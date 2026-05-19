@@ -185,6 +185,8 @@ public class Robot extends TimedRobot {
 
         Command unJam = Routines.unJamCommand(indexer);
 
+        Command reverseRoller = Routines.spinRollerReverse(intake);
+
         xboxController.rightTrigger().whileTrue(score).onFalse(stopShooter); 
 
         //xboxController.povLeft().onTrue(alignTurretToHub);
@@ -201,13 +203,15 @@ public class Robot extends TimedRobot {
         xboxController.b().whileTrue(retract)
         .onFalse(stopArm);
 
+        
         xboxController.leftTrigger().onTrue(spinRoller)
         .onFalse(stopRoller);
 
         xboxController.povDown().whileTrue(turret.setAngleCommand(Degrees.of(0)));
 
         // xboxController.y().onTrue(hoodAngleZero);
-
+        xboxController.x().onTrue(reverseRoller)
+        .onFalse(stopRoller);
         // xboxController.x().onTrue(unJam).onFalse(stopIndex);
 
         // xboxController.povDown().onTrue(Routines.alignToHub(swerve)); //!

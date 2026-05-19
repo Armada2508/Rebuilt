@@ -134,6 +134,13 @@ public class Intake extends SubsystemBase {
         .withName("Spin roller");
     }
 
+    public Command spinRollerReverse() { 
+        return runOnce(() -> 
+            roller.setVoltage(IntakeK.spinRollerReverseVoltage)
+        )
+        .withName("Spin roller");
+    }
+
     public Command stopArm() { //! Check if we need this
         return runOnce(() -> {
             extender.stopMotor();
