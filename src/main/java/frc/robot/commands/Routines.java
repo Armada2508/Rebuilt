@@ -3,6 +3,7 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.reduxrobotics.sensors.canandcolor.DigoutChannel.Index;
 

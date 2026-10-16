@@ -327,7 +327,7 @@ public class Constants {
 
     }
 
-        public static class HopperK {
+    public static class HopperK {
         public static final int timeOfFlightIdTop = 0; //! find these
         public static final int timeOfFlightIdBottom = 1; //! find these
         public static final Distance hopperBottomDetectionRange = Inches.of(0);

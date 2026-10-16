@@ -58,7 +58,7 @@ public class Vision extends SubsystemBase {
      * a robot's odometry with PoseEstimator#addVisionMeasurement.
      */
     public VisionResults getVisionResults() {
-        List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
+        List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>(); //!
         if (isCameraConnectedFront()) {
             visionResults.addAll(processResults(frontCamera.getAllUnreadResults(), frontPoseEstimator, frontCamera.getName()));
         }
@@ -79,7 +79,7 @@ public class Vision extends SubsystemBase {
      */
    private List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> processResults(
         List<PhotonPipelineResult> results, PhotonPoseEstimator poseEstimator, String name) {
-        List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>();
+        List<Pair<EstimatedRobotPose, Matrix<N3, N1>>> visionResults = new ArrayList<>(); //!
         for (var result : results) {
             if (name.equals(VisionK.frontCameraName)) frontLatestResult = result;
             else backLatestResult = result;

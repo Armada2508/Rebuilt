@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
 
         Command zeroGyro = Routines.zeroGyro(swerve);
 
-        Command hoodAngleZero = Routines.hoodAngleZero(shooter);
+        Command hoodAngle = Routines.hoodAngleZero(shooter);
 
         Command unJam = Routines.unJamCommand(indexer);
 
