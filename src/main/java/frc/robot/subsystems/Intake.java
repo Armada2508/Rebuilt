@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -29,6 +30,9 @@ public class Intake extends SubsystemBase {
 
     private final SparkMax extender = new SparkMax(IntakeK.extenderID, MotorType.kBrushless);
     private final SparkMax roller = new SparkMax(IntakeK.rollerID, MotorType.kBrushless);
+
+    private final DigitalInput limitSwitchRetract = new DigitalInput(8);
+    private final DigitalInput limitSwitchExtend = new DigitalInput(9);
     
     public Intake() {
         configSparkMaxs();
@@ -38,14 +42,17 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getExtenderCurrent() > 24) {
+        if (limitSwitchExtend.get() == true) {
             extender.stopMotor();
-            System.out.println("Stopping extender CURRENT | " + getExtenderCurrent());
+            // System.out.println("Stopping extender CURRENT | " + getExtenderCurrent());
         }
-        if (getArmPosition() > 0.1 || getArmPosition() < -18) {
+        if (limitSwitchRetract.get() == true) {
             extender.stopMotor();
-            System.out.println("Stopping Extender POSITION | " + getArmPosition());
         }
+        // if (getArmPosition() > 0.1 || getArmPosition() < -18) {
+        //     extender.stopMotor();
+        //     System.out.println("Stopping Extender POSITION | " + getArmPosition());
+        // }
     }
 
     @SuppressWarnings("removal")
@@ -67,7 +74,7 @@ public class Intake extends SubsystemBase {
 
         //~ Extender Config
         extenderConfig.idleMode(IdleMode.kBrake);
-        extenderConfig.smartCurrentLimit(IntakeK.extenderCurrentLimit);
+        // extenderConfig.smartCurrentLimit(IntakeK.extenderCurrentLimit);
 
         extenderConfig.signals //& Extender Signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -93,6 +100,32 @@ public class Intake extends SubsystemBase {
         extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
 
+    public boolean switchValueExtend() {
+        if (limitSwitchExtend.get() == true) {
+            System.out.println(limitSwitchExtend.get());
+            System.out.println("EXTEND SWITCH TRIGGERED");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean switchValueRetract() {
+        if (limitSwitchRetract.get() == true) {
+            System.out.println(limitSwitchRetract.get());
+            System.out.println("RETRACT SWITCH TRIGGERED");
+            return true;
+        } else {
+            return false;
+        }
+    }
+        public Command stopArm() { //! Check if we need this
+        return runOnce(() -> {
+            extender.stopMotor();
+        })
+        .withName("Stop Arm");
+    }
+
     /**
      * Extends the arm mechanism by setting the voltage using .extendVoltage
      * @return
@@ -103,10 +136,14 @@ public class Intake extends SubsystemBase {
     //    }).alongWith(Commands.waitUntil(() -> getExtenderCurrent() > 24)
     //    .andThen(Commands.runOnce(() -> extender.stopMotor())))
     //    .withName("Extend");
-
+        if (limitSwitchExtend.get() == false) {
         return new RepeatCommand(Commands.runOnce(() -> extender.setVoltage(IntakeK.extendVoltage)))
-        // .until(() -> (getExtenderCurrent() > 24))
+        .until(() -> (limitSwitchExtend.get() == true))
         .withName("Extend");
+        }
+        else {
+            return stopArm();
+        }
     }
 
     /**
@@ -119,9 +156,16 @@ public class Intake extends SubsystemBase {
     //    }).alongWith(Commands.waitUntil(() -> getExtenderCurrent() > 24)
     //    .andThen(Commands.runOnce(() -> extender.stopMotor())))
     //    .withName("Retract");
+        if (limitSwitchRetract.get() == false) {
+            System.out.println(limitSwitchRetract.get());
 
         return new RepeatCommand(Commands.runOnce(() -> extender.setVoltage(IntakeK.retractVoltage)))
+        .until(() -> (limitSwitchRetract.get() == true))
         .withName("Extend");
+        }
+        else {
+            return stopArm();
+        }
     }
 
     /**
@@ -141,12 +185,7 @@ public class Intake extends SubsystemBase {
         .withName("Spin roller");
     }
 
-    public Command stopArm() { //! Check if we need this
-        return runOnce(() -> {
-            extender.stopMotor();
-        })
-        .withName("Stop Arm");
-    }
+
 
     /**
      * Sets the intake roller to stop

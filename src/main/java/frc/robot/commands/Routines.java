@@ -41,13 +41,13 @@ public class Routines {
 
     public static Command extend(Intake intake) {
         return intake.extend()
-        .until(() -> (intake.getExtenderCurrent() > 24))
+        // .until(() -> (intake.getExtenderCurrent() > 24))
         .withName("Extending");
     }
 
     public static Command retract(Intake intake) {
         return intake.retract()
-        .until(() -> (intake.getExtenderCurrent() > 24))
+        // .until(() -> (intake.getExtenderCurrent() > 24))
         .withName("Retracting");
     }
 
@@ -102,14 +102,14 @@ public class Routines {
     }
 
     public static Command score(Swerve swerve, Shooter shooter, Indexer indexer) {
-        return shooter.setHoodAngle(Degrees.of(0)).andThen(
+        // return shooter.setHoodAngle(Degrees.of(0)).andThen(
         
         // shootInterpolatedRpm(swerve, shooter)
         shooter.shoot(RPM.of(3000))
         .alongWith(
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())
-            )).withName("Shoot shooter");
+            ).withName("Shoot shooter");
     }
 
     public static Command unJamCommand(Indexer indexer) {

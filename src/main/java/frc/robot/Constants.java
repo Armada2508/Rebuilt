@@ -86,7 +86,7 @@ public class Constants {
         // public static final double steerGearRatio = 41.25; 
         // public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
+        public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(3); //5.426
         public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
         public static final CurrentLimitsConfigs driveCurrentLimitsConfig = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
@@ -97,7 +97,7 @@ public class Constants {
             .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
  
         // Path Constraints
-        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(6); // Should be just under 3/4 of our max possible speed, arbitrary value
+        public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(3); // Should be just under 3/4 of our max possible speed, arbitrary value -- 6
         public static final LinearAcceleration maxRobotAcceleration = FeetPerSecondPerSecond.of(3.5); 
         public static final AngularVelocity maxRobotAngularVelocity = DegreesPerSecond.of(180); 
         public static final AngularAcceleration maxRobotAngularAcceleration = DegreesPerSecondPerSecond.of(270); 
@@ -296,8 +296,8 @@ public class Constants {
         // Voltage limits for both the wheels and the arm
         public static final Voltage spinRollerVoltage = Volts.of(-10.25); //! Tune
         public static final Voltage spinRollerReverseVoltage = Volts.of(10.25); //! Tune
-        public static final Voltage extendVoltage = Volts.of(-7); //! Tune
-        public static final Voltage retractVoltage = Volts.of(8);
+        public static final Voltage extendVoltage = Volts.of(-6); //! Tune
+        public static final Voltage retractVoltage = Volts.of(6);
 
         public static final double extenderGearRatio = 11.0 / 75.6;
         public static final Distance extenderWheelDiameter = Inches.of(0.875);
