@@ -105,7 +105,7 @@ public class Routines {
         // return shooter.setHoodAngle(Degrees.of(0)).andThen(
         
         // shootInterpolatedRpm(swerve, shooter)
-        shooter.shoot(RPM.of(3000))
+        return shooter.shoot(RPM.of(3000))
         .alongWith(
             Commands.waitSeconds(1).andThen(            
                 indexer.indexCommand())

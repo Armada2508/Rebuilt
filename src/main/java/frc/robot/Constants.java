@@ -62,7 +62,7 @@ public class Constants {
         public static final Pair<Double, Double> rotationAccelLimits = Pair.of(1.0, 2.0);
         public static final double elevatorAccelScaling = 0.5; // Acceleration is halved when elevator is at max height
 
-        public static final double driveSpeedModifier = 0.70; // 0.5
+        public static final double driveSpeedModifier = 0.7; // 0.5
         public static final double rotationSpeedModifier = 0.25; //0.5
         public static final double exponentialControl = 1.5;
     }
@@ -86,7 +86,7 @@ public class Constants {
         // public static final double steerGearRatio = 41.25; 
         // public static final double driveGearRatio = 4.4;
 
-        public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(3); //5.426
+        public static final LinearVelocity maxPossibleRobotSpeed = MetersPerSecond.of(5.426);
         public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
         public static final CurrentLimitsConfigs driveCurrentLimitsConfig = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
@@ -107,7 +107,8 @@ public class Constants {
         public static final double kV = 2.1701;
         public static final double kA = 0.15136;
 
-        // PathPlanner
+        // PathPlanner[]\
+
         public static final PIDConstants ppTranslationConstants = new PIDConstants(5.25, 0, 0); // m/s / m
         public static final PIDConstants ppRotationConstants = new PIDConstants(5, 0, 0); // rad/s / rad
         public static RobotConfig robotConfig; static {
