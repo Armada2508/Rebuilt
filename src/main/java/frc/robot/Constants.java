@@ -90,11 +90,11 @@ public class Constants {
         public static final AngularVelocity maxAngularVelocity = RadiansPerSecond.of(10.477);
         public static final CurrentLimitsConfigs driveCurrentLimitsConfig = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
-            .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
+            .withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true);
 
         public static final CurrentLimitsConfigs steerCurrentLimitsConfig = new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(Amps.of(70)).withSupplyCurrentLimitEnable(true)
-            .withStatorCurrentLimit(Amps.of(75)).withStatorCurrentLimitEnable(true);
+            .withStatorCurrentLimit(Amps.of(60)).withStatorCurrentLimitEnable(true);
  
         // Path Constraints
         public static final LinearVelocity maxRobotVelocity = FeetPerSecond.of(3); // Should be just under 3/4 of our max possible speed, arbitrary value -- 6

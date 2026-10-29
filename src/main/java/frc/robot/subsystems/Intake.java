@@ -100,25 +100,25 @@ public class Intake extends SubsystemBase {
         extender.configure(extenderConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
     }
 
-    public boolean switchValueExtend() {
-        if (limitSwitchExtend.get() == true) {
-            System.out.println(limitSwitchExtend.get());
-            System.out.println("EXTEND SWITCH TRIGGERED");
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // public boolean switchValueExtend() {
+        // if (limitSwitchExtend.get() == true) {
+        //     System.out.println(limitSwitchExtend.get());
+        //     System.out.println("EXTEND SWITCH TRIGGERED");
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+    // }
 
-    public boolean switchValueRetract() {
-        if (limitSwitchRetract.get() == true) {
-            System.out.println(limitSwitchRetract.get());
-            System.out.println("RETRACT SWITCH TRIGGERED");
-            return true;
-        } else {
-            return false;
-        }
-    }
+    // public boolean switchValueRetract() {
+        // if (limitSwitchRetract.get() == true) {
+        //     System.out.println(limitSwitchRetract.get());
+        //     System.out.println("RETRACT SWITCH TRIGGERED");
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+    // }
         public Command stopArm() { //! Check if we need this
         return runOnce(() -> {
             extender.stopMotor();
@@ -133,17 +133,17 @@ public class Intake extends SubsystemBase {
     public Command extend() { 
     //     return runOnce(() -> {
     //         extender.setVoltage(IntakeK.extendVoltage);
-    //    }).alongWith(Commands.waitUntil(() -> getExtenderCurrent() > 24)
-    //    .andThen(Commands.runOnce(() -> extender.stopMotor())))
+    //    })
     //    .withName("Extend");
-        if (limitSwitchExtend.get() == false) {
+        // if (limitSwitchExtend.get() == false) {
         return new RepeatCommand(Commands.runOnce(() -> extender.setVoltage(IntakeK.extendVoltage)))
-        .until(() -> (limitSwitchExtend.get() == true))
         .withName("Extend");
-        }
-        else {
-            return stopArm();
-        }
+        // .until(() -> (limitSwitchExtend.get() == true))
+        // .withName("Extend");
+        // }
+        // else {
+        //     return stopArm();
+        // }
     }
 
     /**
@@ -153,19 +153,19 @@ public class Intake extends SubsystemBase {
     public Command retract() {
     //     return runOnce(() -> {
     //         extender.setVoltage(IntakeK.retractVoltage);
-    //    }).alongWith(Commands.waitUntil(() -> getExtenderCurrent() > 24)
-    //    .andThen(Commands.runOnce(() -> extender.stopMotor())))
+    //    })
     //    .withName("Retract");
-        if (limitSwitchRetract.get() == false) {
-            System.out.println(limitSwitchRetract.get());
+        // if (limitSwitchRetract.get() == false) {
+        //     System.out.println(limitSwitchRetract.get());
 
         return new RepeatCommand(Commands.runOnce(() -> extender.setVoltage(IntakeK.retractVoltage)))
-        .until(() -> (limitSwitchRetract.get() == true))
-        .withName("Extend");
-        }
-        else {
-            return stopArm();
-        }
+        .withName("Retract");
+        // .until(() -> (limitSwitchRetract.get() == true))
+        // .withName("Extend");
+        // }
+        // else {
+        //     return stopArm();
+        // }
     }
 
     /**
